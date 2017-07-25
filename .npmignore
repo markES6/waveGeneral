@@ -1,0 +1,14 @@
+/test
+/src
+/node_modules
+/coverage
+/img
+/experiments
+/dist
+deploy.sh
+.travis.yml
+karma.conf.js
+test-main.js
+webpack.config.js
+.sass-cache
+/ghpages
