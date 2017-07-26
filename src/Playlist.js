@@ -1,11 +1,18 @@
 import _defaults from 'lodash.defaults';
 
+import createElement from 'virtual-dom/create-element';
+
+import TimeScale from './TimeScale';
+import Track from './Track';
+import Playout from './Playout';
 import LoaderFactory from './track/loader/LoaderFactory';
 
 export default class {
   constructor() {
-    this.load = LoaderFactory;
     this.defaults = _defaults;
+    this.duration = 0;
+    this.scrollLeft = 0;
+    this.tracks = [];
   }
 
   // 音频码率
@@ -47,7 +54,18 @@ export default class {
   setZoomIndex(index) {
     this.zoomIndex = index;
   }
+  // 设置show
+  setControlOptions(controlOptions) {
+    this.controls = controlOptions;
+  }
 
+  // 工具类
+  adjustDuration() {
+    this.duration = this.tracks.reduce(
+      (duration, track) => Math.max(duration, track.getEndTime()),
+      0,
+    );
+  }
 
   // 加载音频并初始化显示
   load(trackList) {
@@ -60,18 +78,14 @@ export default class {
       const tracks = audioBuffers.map((audioBuffer, index) => {
         const info = trackList[index];
         const name = info.name || 'Untitled';
-        const start = info.start || 0;
-        const states = info.states || {};
-        const fadeIn = info.fadeIn;
-        const fadeOut = info.fadeOut;
+        // const start = info.start || 0;
+        // const states = info.states || {};
+        // const gain = info.gain || 1;
         const cueIn = info.cuein || 0;
         const cueOut = info.cueout || audioBuffer.duration;
-        const gain = info.gain || 1;
-        const muted = info.muted || false;
-        const soloed = info.soloed || false;
         const selection = info.selected;
         const peaks = info.peaks || { type: 'WebAudio', mono: this.mono };
-        const customClass = info.customClass || undefined;
+        // const customClass = info.customClass || undefined;
         const waveOutlineColor = info.waveOutlineColor || undefined;
         // webaudio specific playout for now.
         const playout = new Playout(this.ac, audioBuffer);
@@ -79,44 +93,26 @@ export default class {
         track.src = info.src;
         track.setBuffer(audioBuffer);
         track.setName(name);
-        track.setEventEmitter(this.ee);
-        track.setEnabledStates(states);
+        // track.setEventEmitter(this.ee);
+        // track.setEnabledStates(states);
         track.setCues(cueIn, cueOut);
-        track.setCustomClass(customClass);
+        // track.setCustomClass(customClass);
         track.setWaveOutlineColor(waveOutlineColor);
-
-        if (fadeIn !== undefined) {
-          track.setFadeIn(fadeIn.duration, fadeIn.shape);
-        }
-
-        if (fadeOut !== undefined) {
-          track.setFadeOut(fadeOut.duration, fadeOut.shape);
-        }
 
         if (selection !== undefined) {
           this.setActiveTrack(track);
           this.setTimeSelection(selection.start, selection.end);
         }
-
         if (peaks !== undefined) {
           track.setPeakData(peaks);
         }
 
-        track.setState(this.getState());
-        track.setStartTime(start);
+        // track.setState(this.getState());
+        // track.setStartTime(start);
         track.setPlayout(playout);
 
-        track.setGainLevel(gain);
+        // track.setGainLevel(gain);
 
-        if (muted) {
-          this.muteTrack(track);
-        }
-
-        if (soloed) {
-          this.soloTrack(track);
-        }
-
-        // extract peaks with AudioContext for now.
         track.calculatePeaks(this.samplesPerPixel, this.sampleRate);
 
         return track;
@@ -124,9 +120,37 @@ export default class {
 
       this.tracks = this.tracks.concat(tracks);
       this.adjustDuration();
-      this.draw(this.render());
-
-      this.ee.emit('audiosourcesrendered');
+      // this.draw(this.render());
+      this.render();
+      // this.ee.emit('audiosourcesrendered');
     });
+  }
+  // 时间刻度记载
+  renderTimeScale() {
+    const controlWidth = this.controls.show ? this.controls.width : 0;
+    const timeScale = new TimeScale(this.duration, this.scrollLeft,
+      this.samplesPerPixel, this.sampleRate, controlWidth);
+    return timeScale.render();
+  }
+  // 波形图绘制
+  renderTrackSection() {
+    const trackElements = this.tracks.map(track =>
+      track.render(),
+    );
+    return trackElements;
+  }
+  // 加载页面
+  render() {
+    const timeTree = this.renderTimeScale();
+    const timeNode = createElement(timeTree);
+    document.getElementById('timescale').innerHTML = '';
+    document.getElementById('timescale').appendChild(timeNode);
+
+    const canvasTree = this.renderTrackSection();
+    document.getElementById('waveCanvse').innerHTML = '';
+    if (canvasTree.length !== 0) {
+      const canvasNode = createElement(canvasTree[0][0]);
+      document.getElementById('waveCanvse').appendChild(canvasNode);
+    }
   }
 }

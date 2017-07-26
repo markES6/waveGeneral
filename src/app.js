@@ -57,30 +57,24 @@ export function init(options = {}, ee = EventEmitter()) {
   playlist.setSamplesPerPixel(config.samplesPerPixel);
   playlist.setAudioContext(config.ac);
   playlist.setEventEmitter(ee);
-  playlist.setUpEventEmitter();
-  playlist.setTimeSelection(0, 0);
-  playlist.setState(config.state);
-  playlist.setControlOptions(config.controls);
+  // playlist.setUpEventEmitter();                       // 初始化音频通用方法
+  // playlist.setTimeSelection(0, 0);                    // 初始化播放起始结束点
+  // playlist.setState(config.state);
+  playlist.setControlOptions(config.controls);        // 宽度以及show设置
   playlist.setWaveHeight(config.waveHeight);
   playlist.setColors(config.colors);
   playlist.setZoomLevels(config.zoomLevels);
   playlist.setZoomIndex(zoomIndex);
-  playlist.setMono(config.mono);
-  playlist.setExclSolo(config.exclSolo);
-  playlist.setShowTimeScale(config.timescale);
-  playlist.setSeekStyle(config.seekStyle);
-  playlist.setAnnotations(config.annotationList);
+  // playlist.setMono(config.mono);                      // 设置是否填充满
+  // playlist.setExclSolo(config.exclSolo);              // 未知
+  // playlist.setShowTimeScale(config.timescale);        // 设置时间刻度条show
+  // playlist.setSeekStyle(config.seekStyle);            // 设置播放模式line
+  // playlist.setAnnotations(config.annotationList);     // 未知 重要
   playlist.isAutomaticScroll = config.isAutomaticScroll;
   playlist.isContinuousPlay = config.isContinuousPlay;
   playlist.linkedEndpoints = config.linkedEndpoints;
 
-  // take care of initial virtual dom rendering.
-  const tree = playlist.render();
-  const rootNode = createElement(tree);
-
-  config.container.appendChild(rootNode);
-  playlist.tree = tree;
-  playlist.rootNode = rootNode;
+  playlist.render();
 
   return playlist;
 }
