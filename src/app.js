@@ -57,7 +57,7 @@ export function init(options = {}, ee = EventEmitter()) {
   playlist.setSamplesPerPixel(config.samplesPerPixel);
   playlist.setAudioContext(config.ac);
   playlist.setEventEmitter(ee);
-  // playlist.setUpEventEmitter();                       // 初始化音频通用方法
+  playlist.setUpEventEmitter();                       // 初始化音频通用方法
   // playlist.setTimeSelection(0, 0);                    // 初始化播放起始结束点
   // playlist.setState(config.state);
   playlist.setControlOptions(config.controls);        // 宽度以及show设置

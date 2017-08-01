@@ -31,13 +31,6 @@ export default class {
   setEventEmitter(ee) {
     this.ee = ee;
   }
-  // 初始化事件状态，且设置track模块事件状态
-  setState(state) {
-    this.state = state;
-    this.tracks.forEach((track) => {
-      track.setState(state);
-    });
-  }
   // 设置wave高度
   setWaveHeight(height) {
     this.waveHeight = height;
@@ -65,6 +58,44 @@ export default class {
       (duration, track) => Math.max(duration, track.getEndTime()),
       0,
     );
+  }
+
+  // 控制模块
+  setUpEventEmitter() {
+    const ee = this.ee;
+    ee.on('play', (startTime, endTime) => {
+      this.play(startTime, endTime);
+    });
+  }
+
+  // 播放
+  play(startTime, endTime) {
+    clearTimeout(this.resetDrawTimer);
+
+    const currentTime = this.ac.currentTime;
+    const selected = this.getTimeSelection();
+    const playoutPromises = [];
+    const start = startTime || this.pausedAt || this.cursor;
+    let end = endTime;
+    if (!end && selected.end !== selected.start && selected.end > start) {
+      end = selected.end;
+    }
+
+    if (this.isPlaying()) {
+      return this.restartPlayFrom(start, end);
+    }
+    // console.log(playoutPromises);
+    this.tracks.forEach((track) => {
+      track.setState('cavasevent');
+      playoutPromises.push(track.schedulePlay(currentTime, start, end, {
+        shouldPlay: this.shouldTrackPlay(track),
+        masterGain: this.masterGain,
+      }));
+    });
+    this.lastPlay = currentTime;
+    this.playoutPromises = playoutPromises;
+    this.startAnimation(start);
+    return Promise.all(this.playoutPromises);
   }
 
   // 加载音频并初始化显示
@@ -114,7 +145,6 @@ export default class {
         // track.setGainLevel(gain);
 
         track.calculatePeaks(this.samplesPerPixel, this.sampleRate);
-
         return track;
       });
 

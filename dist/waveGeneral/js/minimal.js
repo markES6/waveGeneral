@@ -27,8 +27,10 @@ playlist.load([
     },
     'cuein': 0,
   },
-]).then(() => {
-  // can do stuff with the playlist.
-  // initialize the WAV exporter.
-  // playlist.initExporter();
-});
+]);
+
+window.onload = function() {
+  document.getElementById('play').onclick = function(){
+    playlist.play(0, 100);
+  }
+}
