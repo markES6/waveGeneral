@@ -1,3 +1,4 @@
+import _assign from 'lodash.assign';
 import h from 'virtual-dom/h';
 
 import extractPeaks from 'webaudio-peaks';
@@ -57,6 +58,32 @@ export default class {
   // 获取结束时间
   getEndTime() {
     return this.endTime;
+  }
+  // 是否播放
+  isPlaying() {
+    return this.playout.isPlaying();
+  }
+  // 播放
+  schedulePlay(now, startTime, endTime, config) {
+    const defaultOptions = {
+      shouldPlay: true,
+      masterGain: 1,
+      isOffline: false,
+    };
+
+    const options = _assign({}, defaultOptions, config);
+    const playoutSystem = options.isOffline ? this.offlinePlayout : this.playout;
+    const sourcePromise = playoutSystem.setUpSource();
+    playoutSystem.setVolumeGainLevel(1);
+    playoutSystem.setShouldPlay(options.shouldPlay);
+    playoutSystem.setMasterGainLevel(1);
+    playoutSystem.play(now, startTime, endTime);
+
+    return sourcePromise;
+  }
+  // 停止
+  scheduleStop(when = 0) {
+    this.playout.stop(when);
   }
 
   // 设置peaks

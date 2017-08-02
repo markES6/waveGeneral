@@ -63,39 +63,59 @@ export default class {
   // 控制模块
   setUpEventEmitter() {
     const ee = this.ee;
-    ee.on('play', (startTime, endTime) => {
-      this.play(startTime, endTime);
+    ee.on('play', (now, startTime, endTime) => {
+      this.play(now, startTime, endTime);
     });
+  }
+  // 是否播放
+  isPlaying() {
+    return this.tracks.reduce(
+      (isPlaying, track) => isPlaying || track.isPlaying(),
+      false,
+    );
+  }
+  getCurrentTime() {
+    const cursorPos = this.lastSeeked || this.pausedAt || this.cursor;
+
+    return cursorPos + this.getElapsedTime();
+  }
+
+  getElapsedTime() {
+    return this.ac.currentTime - this.lastPlay;
+  }
+  //
+  playbackReset() {
+    this.lastSeeked = undefined;
+
+    this.tracks.forEach((track) => {
+      track.scheduleStop();
+    });
+
+    return Promise.all(this.playoutPromises);
   }
 
   // 播放
-  play(startTime, endTime) {
-    clearTimeout(this.resetDrawTimer);
-
-    const currentTime = this.ac.currentTime;
-    const selected = this.getTimeSelection();
+  play(now, startTime, endTime) {
     const playoutPromises = [];
-    const start = startTime || this.pausedAt || this.cursor;
-    let end = endTime;
-    if (!end && selected.end !== selected.start && selected.end > start) {
-      end = selected.end;
-    }
-
-    if (this.isPlaying()) {
-      return this.restartPlayFrom(start, end);
-    }
-    // console.log(playoutPromises);
+    const currentTime = this.ac.currentTime;
     this.tracks.forEach((track) => {
-      track.setState('cavasevent');
-      playoutPromises.push(track.schedulePlay(currentTime, start, end, {
-        shouldPlay: this.shouldTrackPlay(track),
+      playoutPromises.push(track.schedulePlay(currentTime, startTime, endTime, {
+        shouldPlay: true,
         masterGain: this.masterGain,
       }));
     });
     this.lastPlay = currentTime;
     this.playoutPromises = playoutPromises;
-    this.startAnimation(start);
     return Promise.all(this.playoutPromises);
+  }
+  // 暂停
+  pause() {
+    if (!this.isPlaying()) {
+      return Promise.all(this.playoutPromises);
+    }
+
+    this.pausedAt = this.getCurrentTime();
+    return this.playbackReset();
   }
 
   // 加载音频并初始化显示

@@ -31,6 +31,9 @@ playlist.load([
 
 window.onload = function() {
   document.getElementById('play').onclick = function(){
-    playlist.play(0, 100);
-  }
-}
+    playlist.play(2, 0, 100);
+  };
+  document.getElementById('pause').onclick = function(){
+    playlist.pause();
+  };
+};
