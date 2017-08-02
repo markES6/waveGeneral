@@ -13,6 +13,16 @@ export default class {
     this.duration = 0;
     this.scrollLeft = 0;
     this.tracks = [];
+
+    // this.startTime = 0;
+    // this.stopTime = 0;
+    this.pauseTime = 0;
+    this.lastPlay = 0;
+    this.formInfo = [];
+  }
+  // 设置初始值
+  setDefault(info) {
+    this.markData = info || this.markData;
   }
 
   // 音频码率
@@ -47,6 +57,18 @@ export default class {
   setZoomIndex(index) {
     this.zoomIndex = index;
   }
+  // 设置缩放比例
+  setZoom(zoomIndex) {
+    const zoom = this.zoomLevels[zoomIndex];
+    this.samplesPerPixel = zoom;
+    this.tracks.forEach((track) => {
+      track.calculatePeaks(zoom, this.sampleRate);
+    });
+  }
+  // 设置缩放点率
+  setSamplesPerPixel(samplesPerPixel) {
+    this.samplesPerPixel = samplesPerPixel;
+  }
   // 设置show
   setControlOptions(controlOptions) {
     this.controls = controlOptions;
@@ -62,10 +84,10 @@ export default class {
 
   // 控制模块
   setUpEventEmitter() {
-    const ee = this.ee;
-    ee.on('play', (now, startTime, endTime) => {
-      this.play(now, startTime, endTime);
-    });
+    // const ee = this.ee;
+    // ee.on('play', (now, startTime, endTime) => {
+    //   this.play(now, startTime, endTime);
+    // });
   }
   // 是否播放
   isPlaying() {
@@ -74,32 +96,34 @@ export default class {
       false,
     );
   }
-  getCurrentTime() {
-    const cursorPos = this.lastSeeked || this.pausedAt || this.cursor;
-
-    return cursorPos + this.getElapsedTime();
-  }
 
   getElapsedTime() {
     return this.ac.currentTime - this.lastPlay;
   }
   //
   playbackReset() {
-    this.lastSeeked = undefined;
-
     this.tracks.forEach((track) => {
       track.scheduleStop();
     });
 
     return Promise.all(this.playoutPromises);
   }
+  // demo
+  demo() {
+    console.log(this.zoomIndex);
+    console.log(this.zoomLevels);
+  }
 
   // 播放
   play(now, startTime, endTime) {
+    let start = startTime;
+    if (this.pauseTime) {
+      start = this.pauseTime;
+    }
     const playoutPromises = [];
     const currentTime = this.ac.currentTime;
     this.tracks.forEach((track) => {
-      playoutPromises.push(track.schedulePlay(currentTime, startTime, endTime, {
+      playoutPromises.push(track.schedulePlay(currentTime, start, endTime, {
         shouldPlay: true,
         masterGain: this.masterGain,
       }));
@@ -113,9 +137,22 @@ export default class {
     if (!this.isPlaying()) {
       return Promise.all(this.playoutPromises);
     }
-
-    this.pausedAt = this.getCurrentTime();
+    this.pauseTime += this.getElapsedTime();
     return this.playbackReset();
+  }
+  // 暂停
+  stop() {
+    this.pauseTime = 0;
+    return this.playbackReset();
+  }
+  // 缩放大小
+  zoom(zoomStyle) {
+    const index = this.zoomIndex + zoomStyle;
+    if (index < this.zoomLevels.length && index >= 0) {
+      this.zoomIndex = index;
+    }
+    this.setZoom(this.zoomIndex);
+    this.render();
   }
 
   // 加载音频并初始化显示
@@ -125,29 +162,20 @@ export default class {
       return loader.load();
     });
     return Promise.all(loadPromises).then((audioBuffers) => {
-      this.ee.emit('audiosourcesloaded');
       const tracks = audioBuffers.map((audioBuffer, index) => {
         const info = trackList[index];
         const name = info.name || 'Untitled';
-        // const start = info.start || 0;
-        // const states = info.states || {};
-        // const gain = info.gain || 1;
         const cueIn = info.cuein || 0;
         const cueOut = info.cueout || audioBuffer.duration;
         const selection = info.selected;
         const peaks = info.peaks || { type: 'WebAudio', mono: this.mono };
-        // const customClass = info.customClass || undefined;
         const waveOutlineColor = info.waveOutlineColor || undefined;
-        // webaudio specific playout for now.
         const playout = new Playout(this.ac, audioBuffer);
         const track = new Track();
         track.src = info.src;
         track.setBuffer(audioBuffer);
         track.setName(name);
-        // track.setEventEmitter(this.ee);
-        // track.setEnabledStates(states);
         track.setCues(cueIn, cueOut);
-        // track.setCustomClass(customClass);
         track.setWaveOutlineColor(waveOutlineColor);
 
         if (selection !== undefined) {
@@ -158,11 +186,7 @@ export default class {
           track.setPeakData(peaks);
         }
 
-        // track.setState(this.getState());
-        // track.setStartTime(start);
         track.setPlayout(playout);
-
-        // track.setGainLevel(gain);
 
         track.calculatePeaks(this.samplesPerPixel, this.sampleRate);
         return track;
@@ -170,9 +194,7 @@ export default class {
 
       this.tracks = this.tracks.concat(tracks);
       this.adjustDuration();
-      // this.draw(this.render());
       this.render();
-      // this.ee.emit('audiosourcesrendered');
     });
   }
   // 时间刻度记载

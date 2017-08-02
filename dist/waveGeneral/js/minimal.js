@@ -2,7 +2,6 @@ var playlist = WaveGeneral.init({
   samplesPerPixel: 512,
   waveHeight: 500,
   container: document.getElementById('wavelist'),
-  state: 'cavasevent',
   colors: {
     waveOutlineColor: '#1E90FF',
     timeColor: 'grey',
@@ -12,8 +11,7 @@ var playlist = WaveGeneral.init({
   controls: {
     show: true, // whether or not to include the track controls
     width: 200, // width of controls in pixels
-  },
-  seekStyle: 'line',
+  }
 });
 
 playlist.load([
@@ -30,10 +28,22 @@ playlist.load([
 ]);
 
 window.onload = function() {
+  document.getElementById('demo').onclick = function(){
+    playlist.demo();
+  };
   document.getElementById('play').onclick = function(){
     playlist.play(2, 0, 100);
   };
   document.getElementById('pause').onclick = function(){
     playlist.pause();
+  };
+  document.getElementById('stop').onclick = function(){
+    playlist.stop();
+  };
+  document.getElementById('bigger').onclick = function(){
+    playlist.zoom(1);
+  };
+  document.getElementById('smaller').onclick = function(){
+    playlist.zoom(-1);
   };
 };
