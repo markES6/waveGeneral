@@ -32,7 +32,7 @@ window.onload = function() {
     playlist.demo();
   };
   document.getElementById('play').onclick = function(){
-    playlist.play(2, 0, 100);
+    playlist.play(2, 0);
   };
   document.getElementById('pause').onclick = function(){
     playlist.pause();
@@ -41,9 +41,9 @@ window.onload = function() {
     playlist.stop();
   };
   document.getElementById('bigger').onclick = function(){
-    playlist.zoom(1);
+    playlist.zoom(-1);
   };
   document.getElementById('smaller').onclick = function(){
-    playlist.zoom(-1);
+    playlist.zoom(1);
   };
 };

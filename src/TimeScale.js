@@ -4,7 +4,7 @@ import { secondsToPixels } from './utils/conversions';
 import TimeScaleHook from './render/TimeScaleHook';
 
 class TimeScale {
-  constructor(duration, offset, samplesPerPixel, sampleRate, marginLeft = 0) {
+  constructor(duration, offset, samplesPerPixel, sampleRate) {
     this.duration = duration;
     this.offset = offset;
     this.samplesPerPixel = samplesPerPixel;

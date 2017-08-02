@@ -110,12 +110,13 @@ export default class {
   }
   // demo
   demo() {
-    console.log(this.zoomIndex);
+    // const widArr = [375, 187, 93]
     console.log(this.zoomLevels);
   }
 
   // 播放
   play(now, startTime, endTime) {
+    const end = endTime || this.duration;
     let start = startTime;
     if (this.pauseTime) {
       start = this.pauseTime;
@@ -123,7 +124,7 @@ export default class {
     const playoutPromises = [];
     const currentTime = this.ac.currentTime;
     this.tracks.forEach((track) => {
-      playoutPromises.push(track.schedulePlay(currentTime, start, endTime, {
+      playoutPromises.push(track.schedulePlay(currentTime, start, end, {
         shouldPlay: true,
         masterGain: this.masterGain,
       }));
