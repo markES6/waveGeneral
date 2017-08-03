@@ -3,7 +3,7 @@ import Loader from './Loader';
 export default class extends Loader {
 
   /**
-   * Loads an audio file via XHR.
+   * XHR加载
    */
   load() {
     return new Promise((resolve, reject) => {

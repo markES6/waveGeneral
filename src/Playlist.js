@@ -5,6 +5,7 @@ import createElement from 'virtual-dom/create-element';
 import TimeScale from './TimeScale';
 import Track from './Track';
 import Playout from './Playout';
+import PlayedHook from './render/PlayedHook';
 import LoaderFactory from './track/loader/LoaderFactory';
 
 export default class {
@@ -13,9 +14,11 @@ export default class {
     this.duration = 0;
     this.scrollLeft = 0;
     this.tracks = [];
+    this.timer = null;
+    this.animateTime = null;
 
-    // this.startTime = 0;
-    // this.stopTime = 0;
+    this.startTime = 0;
+    this.stopTime = 0;
     this.pauseTime = 0;
     this.lastPlay = 0;
     this.formInfo = [];
@@ -65,10 +68,6 @@ export default class {
       track.calculatePeaks(zoom, this.sampleRate);
     });
   }
-  // 设置缩放点率
-  setSamplesPerPixel(samplesPerPixel) {
-    this.samplesPerPixel = samplesPerPixel;
-  }
   // 设置show
   setControlOptions(controlOptions) {
     this.controls = controlOptions;
@@ -84,10 +83,10 @@ export default class {
 
   // 控制模块
   setUpEventEmitter() {
-    // const ee = this.ee;
-    // ee.on('play', (now, startTime, endTime) => {
-    //   this.play(now, startTime, endTime);
-    // });
+    const ee = this.ee;
+    ee.on('play', (now, startTime, endTime) => {
+      this.play(now, startTime, endTime);
+    });
   }
   // 是否播放
   isPlaying() {
@@ -96,11 +95,11 @@ export default class {
       false,
     );
   }
-
+  // 获取间隔时间TODO
   getElapsedTime() {
     return this.ac.currentTime - this.lastPlay;
   }
-  //
+  // 停止
   playbackReset() {
     this.tracks.forEach((track) => {
       track.scheduleStop();
@@ -108,10 +107,32 @@ export default class {
 
     return Promise.all(this.playoutPromises);
   }
+  // 启动动画
+  startAnimation() {
+    this.stopAnimation();
+    this.timer = requestAnimationFrame((step) => {
+      this.animationRequest(step);
+    });
+  }
+  animationRequest(step) {
+    const framTime = this.animateTime ? (step - this.animateTime)/1000 : 0;
+    this.animateTime = step;
+    this.pauseTime = framTime + this.pauseTime;
+    console.log(framTime);
+    console.log(this.pauseTime);
+    this.renderPlayed(this.pauseTime);
+    this.timer = requestAnimationFrame((step) => {
+      this.animationRequest(step);
+    });
+  }
+  // 停止动画
+  stopAnimation() {
+    window.cancelAnimationFrame(this.timer);
+    this.animateTime = null;
+  }
   // demo
   demo() {
-    // const widArr = [375, 187, 93]
-    console.log(this.zoomLevels);
+    this.startAnimation();
   }
 
   // 播放
@@ -121,6 +142,7 @@ export default class {
     if (this.pauseTime) {
       start = this.pauseTime;
     }
+    this.startAnimation();
     const playoutPromises = [];
     const currentTime = this.ac.currentTime;
     this.tracks.forEach((track) => {
@@ -138,6 +160,7 @@ export default class {
     if (!this.isPlaying()) {
       return Promise.all(this.playoutPromises);
     }
+    this.stopAnimation();
     this.pauseTime += this.getElapsedTime();
     return this.playbackReset();
   }
@@ -153,6 +176,7 @@ export default class {
       this.zoomIndex = index;
     }
     this.setZoom(this.zoomIndex);
+    this.renderPlayed(3);
     this.render();
   }
 
@@ -211,6 +235,11 @@ export default class {
       track.render(),
     );
     return trackElements;
+  }
+  // 播放过音频控制
+  renderPlayed(seconds) {
+    const played = new PlayedHook(seconds, this.samplesPerPixel, this.sampleRate);
+    return played.render();
   }
   // 加载页面
   render() {

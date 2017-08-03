@@ -4,7 +4,6 @@
 class CanvasHook {
   constructor(peaks, offset, bits, color) {
     this.peaks = peaks;
-    // http://stackoverflow.com/questions/6081483/maximum-size-of-a-canvas-element
     this.offset = offset;
     this.color = color;
     this.bits = bits;

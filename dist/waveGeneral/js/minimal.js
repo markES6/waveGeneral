@@ -1,4 +1,4 @@
-var playlist = WaveGeneral.init({
+const playlist = WaveGeneral.init({
   samplesPerPixel: 512,
   waveHeight: 500,
   container: document.getElementById('wavelist'),
@@ -9,41 +9,40 @@ var playlist = WaveGeneral.init({
   },
   timescale: true,
   controls: {
-    show: true, // whether or not to include the track controls
-    width: 200, // width of controls in pixels
-  }
+    show: true,
+    width: 200,
+  },
 });
 
 playlist.load([
   {
-    'src': 'media/audio/sonnet.mp3',
-    'name': 'Guitar',
-    'start': 0,
-    'fadeOut': {
-      'shape': 'linear',
-      'duration': 0.5,
+    src: 'media/audio/sonnet.mp3',
+    name: 'Guitar',
+    start: 0,
+    fadeOut: {
+      shape: 'linear',
+      duration: 0.5,
     },
-    'cuein': 0,
+    cuein: 0,
   },
 ]);
-
-window.onload = function() {
-  document.getElementById('demo').onclick = function(){
+$(() => {
+  $('#demo').click(() => {
     playlist.demo();
-  };
-  document.getElementById('play').onclick = function(){
+  });
+  $('#play').click(() => {
     playlist.play(2, 0);
-  };
-  document.getElementById('pause').onclick = function(){
+  });
+  $('#pause').click(() => {
     playlist.pause();
-  };
-  document.getElementById('stop').onclick = function(){
+  });
+  $('#stop').click(() => {
     playlist.stop();
-  };
-  document.getElementById('bigger').onclick = function(){
+  });
+  $('#bigger').click(() => {
     playlist.zoom(-1);
-  };
-  document.getElementById('smaller').onclick = function(){
+  });
+  $('#smaller').click(() => {
     playlist.zoom(1);
-  };
-};
+  });
+});
