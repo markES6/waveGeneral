@@ -165,7 +165,7 @@ export default class {
     // this.pauseTime += this.getElapsedTime();
     return this.playbackReset();
   }
-  // 暂停
+  // 停止
   stop() {
     this.stopAnimation();
     this.pauseTime = 0;
