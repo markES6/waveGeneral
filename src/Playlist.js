@@ -115,14 +115,12 @@ export default class {
     });
   }
   animationRequest(step) {
-    const framTime = this.animateTime ? (step - this.animateTime)/1000 : 0;
+    const framTime = this.animateTime ? (step - this.animateTime) / 1000 : 0;
     this.animateTime = step;
     this.pauseTime = framTime + this.pauseTime;
-    console.log(framTime);
-    console.log(this.pauseTime);
     this.renderPlayed(this.pauseTime);
-    this.timer = requestAnimationFrame((step) => {
-      this.animationRequest(step);
+    this.timer = requestAnimationFrame((steps) => {
+      this.animationRequest(steps);
     });
   }
   // 停止动画
@@ -132,15 +130,18 @@ export default class {
   }
   // demo
   demo() {
-    this.startAnimation();
+    this.play(1, 10);
   }
 
   // 播放
-  play(now, startTime, endTime) {
+  play(startTime, endTime) {
     const end = endTime || this.duration;
     let start = startTime;
     if (this.pauseTime) {
       start = this.pauseTime;
+    }
+    if (this.isPlaying()) {
+      return this.restartPlayFrom(start, end);
     }
     this.startAnimation();
     const playoutPromises = [];
@@ -161,13 +162,25 @@ export default class {
       return Promise.all(this.playoutPromises);
     }
     this.stopAnimation();
-    this.pauseTime += this.getElapsedTime();
+    // this.pauseTime += this.getElapsedTime();
     return this.playbackReset();
   }
   // 暂停
   stop() {
+    this.stopAnimation();
     this.pauseTime = 0;
+    this.renderPlayed(this.pauseTime);
     return this.playbackReset();
+  }
+  // 重新播放
+  restartPlayFrom(start, end) {
+    this.stopAnimation();
+
+    this.tracks.forEach((editor) => {
+      editor.scheduleStop();
+    });
+
+    return Promise.all(this.playoutPromises).then(this.play.bind(this, start, end));
   }
   // 缩放大小
   zoom(zoomStyle) {
@@ -176,7 +189,7 @@ export default class {
       this.zoomIndex = index;
     }
     this.setZoom(this.zoomIndex);
-    this.renderPlayed(3);
+    this.renderPlayed(this.pauseTime);
     this.render();
   }
 

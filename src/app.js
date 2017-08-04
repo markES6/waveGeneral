@@ -26,7 +26,7 @@ export function init(options = {}, ee = EventEmitter()) {
       timeColor: 'grey',
       fadeColor: 'black',
     },
-    waveHeight: 128,
+    waveHeight: 256,
     zoomLevels: [128, 256, 512, 1024, 2048, 4096, 8192, 16384],
   };
 

@@ -31,7 +31,7 @@ $(() => {
     playlist.demo();
   });
   $('#play').click(() => {
-    playlist.play(2, 0);
+    playlist.play(0);
   });
   $('#pause').click(() => {
     playlist.pause();

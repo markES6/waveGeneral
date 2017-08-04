@@ -78,7 +78,6 @@ export default class {
     playoutSystem.setShouldPlay(options.shouldPlay);
     playoutSystem.setMasterGainLevel(1);
     playoutSystem.play(now, startTime, endTime);
-
     return sourcePromise;
   }
   // 停止
