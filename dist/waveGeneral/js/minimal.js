@@ -31,7 +31,7 @@ $(() => {
     playlist.demo();
   });
   $('#play').click(() => {
-    playlist.play(0);
+    playlist.play();
   });
   $('#pause').click(() => {
     playlist.pause();
@@ -44,5 +44,8 @@ $(() => {
   });
   $('#smaller').click(() => {
     playlist.zoom(1);
+  });
+  $('#scope').click(() => {
+    playlist.play(3, 3);
   });
 });

@@ -15,7 +15,6 @@ export default class {
     this.scrollLeft = 0;
     this.tracks = [];
     this.timer = null;
-    this.animateTime = null;
 
     this.startTime = 0;
     this.stopTime = 0;
@@ -111,35 +110,37 @@ export default class {
   startAnimation() {
     this.stopAnimation();
     this.timer = requestAnimationFrame((step) => {
+      this.stepStart = step;
       this.animationRequest(step);
     });
   }
   animationRequest(step) {
-    const framTime = this.animateTime ? (step - this.animateTime) / 1000 : 0;
-    this.animateTime = step;
-    this.pauseTime = framTime + this.pauseTime;
-    this.renderPlayed(this.pauseTime);
+    const stepStart = (step - this.stepStart) / 1000;
+    this.lastPlay = this.startTime ? this.startTime + stepStart : this.pauseTime + stepStart;
+    this.renderPlayed(this.lastPlay);
     this.timer = requestAnimationFrame((steps) => {
       this.animationRequest(steps);
     });
+    if (this.lastPlay >= this.startTime + this.endTime) {
+      this.stopAnimation();
+      this.pauseTime = this.lastPlay;
+    }
   }
   // 停止动画
   stopAnimation() {
     window.cancelAnimationFrame(this.timer);
-    this.animateTime = null;
   }
   // demo
   demo() {
-    this.play(1, 10);
+    this.play(4, 2);
   }
 
   // 播放
   play(startTime, endTime) {
+    const start = startTime || this.pauseTime;
     const end = endTime || this.duration;
-    let start = startTime;
-    if (this.pauseTime) {
-      start = this.pauseTime;
-    }
+    this.startTime = startTime;
+    this.endTime = end;
     if (this.isPlaying()) {
       return this.restartPlayFrom(start, end);
     }
@@ -152,7 +153,6 @@ export default class {
         masterGain: this.masterGain,
       }));
     });
-    this.lastPlay = currentTime;
     this.playoutPromises = playoutPromises;
     return Promise.all(this.playoutPromises);
   }
@@ -162,7 +162,7 @@ export default class {
       return Promise.all(this.playoutPromises);
     }
     this.stopAnimation();
-    // this.pauseTime += this.getElapsedTime();
+    this.pauseTime = this.lastPlay;
     return this.playbackReset();
   }
   // 停止
