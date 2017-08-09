@@ -2,8 +2,8 @@ import _assign from 'lodash.assign';
 import h from 'virtual-dom/h';
 
 import extractPeaks from 'webaudio-peaks';
-import { secondsToSamples } from './utils/conversions';
-import CanvasHook from './render/CanvasHook';
+import { secondsToSamples } from '../utils/conversions';
+import CanvasHook from '../render/CanvasHook';
 
 const MAX_CANVAS_WIDTH = 3000;
 export default class {

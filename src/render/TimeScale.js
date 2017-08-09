@@ -1,7 +1,7 @@
 import h from 'virtual-dom/h';
 
-import { secondsToPixels } from './utils/conversions';
-import TimeScaleHook from './render/TimeScaleHook';
+import { secondsToPixels } from '../utils/conversions';
+import TimeScaleHook from '../render/TimeScaleHook';
 
 class TimeScale {
   constructor(duration, offset, samplesPerPixel, sampleRate) {

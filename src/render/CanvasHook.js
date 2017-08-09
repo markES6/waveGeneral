@@ -1,6 +1,4 @@
-/*
-* virtual-dom hook for drawing to the canvas element.
-*/
+
 class CanvasHook {
   constructor(peaks, offset, bits, color) {
     this.peaks = peaks;

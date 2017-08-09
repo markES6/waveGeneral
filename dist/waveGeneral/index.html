@@ -9,37 +9,59 @@
 		width: 100%;
 		position: relative;
 	}
-	#wavelist{
+	#container{
 		width: 1000px;
-		height: 350px;
+		position: relative;
 		float: left;
 		overflow-x: auto;
 	}
-	#timescale{
-		float: left;
+	#wavelist{
+		width: auto;
+		height: 350px;
 		position: relative;
+		float: left;
+	}
+	#timescale{
+		left: 0;
+		position: absolute;
 	}
 	#waveCanvse{
-		width: auto;
-		position: relative;
+		position: absolute;
+		height: 300px;
+		width: 100%;
 		top: 30px;
 	}
 	#waveBack{
-		width: 0%;
 		height: 300px;
-		margin-top: 30px;
-		position: relative;
+		position: absolute;
 		left:0;
+		top: 30px;
 		background: red;
 	}
 	#wavePointer{
 		width: 1px;
-		left: 0%;
+		top: 30px;
 		height: 300px;
-		margin-top: -300px;
-		position: relative;
+		position: absolute;
 		background: #fff;
 		z-index: 100;
+	}
+	#waveFrag{
+		height: 300px;
+		width: 100%;
+		top: 30px;
+		left: 0;
+		position: absolute;
+		z-index: 100;
+	}
+	.frag{
+		position: absolute;
+		height: 300px;
+		background: rgba(255, 255, 255, 0.5);
+		border:1px #fff solid;
+		border-top: none;
+		border-bottom: 0;
+		cursor: pointer;
 	}
 	#btnGroup{
 		width: 100%;
@@ -60,15 +82,16 @@
 	}
 </style>
 <body>
-	<div class="container">
+	<div id="container">
 		<div id="wavelist">
-		    <div id="timescale"></div>
-	        <div id="waveCanvse"></div>
-	        <div id="waveBack"></div>
-	        <div id="wavePointer"></div>
+	      <div id="timescale"></div>
+        <div id="waveCanvse"></div>
+        <div id="waveBack"></div>
+        <div id="wavePointer"></div>
+        <div id="waveFrag"></div>
 		</div>
-    </div>
-    <div id="btnGroup">
+  </div>
+  <div id="btnGroup">
 		<div id="demo">demo</div>
 		<div id="play">play</div>
 		<div id="pause">pause</div>
@@ -76,7 +99,7 @@
 		<div id="bigger">bigger</div>
 		<div id="smaller">smaller</div>
 		<div id="scope">scope</div>
-    </div>
+  </div>
 </body>
 <script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
 <script type="text/javascript" src="js/waveGeneral.var.js"></script>

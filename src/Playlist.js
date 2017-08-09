@@ -2,10 +2,11 @@ import _defaults from 'lodash.defaults';
 
 import createElement from 'virtual-dom/create-element';
 
-import TimeScale from './TimeScale';
-import Track from './Track';
+import TimeScale from './render/TimeScale';
+import Track from './render/Track';
 import Playout from './Playout';
 import PlayedHook from './render/PlayedHook';
+import FragHook from './render/FragHook';
 import LoaderFactory from './track/loader/LoaderFactory';
 
 export default class {
@@ -20,7 +21,7 @@ export default class {
     this.stopTime = 0;
     this.pauseTime = 0;
     this.lastPlay = 0;
-    this.formInfo = [];
+    this.formInfo = [{ start: 1, end: 2 }, { start: 3, end: 5 }];
   }
   // 设置初始值
   setDefault(info) {
@@ -132,7 +133,7 @@ export default class {
   }
   // demo
   demo() {
-    this.play(4, 2);
+    this.renderFrag();
   }
 
   // 播放
@@ -190,6 +191,7 @@ export default class {
     }
     this.setZoom(this.zoomIndex);
     this.renderPlayed(this.pauseTime);
+    this.renderFrag();
     this.render();
   }
 
@@ -253,6 +255,11 @@ export default class {
   renderPlayed(seconds) {
     const played = new PlayedHook(seconds, this.samplesPerPixel, this.sampleRate);
     return played.render();
+  }
+  // 加载片段框
+  renderFrag() {
+    const fragHook = new FragHook(this.formInfo, this.samplesPerPixel, this.sampleRate);
+    fragHook.render();
   }
   // 加载页面
   render() {
