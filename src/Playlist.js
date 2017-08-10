@@ -7,6 +7,10 @@ import Track from './render/Track';
 import Playout from './Playout';
 import PlayedHook from './render/PlayedHook';
 import FragHook from './render/FragHook';
+
+import FragController from './track/controller/FragController';
+import CanvasController from './track/controller/CanvasController';
+
 import LoaderFactory from './track/loader/LoaderFactory';
 
 export default class {
@@ -16,18 +20,25 @@ export default class {
     this.scrollLeft = 0;
     this.tracks = [];
     this.timer = null;
+    this.cycle = true;
 
     this.startTime = 0;
     this.stopTime = 0;
     this.pauseTime = 0;
     this.lastPlay = 0;
     this.formInfo = [{ start: 1, end: 2 }, { start: 3, end: 5 }];
+
+    this.fragDom = document.getElementById('waveFrag');
+    this.canvasDom = document.getElementById('waveCanvse');
   }
   // 设置初始值
   setDefault(info) {
     this.markData = info || this.markData;
   }
-
+  // 设置循环
+  setCycle(bol) {
+    this.cycle = bol;
+  }
   // 音频码率
   setSampleRate(sampleRate) {
     this.sampleRate = sampleRate;
@@ -84,8 +95,17 @@ export default class {
   // 控制模块
   setUpEventEmitter() {
     const ee = this.ee;
-    ee.on('play', (now, startTime, endTime) => {
-      this.play(now, startTime, endTime);
+    this.FragController = new FragController(ee, this.fragDom);
+    this.FragController.bindEvent();
+    this.CanvasController = new CanvasController(ee, this.canvasDom, this.samplesPerPixel, this.sampleRate);
+    this.CanvasController.bindEvent();
+    ee.on('play', (startTime, endTime) => {
+      this.play(startTime, endTime);
+    });
+    ee.on('playFrag', (index) => {
+      const start = this.formInfo[index].start;
+      const end = this.formInfo[index].end - start;
+      this.play(start, end);
     });
   }
   // 是否播放
@@ -123,6 +143,10 @@ export default class {
       this.animationRequest(steps);
     });
     if (this.lastPlay >= this.startTime + this.endTime) {
+      if (this.cycle) {
+        this.play(this.startTime, this.endTime);
+        return;
+      }
       this.stopAnimation();
       this.pauseTime = this.lastPlay;
     }
@@ -133,7 +157,7 @@ export default class {
   }
   // demo
   demo() {
-    this.renderFrag();
+    console.log(111);
   }
 
   // 播放
@@ -190,8 +214,8 @@ export default class {
       this.zoomIndex = index;
     }
     this.setZoom(this.zoomIndex);
+    this.CanvasController.setSamples(this.samplesPerPixel, this.sampleRate);
     this.renderPlayed(this.pauseTime);
-    this.renderFrag();
     this.render();
   }
 
@@ -258,7 +282,7 @@ export default class {
   }
   // 加载片段框
   renderFrag() {
-    const fragHook = new FragHook(this.formInfo, this.samplesPerPixel, this.sampleRate);
+    const fragHook = new FragHook(this.fragDom, this.formInfo, this.samplesPerPixel, this.sampleRate, this.ee);
     fragHook.render();
   }
   // 加载页面
@@ -269,10 +293,12 @@ export default class {
     document.getElementById('timescale').appendChild(timeNode);
 
     const canvasTree = this.renderTrackSection();
-    document.getElementById('waveCanvse').innerHTML = '';
+    this.canvasDom.innerHTML = '';
     if (canvasTree.length !== 0) {
       const canvasNode = createElement(canvasTree[0][0]);
-      document.getElementById('waveCanvse').appendChild(canvasNode);
+      this.canvasDom.appendChild(canvasNode);
     }
+
+    this.renderFrag();
   }
 }

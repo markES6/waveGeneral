@@ -1,16 +1,16 @@
 import { secondsToPixels } from '../utils/conversions';
 
 class FragHook {
-  constructor(formArr, samplesPerPixel, sampleRate) {
+  constructor(fragDom, formArr, samplesPerPixel, sampleRate) {
     this.formArr = formArr;
     this.samplesPerPixel = samplesPerPixel;
     this.sampleRate = sampleRate;
-    this.fragDom = document.getElementById('waveFrag');
+    this.fragDom = fragDom;
   }
-  creatDom(frag) {
+  creatDom(frag, index) {
     const left = secondsToPixels(frag.start, this.samplesPerPixel, this.sampleRate);
     const width = secondsToPixels(frag.end, this.samplesPerPixel, this.sampleRate) - left;
-    const dom = `<div class="frag" style='left:${left}px;width:${width}px'></div>`;
+    const dom = `<div class="frag" style='left:${left}px;width:${width}px' name=${index}></div>`;
     return dom;
   }
   renderAdd(frag) {
@@ -19,8 +19,8 @@ class FragHook {
   }
   render() {
     let domAll = '';
-    this.formArr.forEach((item) => {
-      domAll += this.creatDom(item);
+    this.formArr.forEach((item, index) => {
+      domAll += this.creatDom(item, index);
     });
     this.fragDom.innerHTML = domAll;
   }

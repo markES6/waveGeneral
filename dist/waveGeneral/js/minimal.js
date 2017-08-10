@@ -48,4 +48,7 @@ $(() => {
   $('#scope').click(() => {
     playlist.play(3, 3);
   });
+  $('#cycle').click(() => {
+    playlist.setCycle(false);
+  });
 });
