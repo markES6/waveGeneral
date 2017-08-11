@@ -7,9 +7,10 @@ import CanvasHook from '../render/CanvasHook';
 
 const MAX_CANVAS_WIDTH = 3000;
 export default class {
-  constructor() {
+  constructor(fragDom) {
     this.startTime = 0;
     this.endTime = 0;
+    this.fragDom = fragDom;
     this.peakData = {
       type: 'WebAudio',
       mono: true,
@@ -96,7 +97,7 @@ export default class {
   render() {
     const canvasWidth = this.peaks.length;
     const canvasHeight = 300;
-
+    this.fragDom.style.width = canvasWidth + 'px';
     const channels = Object.keys(this.peaks.data).map((channelNum) => {
       const channelChildren = [];
       let offset = 0;

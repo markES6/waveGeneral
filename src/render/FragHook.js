@@ -8,13 +8,15 @@ class FragHook {
     this.fragDom = fragDom;
   }
   creatDom(frag, index) {
-    const left = secondsToPixels(frag.start, this.samplesPerPixel, this.sampleRate);
-    const width = secondsToPixels(frag.end, this.samplesPerPixel, this.sampleRate) - left;
+    const start = Math.min(frag.start, frag.end);
+    const end = Math.max(frag.start, frag.end);
+    const left = secondsToPixels(start, this.samplesPerPixel, this.sampleRate);
+    const width = secondsToPixels(end, this.samplesPerPixel, this.sampleRate) - left;
     const dom = `<div class="frag" style='left:${left}px;width:${width}px' name=${index}></div>`;
     return dom;
   }
-  renderAdd(frag) {
-    const dom = this.creatDom(frag);
+  renderAdd(frag, index) {
+    const dom = this.creatDom(frag, index);
     this.fragDom.innerHTML += dom;
   }
   render() {

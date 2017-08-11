@@ -9,7 +9,6 @@ import PlayedHook from './render/PlayedHook';
 import FragHook from './render/FragHook';
 
 import FragController from './track/controller/FragController';
-import CanvasController from './track/controller/CanvasController';
 
 import LoaderFactory from './track/loader/LoaderFactory';
 
@@ -26,7 +25,7 @@ export default class {
     this.stopTime = 0;
     this.pauseTime = 0;
     this.lastPlay = 0;
-    this.formInfo = [{ start: 1, end: 2 }, { start: 3, end: 5 }];
+    this.formInfo = [];
 
     this.fragDom = document.getElementById('waveFrag');
     this.canvasDom = document.getElementById('waveCanvse');
@@ -83,7 +82,6 @@ export default class {
   setControlOptions(controlOptions) {
     this.controls = controlOptions;
   }
-
   // 工具类
   adjustDuration() {
     this.duration = this.tracks.reduce(
@@ -91,14 +89,16 @@ export default class {
       0,
     );
   }
+  // 添加新片段
+  setFragHook(frag) {
+    this.fragHook.renderAdd(frag, this.formInfo.length - 1);
+  }
 
   // 控制模块
   setUpEventEmitter() {
     const ee = this.ee;
-    this.FragController = new FragController(ee, this.fragDom);
+    this.FragController = new FragController(ee, this.fragDom, this.formInfo, this.samplesPerPixel, this.sampleRate);
     this.FragController.bindEvent();
-    this.CanvasController = new CanvasController(ee, this.canvasDom, this.samplesPerPixel, this.sampleRate);
-    this.CanvasController.bindEvent();
     ee.on('play', (startTime, endTime) => {
       this.play(startTime, endTime);
     });
@@ -106,6 +106,10 @@ export default class {
       const start = this.formInfo[index].start;
       const end = this.formInfo[index].end - start;
       this.play(start, end);
+    });
+    ee.on('addFrag', (frag) => {
+      this.formInfo.push(frag);
+      this.setFragHook(frag);
     });
   }
   // 是否播放
@@ -214,7 +218,7 @@ export default class {
       this.zoomIndex = index;
     }
     this.setZoom(this.zoomIndex);
-    this.CanvasController.setSamples(this.samplesPerPixel, this.sampleRate);
+    this.FragController.setSamples(this.samplesPerPixel, this.sampleRate);
     this.renderPlayed(this.pauseTime);
     this.render();
   }
@@ -235,7 +239,7 @@ export default class {
         const peaks = info.peaks || { type: 'WebAudio', mono: this.mono };
         const waveOutlineColor = info.waveOutlineColor || undefined;
         const playout = new Playout(this.ac, audioBuffer);
-        const track = new Track();
+        const track = new Track(this.fragDom);
         track.src = info.src;
         track.setBuffer(audioBuffer);
         track.setName(name);
@@ -282,8 +286,8 @@ export default class {
   }
   // 加载片段框
   renderFrag() {
-    const fragHook = new FragHook(this.fragDom, this.formInfo, this.samplesPerPixel, this.sampleRate, this.ee);
-    fragHook.render();
+    this.fragHook = new FragHook(this.fragDom, this.formInfo, this.samplesPerPixel, this.sampleRate, this.ee);
+    this.fragHook.render();
   }
   // 加载页面
   render() {
