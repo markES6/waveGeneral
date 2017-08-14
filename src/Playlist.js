@@ -93,6 +93,9 @@ export default class {
   setFragHook(frag) {
     this.fragHook.renderAdd(frag, this.formInfo.length - 1);
   }
+  changeFragHook(frag, index) {
+    this.formInfo.splice(index, 1, frag);
+  }
 
   // 控制模块
   setUpEventEmitter() {
@@ -110,6 +113,9 @@ export default class {
     ee.on('addFrag', (frag) => {
       this.formInfo.push(frag);
       this.setFragHook(frag);
+    });
+    ee.on('pause', () => {
+      this.pause();
     });
   }
   // 是否播放
