@@ -13,6 +13,7 @@ class FragController {
     this.creatDom = false;
     this.selected = false;
     this.hitPoint = false;
+    this.changeFrag = null;
   }
   setSamples(samplesPerPixel, sampleRate) {
     this.samplesPerPixel = samplesPerPixel;
@@ -26,18 +27,18 @@ class FragController {
     });
     this.fragId.addEventListener('mousedown', (e) => {
       // 选中状态
-      if (this.selected) {
-        this.downRightEvent(e);
-        return;
-      }
       if (e.which === 1) {
+        if (this.selected) {
+          this.downRightEvent(e);
+          return;
+        }
         this.downEvent(e);
       }
     });
     this.fragId.addEventListener('mousemove', (e) => {
       // 选中状态
-      if (this.selected && !this.hitPoint) {
-        console.log(this.selected);
+      if (this.selected) {
+        this.moveRightEvent(e);
         return;
       }
       if (this.downPoint) {
@@ -46,11 +47,11 @@ class FragController {
     });
     this.fragId.addEventListener('mouseup', (e) => {
       // 选中状态
+      if (e.which === 3) { return; }
       if (this.selected) {
-        console.log(333);
+        this.upRightEvent();
         return;
       }
-      if (e.which === 3) { return; }
       if (this.creatDom) {
         this.upEventCreat(e);
       } else {
@@ -81,19 +82,31 @@ class FragController {
     const playWidth = mouseLeft - canvasLeft;
     return playWidth;
   }
+  getHitPoint(e) {
+    const canvasLeft = this.fragId.getBoundingClientRect().left;
+    const selected = this.formInfo[this.selected];
+    const mouseLeft = pixelsToSeconds(e.clientX - canvasLeft, this.samplesPerPixel, this.sampleRate);
+    let pointSlected = false;
+    if (selected.end - 0.1 < mouseLeft && selected.end + 0.1 > mouseLeft) {
+      pointSlected = 'end';
+    } else if (selected.start - 0.1 < mouseLeft && selected.start + 0.1 > mouseLeft) {
+      pointSlected = 'start';
+    }
+    return pointSlected;
+  }
   setShortFrag(playWidth) {
     const left = Math.min(playWidth, this.downPoint);
     const right = Math.max(playWidth, this.downPoint);
     const width = right - left;
     this.shortFrag.style.display = 'block';
-    this.shortFrag.style.left =  left + 'px';
-    this.shortFrag.style.width = width + 'px';
+    this.shortFrag.style.left =  `${left}px`;
+    this.shortFrag.style.width = `${width}px`;
   }
-  pointStart(Point) {
+  pointStart(Point, out) {
     let setUp = true;
     const points = pixelsToSeconds(Point, this.samplesPerPixel, this.sampleRate);
-    this.formInfo.forEach((item) => {
-      if (points > item.start && points < item.end) {
+    this.formInfo.forEach((item, index) => {
+      if ((points > item.start && points < item.end) && out != index) {
         setUp = false;
       }
     });
@@ -157,12 +170,49 @@ class FragController {
   }
   downRightEvent(e) {
     const name = this.getAttrName(e);
-    if (name === this.selected) {
-      console.log(e);
+    this.hitPoint = this.getHitPoint(e);
+    this.movePoint = e.clientX;
+    if (name === this.selected || this.hitPoint) {
+      // this.selected = name;
+      // console.log(this.hitPoint);
     } else {
       this.selected = null;
       this.clearClassName();
     }
+  }
+  moveRightEvent(e) {
+    const selectedDom = document.getElementsByClassName('fragSelected')[0];
+    let left;
+    let width;
+    if (this.movePoint) {
+      if (this.hitPoint) {
+        if (this.hitPoint === 'end') {
+          left = window.parseInt(selectedDom.style.left);
+          width = window.parseInt(selectedDom.style.width) + e.movementX;
+        } else if (this.hitPoint === 'start') {
+          left = window.parseInt(selectedDom.style.left) + e.movementX;
+          width = window.parseInt(selectedDom.style.width) - e.movementX;
+        }
+      } else {
+        left = window.parseInt(selectedDom.style.left) + e.movementX;
+        width = window.parseInt(selectedDom.style.width);
+      }
+    }
+    if (this.pointStart(left, this.selected) && this.pointStart(left + width, this.selected)) {
+      selectedDom.style.left = `${left}px`;
+      selectedDom.style.width = `${width}px`;
+    }
+    const starts = pixelsToSeconds(left, this.samplesPerPixel, this.sampleRate);
+    const ends = pixelsToSeconds(left + width, this.samplesPerPixel, this.sampleRate);
+    this.changeFrag = { start: starts, end: ends };
+  }
+  upRightEvent() {
+    if (this.changeFrag) {
+      this.ee.emit('changeFrag', this.changeFrag, this.selected);
+    }
+    this.movePoint = false;
+    this.hitPoint = false;
+    // console.log(e);
   }
 }
 

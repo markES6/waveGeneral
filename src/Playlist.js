@@ -110,6 +110,9 @@ export default class {
       const end = this.formInfo[index].end - start;
       this.play(start, end);
     });
+    ee.on('changeFrag', (frag, index) => {
+      this.changeFragHook(frag, index);
+    });
     ee.on('addFrag', (frag) => {
       this.formInfo.push(frag);
       this.setFragHook(frag);
