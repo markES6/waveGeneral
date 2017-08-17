@@ -156,6 +156,8 @@ class FragController {
     const frag = {
       start: pixelsToSeconds(start, this.samplesPerPixel, this.sampleRate),
       end: pixelsToSeconds(end, this.samplesPerPixel, this.sampleRate),
+      title: '',
+      extend: {},
     };
     this.ee.emit('addFrag', frag);
   }
@@ -204,7 +206,8 @@ class FragController {
     }
     const starts = pixelsToSeconds(left, this.samplesPerPixel, this.sampleRate);
     const ends = pixelsToSeconds(left + width, this.samplesPerPixel, this.sampleRate);
-    this.changeFrag = { start: starts, end: ends };
+    const index = selectedDom.getAttribute('name');
+    this.changeFrag = { start: starts, end: ends, title: this.formInfo[index].title, extend: this.formInfo[index].extend };
   }
   upRightEvent() {
     if (this.changeFrag) {
@@ -212,7 +215,6 @@ class FragController {
     }
     this.movePoint = false;
     this.hitPoint = false;
-    // console.log(e);
   }
 }
 

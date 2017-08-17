@@ -7,6 +7,7 @@ import Track from './render/Track';
 import Playout from './Playout';
 import PlayedHook from './render/PlayedHook';
 import FragHook from './render/FragHook';
+import FormHook from './render/FormHook';
 
 import FragController from './track/controller/FragController';
 
@@ -25,7 +26,8 @@ export default class {
     this.stopTime = 0;
     this.pauseTime = 0;
     this.lastPlay = 0;
-    this.formInfo = [];
+    this.formInfo = [{ start: 1, end: 3, title: '你猜是什么', extend: {} }];
+    this.typeArr = ['input'];
 
     this.fragDom = document.getElementById('waveFrag');
     this.canvasDom = document.getElementById('waveCanvse');
@@ -92,9 +94,11 @@ export default class {
   // 添加新片段
   setFragHook(frag) {
     this.fragHook.renderAdd(frag, this.formInfo.length - 1);
+    this.formHook.renderAdd(frag, this.formInfo.length - 1);
   }
   changeFragHook(frag, index) {
     this.formInfo.splice(index, 1, frag);
+    this.formHook.render();
   }
 
   // 控制模块
@@ -297,6 +301,8 @@ export default class {
   renderFrag() {
     this.fragHook = new FragHook(this.fragDom, this.formInfo, this.samplesPerPixel, this.sampleRate, this.ee);
     this.fragHook.render();
+    this.formHook = new FormHook(this.typeArr, this.formInfo, this.samplesPerPixel, this.sampleRate, this.ee);
+    this.formHook.render();
   }
   // 加载页面
   render() {
