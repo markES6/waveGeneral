@@ -13,8 +13,8 @@ class FromHook {
   }
   renderInput(item, index) {
     const left = secondsToPixels(item.start, this.samplesPerPixel, this.sampleRate);
-    const inputDom = `<div class="form-group" style="left:${left}px">
-            <div class="form-title"><h1>${index}</h1><h2>X</h2></div>
+    const inputDom = `<div class="form-group" style="left:${left}px" name="${index}">
+            <div class="form-title"><h1>${index}</h1><h2 name="close">X</h2></div>
             <div class="form-content"><p>标注内容:</p><input type="text" value=${item.title}></div>
           </div>`;
     return inputDom;

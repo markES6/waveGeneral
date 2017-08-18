@@ -37,6 +37,16 @@ export default class {
   setDefault(info) {
     this.markData = info || this.markData;
   }
+  // 设置项目名称ID
+  setSampleName(name) {
+    this.name = name;
+  }
+  // 设置初始值
+  setDataInfo() {
+    if (localStorage[this.name]) {
+      this.formInfo = JSON.parse(localStorage[this.name]);
+    }
+  }
   // 设置循环
   setCycle(bol) {
     this.cycle = bol;
@@ -85,6 +95,10 @@ export default class {
   setControlOptions(controlOptions) {
     this.controls = controlOptions;
   }
+  // 保存数据
+  saveLocalStorage() {
+    localStorage.setItem(this.name, JSON.stringify(this.formInfo));
+  }
   // 工具类
   adjustDuration() {
     this.duration = this.tracks.reduce(
@@ -117,6 +131,9 @@ export default class {
     ee.on('play', (startTime, endTime) => {
       this.play(startTime, endTime);
     });
+    ee.on('pause', () => {
+      this.pause();
+    });
     ee.on('playFrag', (index) => {
       const start = this.formInfo[index].start;
       const end = this.formInfo[index].end - start;
@@ -129,8 +146,11 @@ export default class {
       this.formInfo.push(frag);
       this.setFragHook(frag);
     });
-    ee.on('pause', () => {
-      this.pause();
+    ee.on('selectdFrag', (index) => {
+      this.formController.setClassName(index);
+    });
+    ee.on('deleteFrag', (index) => {
+      this.deleteFragHook(index);
     });
   }
   // 是否播放
@@ -182,7 +202,7 @@ export default class {
   }
   // demo
   demo() {
-    this.deleteFragHook(0);
+    this.ee.emit('selectdFrag', 0);
   }
 
   // 播放

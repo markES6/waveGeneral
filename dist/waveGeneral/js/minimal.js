@@ -1,4 +1,5 @@
 const playlist = WaveGeneral.init({
+  name: 'demo1',
   samplesPerPixel: 512,
   waveHeight: 500,
   container: document.getElementById('wavelist'),
@@ -16,7 +17,7 @@ const playlist = WaveGeneral.init({
 
 playlist.load([
   {
-    src: 'media/audio/sonnet.mp3',
+    src: 'media/audio/sonnet.wav',
     name: 'Guitar',
     start: 0,
     fadeOut: {
@@ -50,5 +51,8 @@ $(() => {
   });
   $('#cycle').click(() => {
     playlist.setCycle(false);
+  });
+  $('#save').click(() => {
+    playlist.saveLocalStorage();
   });
 });

@@ -146,6 +146,7 @@ class FragController {
       const start = pixelsToSeconds(upPoint, this.samplesPerPixel, this.sampleRate);
       this.ee.emit('play', start);
     } else {
+      this.ee.emit('selectdFrag', name);
       this.ee.emit('playFrag', name);
     }
   }
@@ -167,6 +168,7 @@ class FragController {
     if (name !== 'waveFrag') {
       this.selected = name;
       this.setClassName(e);
+      this.ee.emit('selectdFrag', name);
       this.ee.emit('pause');
     }
   }

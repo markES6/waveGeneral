@@ -36,8 +36,9 @@ export function init(options = {}, ee = EventEmitter()) {
   if (zoomIndex === -1) {
     throw new Error('initial samplesPerPixel must be included in array zoomLevels');
   }
-
   const playlist = new Playlist();
+  playlist.setSampleName(config.name);
+  playlist.setDataInfo();
   playlist.setSampleRate(config.sampleRate);
   playlist.setSamplesPerPixel(config.samplesPerPixel);
   playlist.setAudioContext(config.ac);
