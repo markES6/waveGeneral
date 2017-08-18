@@ -7,7 +7,8 @@
   "license": "MIT",
   "website": "https://git.coding.net/OctopusWeb/waveGeneral.git",
   "engines": {
-    "node": "4.4.0"
+    "node": "8.1.2",
+    "npm": "4.6.1"
   }, 
   "babel": {
     "presets": [

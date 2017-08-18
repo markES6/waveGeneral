@@ -10,6 +10,7 @@ import FragHook from './render/FragHook';
 import FormHook from './render/FormHook';
 
 import FragController from './track/controller/FragController';
+import FormController from './track/controller/FormController';
 
 import LoaderFactory from './track/loader/LoaderFactory';
 
@@ -100,12 +101,19 @@ export default class {
     this.formInfo.splice(index, 1, frag);
     this.formHook.render();
   }
+  deleteFragHook(index) {
+    this.formInfo.splice(index, 1);
+    this.fragHook.render();
+    this.formHook.render();
+  }
 
   // 控制模块
   setUpEventEmitter() {
     const ee = this.ee;
-    this.FragController = new FragController(ee, this.fragDom, this.formInfo, this.samplesPerPixel, this.sampleRate);
-    this.FragController.bindEvent();
+    this.fragController = new FragController(ee, this.fragDom, this.formInfo, this.samplesPerPixel, this.sampleRate);
+    this.fragController.bindEvent();
+    this.formController = new FormController(ee, this.formInfo);
+    this.formController.bindEvent();
     ee.on('play', (startTime, endTime) => {
       this.play(startTime, endTime);
     });
@@ -174,7 +182,7 @@ export default class {
   }
   // demo
   demo() {
-    console.log(111);
+    this.deleteFragHook(0);
   }
 
   // 播放
@@ -231,7 +239,7 @@ export default class {
       this.zoomIndex = index;
     }
     this.setZoom(this.zoomIndex);
-    this.FragController.setSamples(this.samplesPerPixel, this.sampleRate);
+    this.fragController.setSamples(this.samplesPerPixel, this.sampleRate);
     this.renderPlayed(this.pauseTime);
     this.render();
   }
