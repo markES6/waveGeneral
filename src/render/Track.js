@@ -122,7 +122,7 @@ export default class {
       return h(`div.channel.channel-${channelNum}`,
         {
           attributes: {
-            style: `height: ${canvasHeight}px; width: ${canvasWidth}px; top: ${channelNum * canvasHeight}px; position: absolute; margin: 0; padding: 0; z-index: 1;`,
+            style: `height: ${canvasHeight}px; width: ${canvasWidth}px; top: ${channelNum * canvasHeight}px; position: absolute; margin: 0; padding: 0; z-index: 1;border-top: 20px #000 solid;border-bottom: 20px #000 solid;`,
           },
         },
         channelChildren,

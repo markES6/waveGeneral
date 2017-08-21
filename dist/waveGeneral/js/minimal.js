@@ -17,7 +17,7 @@ const playlist = WaveGeneral.init({
 
 playlist.load([
   {
-    src: 'media/audio/sonnet.wav',
+    src: 'media/audio/20150905_215404.wav',
     name: 'Guitar',
     start: 0,
     fadeOut: {

@@ -21,7 +21,7 @@
   }
   #wavelist{
     width: auto;
-    height: 450px;
+    height: 500px;
     position: relative;
     float: left;
   }
@@ -36,22 +36,22 @@
     top: 30px;
   }
   #waveBack{
-    height: 300px;
+    height: 340px;
     position: absolute;
     left:0;
     top: 30px;
-    background: #46f4a6;
+    background: red;
   }
   #wavePointer{
     width: 1px;
     top: 30px;
-    height: 300px;
+    height: 340px;
     position: absolute;
     background: #fff;
     z-index: 100;
   }
   #waveFrag{
-    height: 300px;
+    height: 340px;
     width: 100%;
     top: 30px;
     left: 0;
@@ -60,7 +60,7 @@
   }
   .frag{
     position: absolute;
-    height: 300px;
+    height: 340px;
     background: rgba(255, 255, 255, 0.5);
     border:1px #fff solid;
     border-top: none;
@@ -75,7 +75,7 @@
   }
   #shortFrag{
     position: absolute;
-    height: 300px;
+    height: 340px;
     top: 30px;
     border:1px #fff solid;
     border-top: none;
@@ -102,7 +102,7 @@
   }
   #formInfo{
     position: absolute;
-    top: 330px;
+    top: 370px;
   }
   #formInfo .form-group{
     background: #fff;
@@ -162,22 +162,31 @@
     line-height: 30px;
     border-top: 1px #000 solid;
   }
+  #progress{
+    width: 960px;
+    position: absolute;
+    top: 550px;
+    left: 20px;
+    height: 20px;
+    background: #abc;
+  }
 </style>
 <body>
-  <div id="container">
-    <div id="wavelist">
-        <div id="timescale"></div>
-        <div id="waveCanvse"></div>
-        <div id="waveBack"></div>
-        <div id="wavePointer"></div>
-        <div id="waveFrag" name="waveFrag"></div>
-        <div id="shortFrag"></div>
-        <div id="formInfo">
-          <div class="form-group">
-            <div class="form-title"><h1>1</h1><h2>X</h2></div>
-            <div class="form-content"><p>标注内容:</p><input type="text"></div>
-          </div>
-        </div>
+  <div id="wrap">
+    <div id="container">
+      <div id="wavelist">
+          <div id="timescale"></div>
+          <div id="waveCanvse"></div>
+          <div id="waveBack"></div>
+          <div id="wavePointer"></div>
+          <div id="waveFrag" name="waveFrag"></div>
+          <div id="shortFrag"></div>
+          <div id="formInfo"></div>
+      </div>
+    </div>
+    <div id="progress">
+      <div id="played"></div>
+      <div id="loading"></div>
     </div>
   </div>
   <div id="btnGroup">
