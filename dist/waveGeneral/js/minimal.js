@@ -17,7 +17,7 @@ const playlist = WaveGeneral.init({
 
 playlist.load([
   {
-    src: 'media/audio/20150905_215404.wav',
+    src: 'media/audio/BassDrums30.mp3',
     name: 'Guitar',
     start: 0,
     fadeOut: {
@@ -25,7 +25,7 @@ playlist.load([
       duration: 0.5,
     },
     cuein: 0,
-  },
+  }
 ]);
 $(() => {
   $('#demo').click(() => {

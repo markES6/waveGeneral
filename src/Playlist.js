@@ -322,7 +322,7 @@ export default class {
   }
   // 播放过音频控制
   renderPlayed(seconds) {
-    const played = new PlayedHook(seconds, this.samplesPerPixel, this.sampleRate);
+    const played = new PlayedHook(seconds, this.samplesPerPixel, this.sampleRate, this.duration);
     return played.render();
   }
   // 加载片段框
@@ -342,8 +342,10 @@ export default class {
     const canvasTree = this.renderTrackSection();
     this.canvasDom.innerHTML = '';
     if (canvasTree.length !== 0) {
-      const canvasNode = createElement(canvasTree[0][0]);
-      this.canvasDom.appendChild(canvasNode);
+      for (let i = 0; i < canvasTree.length; i++) {
+        const canvasNode = createElement(canvasTree[i][0]);
+        this.canvasDom.appendChild(canvasNode);
+      }
     }
 
     this.renderFrag();

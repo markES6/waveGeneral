@@ -97,7 +97,7 @@ export default class {
   render() {
     const canvasWidth = this.peaks.length;
     const canvasHeight = 300;
-    this.fragDom.style.width = canvasWidth + 'px';
+    this.fragDom.style.width = `${canvasWidth}px`;
     const channels = Object.keys(this.peaks.data).map((channelNum) => {
       const channelChildren = [];
       let offset = 0;
@@ -105,7 +105,7 @@ export default class {
       const peaks = this.peaks.data[channelNum];
       while (totalWidth > 0) {
         const currentWidth = Math.min(totalWidth, MAX_CANVAS_WIDTH);
-        const canvasColor = '#000';
+        const canvasColor = '#373B4D';
 
         channelChildren.push(h('canvas', {
           attributes: {
@@ -122,7 +122,7 @@ export default class {
       return h(`div.channel.channel-${channelNum}`,
         {
           attributes: {
-            style: `height: ${canvasHeight}px; width: ${canvasWidth}px; top: ${channelNum * canvasHeight}px; position: absolute; margin: 0; padding: 0; z-index: 1;border-top: 20px #000 solid;border-bottom: 20px #000 solid;`,
+            style: `height: ${canvasHeight}px; width: ${canvasWidth}px; top: ${channelNum * canvasHeight}px; position: absolute; margin: 0; padding: 0; z-index: 1;border-top: 20px #373B4D solid;border-bottom: 20px #373B4D solid;`,
           },
         },
         channelChildren,

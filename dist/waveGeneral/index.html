@@ -13,15 +13,24 @@
     width: 100%;
     position: relative;
   }
+  #wrap{
+    background: #f3f3f3;
+    border:1px #ccc solid;
+    position: relative;
+    margin:50px;
+    padding:10px;
+    float: left;
+  }
   #container{
     width: 1000px;
     position: relative;
     float: left;
     overflow-x: auto;
+    margin-bottom: 10px;
   }
   #wavelist{
     width: auto;
-    height: 500px;
+    height: 520px;
     position: relative;
     float: left;
   }
@@ -40,14 +49,14 @@
     position: absolute;
     left:0;
     top: 30px;
-    background: red;
+    background: #26C78C;
   }
   #wavePointer{
     width: 1px;
     top: 30px;
     height: 340px;
     position: absolute;
-    background: #fff;
+    background: #26C78C;
     z-index: 100;
   }
   #waveFrag{
@@ -62,14 +71,14 @@
     position: absolute;
     height: 340px;
     background: rgba(255, 255, 255, 0.5);
-    border:1px #fff solid;
+    border:1px #6C708C solid;
     border-top: none;
     border-bottom: 0;
     cursor: pointer;
   }
   .fragSelected{
-    background: rgba(233, 56, 18, 0.5);
-    border-color: #E93812;
+    background: rgba(253, 254, 202, 0.8);
+    border-color: #FDFECA;
     border-width: 1px;
     cursor: move;
   }
@@ -82,6 +91,10 @@
     border-bottom: 0;
     background: rgba(255, 255, 255, 0.3);
     z-index: 90;
+  }
+  .time{
+    font-size: 12px;
+    color: #2B2F41;
   }
   #btnGroup{
     width: 100%;
@@ -96,7 +109,7 @@
     line-height: 30px;
     color: #fff;
     font-size: 14px;
-    background: #000;
+    background: #999999;
     margin-left: 30px;
     cursor: pointer;
   }
@@ -110,7 +123,7 @@
     top: 10px;
     width: 250px;
     height: 100px;
-    border: 1px #000 solid;
+    border: 1px #2B2F41 solid;
     opacity: 0.3;
   }
   #formInfo .form-selected{
@@ -118,23 +131,23 @@
     opacity: 1;
   }
   .form-group .form-title{
-    height: 30px;
+    height: 24px;
     width: 100%;
     float: left;
-    border-bottom: 1px solid #000;
+    border-bottom: 1px solid #2B2F41;
   }
   .form-group h1{
     float: left;
     font-weight: 400;
-    font-size: 14px;
-    line-height: 30px;
+    font-size: 12px;
+    line-height: 24px;
     margin-left: 10px;
   }
   .form-group h2{
     float: right;
     font-weight: 400;
-    font-size: 14px;
-    line-height: 30px;
+    font-size: 11px;
+    line-height: 24px;
     margin-right: 10px;
   }
   .form-group .content{
@@ -153,6 +166,7 @@
     float: left;
     height: 20px;
     margin-top: 10px;
+    font-size: 12px;
   }
   .form-group .submit{
     width: 100%;
@@ -160,15 +174,33 @@
     text-align: center;
     font-size: 12px;
     line-height: 30px;
-    border-top: 1px #000 solid;
+    border-top: 1px #2B2F41 solid;
   }
   #progress{
     width: 960px;
     position: absolute;
-    top: 550px;
+    border-radius: 5px;
+    bottom: -50px;
     left: 20px;
-    height: 20px;
-    background: #abc;
+    height: 10px;
+    background: #2B2F41;
+    cursor: pointer;
+    overflow: hidden;
+  }
+  #played{
+    width: 0%;
+    height: 10px;
+    position: absolute;
+    left: 0;
+    background: #26C78C;
+    z-index: 10;
+  }
+  #loading{
+    width: 50%;
+    height: 10px;
+    position: absolute;
+    left: 0;
+    background: #2B2F41;
   }
 </style>
 <body>
