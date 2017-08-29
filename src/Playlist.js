@@ -28,7 +28,10 @@ export default class {
     this.pauseTime = 0;
     this.lastPlay = 0;
     this.formInfo = [{ start: 1, end: 3, title: '你猜是什么', extend: {} }];
-    this.typeArr = ['input'];
+    this.typeArr = ['input', 'checkbox'];
+    this.typeArr = [{ type: 'input', name: '', title: '输入标题', option: '' },
+                     { type: 'checkbox', name: 'demo', title: '输入标题', option: ['苹果', '香蕉', '橘子'] },
+                     { type: 'radio', name: 'demo', title: '输入标题', option: ['苹果', '香蕉', '橘子'] }];
 
     this.fragDom = document.getElementById('waveFrag');
     this.canvasDom = document.getElementById('waveCanvse');
@@ -152,6 +155,13 @@ export default class {
     ee.on('deleteFrag', (index) => {
       this.deleteFragHook(index);
     });
+    ee.on('zoom', (index) => {
+      this.zoom(index);
+    });
+    document.body.onmousewheel = (e) => {
+      const zoomIndex = e.deltaY === 100 ? 1 : -1;
+      ee.emit('zoom', zoomIndex);
+    };
   }
   // 是否播放
   isPlaying() {

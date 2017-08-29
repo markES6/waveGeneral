@@ -11,26 +11,64 @@ class FromHook {
 
     this.formDom = document.getElementById('formInfo');
   }
-  renderInput(item, index) {
-    const left = secondsToPixels(item.start, this.samplesPerPixel, this.sampleRate);
-    const inputDom = `<div class="form-group" style="left:${left}px" name="${index}">
-            <div class="form-title"><h1>${index}</h1><h2 name="close">X</h2></div>
-            <div class="form-content"><p>标注内容:</p><input type="text" value=${item.title}></div>
-          </div>`;
+  renderInput(item, typeInfo) {
+    const inputDom = `<div class="form-content"><p>${typeInfo.title}:</p><input type="text" value=${item.title}></div>`;
     return inputDom;
   }
+  renderCheckbox(item, typeInfo, index) {
+    let listDom = '';
+    typeInfo.option.forEach((name) => {
+      listDom += `<li>
+                    <input type="checkbox" name="checkbox-${index}">
+                    <label>${name}</label>
+                  </li>
+                `;
+    });
+    const checkboxDom = `<div class="form-content"><p>${typeInfo.title}:</p>
+                          <ul class="cd-form-list">
+                            ${listDom}
+                          </ul>
+                        </div>`;
+    return checkboxDom;
+  }
+  renderRadio(item, typeInfo, index) {
+    let listDom = '';
+    typeInfo.option.forEach((name) => {
+      listDom += `<li>
+                    <input type="radio" name="radio-${index}" checked>
+                    <label>${name}</label>
+                  </li>
+                `;
+    });
+    const radioDom = `<div class="form-content"><p>${typeInfo.title}:</p>
+                          <ul class="cd-form-list">
+                            ${listDom}
+                          </ul>
+                        </div>`;
+    return radioDom;
+  }
   creatDom(formItem, index) {
+    const left = secondsToPixels(formItem.start, this.samplesPerPixel, this.sampleRate);
     let formContent = '';
     this.typeArr.forEach((typeItem) => {
-      switch (typeItem) {
+      switch (typeItem.type) {
         case 'input':
-          formContent += this.renderInput(formItem, index);
+          formContent += this.renderInput(formItem, typeItem);
+          break;
+        case 'checkbox':
+          formContent += this.renderCheckbox(formItem, typeItem);
+          break;
+        case 'radio':
+          formContent += this.renderRadio(formItem, typeItem, index);
           break;
         default:
           break;
       }
     });
-    return formContent;
+    return `<div class="form-group" style="left:${left}px" name="${index}">
+            <div class="form-title"><h1>${index}</h1><h2 name="close">X</h2></div>
+            ${formContent}
+            </div>`;
   }
   renderAdd(form, index) {
     const formContent = this.creatDom(form, index);
