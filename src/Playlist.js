@@ -29,10 +29,10 @@ export default class {
     this.lastPlay = 0;
     this.formInfo = [{ start: 1, end: 3, title: '你猜是什么', extend: {} }];
     this.typeArr = ['input', 'checkbox'];
-    this.typeArr = [{ type: 'input', name: '', title: 'input', option: '' },
-                     { type: 'select', name: 'demo', title: 'select', option: ['苹果', '香蕉', '橘子'] },
-                     { type: 'checkbox', name: 'demo', title: 'checkbox', option: ['苹果', '香蕉', '橘子'] },
-                     { type: 'radio', name: 'demo', title: 'radio', option: ['苹果', '香蕉', '橘子'] }];
+    this.typeArr = [{ type: 'input', sort: 'form1', title: 'input', option: '' },
+                     { type: 'select', sort: 'form2', title: 'select', option: ['苹果', '香蕉', '橘子'] },
+                     { type: 'checkbox', sort: 'form3', title: 'checkbox', option: ['苹果', '香蕉', '橘子'] },
+                     { type: 'radio', sort: 'form4', title: 'radio', option: ['苹果', '香蕉', '橘子'] }];
 
     this.fragDom = document.getElementById('waveFrag');
     this.canvasDom = document.getElementById('waveCanvse');
@@ -47,7 +47,7 @@ export default class {
   }
   // 设置初始值
   setDataInfo() {
-    if (localStorage[this.name]) {
+    if (localStorage[this.name] && localStorage[this.name] !== '[]') {
       this.formInfo = JSON.parse(localStorage[this.name]);
     }
   }
@@ -158,6 +158,9 @@ export default class {
     });
     ee.on('zoom', (index) => {
       this.zoom(index);
+    });
+    ee.on('save', (formData) => {
+      this.saveLocalStorage(formData);
     });
     document.body.onmousewheel = (e) => {
       const zoomIndex = e.deltaY === 100 ? 1 : -1;

@@ -12,6 +12,31 @@ class FormController {
       return this.getIndex(target.offsetParent);
     }
   }
+  getValue(formDom) {
+    if (!formDom) {
+      return;
+    }
+    const type = formDom.type;
+    console.log(type);
+    let values = '';
+    let name = '';
+    switch (type) {
+      case 'text':
+        values = formDom.value;
+        name = formDom.name;
+        break;
+      case 'select-one':
+        values = formDom.options[formDom.selectedIndex].value;
+        name = formDom.name;
+        break;
+      case 'checkbox':
+        console.log(formDom);
+        break;
+      default:
+        break;
+    }
+    return { value: values, sort: name };
+  }
   setClassName(index) {
     this.clearClassName();
     document.getElementsByClassName('form-group')[index].className = 'form-group form-selected';
@@ -33,8 +58,15 @@ class FormController {
       }
       this.selected = index;
     });
-    this.formDom.addEventListener('blur', (e) => {
-      console.log(e);
+    this.formDom.addEventListener('mouseleave', (e) => {
+      const formSlected = this.formDom.getElementsByClassName('form-selected')[0];
+      if (!formSlected) {
+        return;
+      }
+      const listDom = formSlected.getElementsByClassName('form-content');
+      for (let i = 0; i < listDom.length; i++) {
+        console.log(this.getValue(listDom[i].getElementsByClassName('formValue')[0]));
+      }
     });
   }
 }
