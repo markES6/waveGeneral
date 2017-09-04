@@ -33,6 +33,9 @@ class FormController {
       }
       this.selected = index;
     });
+    this.formDom.addEventListener('blur', (e) => {
+      console.log(e);
+    });
   }
 }
 

@@ -29,9 +29,10 @@ export default class {
     this.lastPlay = 0;
     this.formInfo = [{ start: 1, end: 3, title: '你猜是什么', extend: {} }];
     this.typeArr = ['input', 'checkbox'];
-    this.typeArr = [{ type: 'input', name: '', title: '输入标题', option: '' },
-                     { type: 'checkbox', name: 'demo', title: '输入标题', option: ['苹果', '香蕉', '橘子'] },
-                     { type: 'radio', name: 'demo', title: '输入标题', option: ['苹果', '香蕉', '橘子'] }];
+    this.typeArr = [{ type: 'input', name: '', title: 'input', option: '' },
+                     { type: 'select', name: 'demo', title: 'select', option: ['苹果', '香蕉', '橘子'] },
+                     { type: 'checkbox', name: 'demo', title: 'checkbox', option: ['苹果', '香蕉', '橘子'] },
+                     { type: 'radio', name: 'demo', title: 'radio', option: ['苹果', '香蕉', '橘子'] }];
 
     this.fragDom = document.getElementById('waveFrag');
     this.canvasDom = document.getElementById('waveCanvse');
@@ -234,6 +235,8 @@ export default class {
       }));
     });
     this.playoutPromises = playoutPromises;
+
+    document.getElementById('play').style.display = 'none';
     return Promise.all(this.playoutPromises);
   }
   // 暂停
@@ -243,6 +246,7 @@ export default class {
     }
     this.stopAnimation();
     this.pauseTime = this.lastPlay;
+    document.getElementById('play').style.display = 'block';
     return this.playbackReset();
   }
   // 停止

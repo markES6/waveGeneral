@@ -27,8 +27,8 @@
 }
 .cd-form input, .cd-form textarea, .cd-form select, .cd-form label {
   font-family: "Open Sans", sans-serif;
-  font-size: 1.6rem;
-  color: #2b3e51;
+/*  font-size: 1.6rem;
+*/  color: #2b3e51;
 }
 .cd-form input[type="text"],
 .cd-form input[type="email"],
@@ -75,8 +75,8 @@
   display: block;
   width: 16px;
   height: 16px;
-  background: url("../img/cd-icon-arrow.svg") no-repeat center center;
-  pointer-events: none;
+/*  background: url("../img/cd-icon-arrow.svg") no-repeat center center;
+*/  pointer-events: none;
 }
 .cd-form select {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
@@ -260,9 +260,10 @@
 Custom icons
 
 -------------------------------- */
-.cd-form .icon input, .cd-form .icon select, .cd-form .icon textarea {
+/*.cd-form .icon input, .cd-form .icon select, .cd-form .icon textarea {
   padding-left: 54px !important;
-}
+  padding-right: 54px !important;
+}*/
 .cd-form .user {
   background: url("../img/cd-icon-user.svg") no-repeat 16px center;
 }
@@ -282,8 +283,8 @@ Custom icons
   background: url("../img/cd-icon-email.svg") no-repeat 16px center, url("../img/cd-required.svg") no-repeat top right;
 }
 .cd-form .budget {
-  background: url("../img/cd-icon-budget.svg") no-repeat 16px center;
-}
+/*  background: url("../img/cd-icon-budget.svg") no-repeat 16px center;
+*/}
 .cd-form .message {
   background: url("../img/cd-icon-message.svg") no-repeat 16px 16px;
 }

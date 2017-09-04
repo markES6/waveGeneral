@@ -39,12 +39,7 @@ $(() => {
   });
   $('#stop').click(() => {
     playlist.stop();
-  });
-  $('#bigger').click(() => {
-    playlist.zoom(-1);
-  });
-  $('#smaller').click(() => {
-    playlist.zoom(1);
+    document.getElementById('play').style.display = 'block';
   });
   $('#scope').click(() => {
     playlist.play(3, 3);

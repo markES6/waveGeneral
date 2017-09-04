@@ -47,6 +47,20 @@ class FromHook {
                         </div>`;
     return radioDom;
   }
+  renderSelect(item, typeInfo, index) {
+    let listDom = '';
+    typeInfo.option.forEach((name, index) => {
+      listDom += `<option value=${index}>${name}</option>`;
+    });
+    const selectDom = `<div class="form-content"><p>${typeInfo.title}:</p>
+                          <p class="cd-select icon">
+                            <select class="budget">
+                             ${listDom}
+                            </select>
+                         </p>
+                      </div>`;
+    return selectDom;
+  }
   creatDom(formItem, index) {
     const left = secondsToPixels(formItem.start, this.samplesPerPixel, this.sampleRate);
     let formContent = '';
@@ -60,6 +74,9 @@ class FromHook {
           break;
         case 'radio':
           formContent += this.renderRadio(formItem, typeItem, index);
+          break;
+        case 'select':
+          formContent += this.renderSelect(formItem, typeItem, index);
           break;
         default:
           break;

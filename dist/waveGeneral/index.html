@@ -124,7 +124,7 @@
     position: absolute;
     top: 10px;
     width: 250px;
-    height: 130px;
+    height: 150px;
     border: 1px #2B2F41 solid;
     opacity: 0.3;
   }
@@ -164,7 +164,7 @@
     line-height: 20px;
     text-align: center;
   }
-  .form-group input{
+  .form-group input, .form-group select{
     width: 150px;
     float: left;
     height: 20px;
@@ -189,15 +189,39 @@
     border-top: 1px #2B2F41 solid;
   }
   #progress{
-    width: 960px;
+    width: 920px;
     position: absolute;
     border-radius: 5px;
     bottom: -50px;
-    left: 20px;
+    left: 50px;
     height: 10px;
     background: #2B2F41;
     cursor: pointer;
     overflow: hidden;
+  }
+  #controllBtn{
+    width: 100%;
+    height: 20px;
+    position: absolute;
+    bottom: -55px;
+    left: 0;
+  }
+  #controllBtn div{
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    background-size: 20px 20px;
+  }
+  #play{
+    background: url(img/play.jpg);
+    z-index: 10;
+  }
+  #pause{
+    background: url(img/pause.jpg);
+  }
+  #stop{
+    background: url(img/stop.jpg);
+    left: 22px;
   }
   #played{
     width: 0%;
@@ -232,15 +256,13 @@
       <div id="played"></div>
       <div id="loading"></div>
     </div>
+    <div id="controllBtn">
+      <div id="play"></div>
+      <div id="pause"></div>
+      <div id="stop"></div>
+    </div>
   </div>
   <div id="btnGroup">
-    <div id="demo">demo</div>
-    <div id="play">play</div>
-    <div id="pause">pause</div>
-    <div id="stop">stop</div>
-    <div id="bigger">bigger</div>
-    <div id="smaller">smaller</div>
-    <div id="scope">scope</div>
     <div id="cycle">cycle</div>
     <div id="save">save</div>
   </div>
