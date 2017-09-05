@@ -27,12 +27,12 @@ export default class {
     this.stopTime = 0;
     this.pauseTime = 0;
     this.lastPlay = 0;
-    this.formInfo = [{ start: 1, end: 3, title: '你猜是什么', extend: {} }];
-    this.typeArr = ['input', 'checkbox'];
-    this.typeArr = [{ type: 'input', sort: 'form1', title: 'input', option: '' },
+    this.formInfo = [];
+    this.typeArr = [{ type: 'input', sort: 'form1', title: '标题', option: '' },
                      { type: 'select', sort: 'form2', title: 'select', option: ['苹果', '香蕉', '橘子'] },
-                     { type: 'checkbox', sort: 'form3', title: 'checkbox', option: ['苹果', '香蕉', '橘子'] },
-                     { type: 'radio', sort: 'form4', title: 'radio', option: ['苹果', '香蕉', '橘子'] }];
+                     // { type: 'checkbox', sort: 'form3', title: 'checkbox', option: ['苹果', '香蕉', '橘子'] },
+                     // { type: 'radio', sort: 'form4', title: 'radio', option: ['苹果', '香蕉', '橘子'] }
+                     ];
 
     this.fragDom = document.getElementById('waveFrag');
     this.canvasDom = document.getElementById('waveCanvse');

@@ -12,7 +12,13 @@ class FragHook {
     const end = Math.max(frag.start, frag.end);
     const left = secondsToPixels(start, this.samplesPerPixel, this.sampleRate);
     const width = secondsToPixels(end, this.samplesPerPixel, this.sampleRate) - left;
-    const dom = `<div class="frag" style='left:${left}px;width:${width}px' name=${index}></div>`;
+    let state = '';
+    if (frag.extend.qualityState === '0') {
+      state = 'fragGreen';
+    } else if (frag.extend.qualityState === '1') {
+      state = 'fragRed';
+    }
+    const dom = `<div class="frag ${state}" style='left:${left}px;width:${width}px' name=${index}></div>`;
     return dom;
   }
   renderAdd(frag, index) {

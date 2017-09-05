@@ -25,7 +25,7 @@ playlist.load([
       duration: 0.5,
     },
     cuein: 0,
-  }
+  },
 ]);
 $(() => {
   $('#demo').click(() => {

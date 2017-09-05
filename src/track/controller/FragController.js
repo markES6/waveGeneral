@@ -68,12 +68,12 @@ class FragController {
   }
   setClassName(e) {
     this.clearClassName();
-    e.target.className = 'frag fragSelected';
+    e.target.className = `${e.target.className} fragSelected`;
   }
   clearClassName() {
     const frag = document.getElementsByClassName('frag');
     for (let i = 0; i < frag.length; i++) {
-      frag[i].className = 'frag';
+      frag[i].className = frag[i].className.replace('fragSelected');
     }
   }
   getMouseLeft(e) {

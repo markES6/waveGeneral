@@ -17,29 +17,52 @@ class FormController {
       return;
     }
     const type = formDom.type;
-    console.log(type);
     let values = '';
-    let name = '';
+    let name = formDom.getAttribute('name');
     switch (type) {
       case 'text':
         values = formDom.value;
-        name = formDom.name;
         break;
       case 'select-one':
         values = formDom.options[formDom.selectedIndex].value;
-        name = formDom.name;
         break;
       case 'checkbox':
-        console.log(formDom);
+        const checkboxList = formDom.getElementsByTagName('input');
+        for (const x in checkboxList) {
+          if (checkboxList[x].checked) {
+            values += `${checkboxList[x].value},`;
+          }
+        }
+        break;
+      case 'radio':
+        const radioList = formDom.getElementsByTagName('input');
+        for (const x in radioList) {
+          if (radioList[x].checked) {
+            values = radioList[x].value;
+          }
+        }
         break;
       default:
         break;
     }
-    return { value: values, sort: name };
+    return [name, values];
   }
   setClassName(index) {
     this.clearClassName();
     document.getElementsByClassName('form-group')[index].className = 'form-group form-selected';
+  }
+  addFormInfo() {
+    const formSlected = this.formDom.getElementsByClassName('form-selected')[0];
+    if (!formSlected) {
+      return;
+    }
+    const name = formSlected.getAttribute('name');
+    const listDom = formSlected.getElementsByClassName('form-content');
+    this.formInfo[name].extend.formValue = [];
+    for (let i = 0; i < listDom.length; i++) {
+      const formValue = this.getValue(listDom[i].getElementsByClassName('formValue')[0]);
+      this.formInfo[name].extend[formValue[0]] = formValue[1];
+    }
   }
   clearClassName() {
     const frag = document.getElementsByClassName('form-group');
@@ -58,15 +81,9 @@ class FormController {
       }
       this.selected = index;
     });
-    this.formDom.addEventListener('mouseleave', (e) => {
-      const formSlected = this.formDom.getElementsByClassName('form-selected')[0];
-      if (!formSlected) {
-        return;
-      }
-      const listDom = formSlected.getElementsByClassName('form-content');
-      for (let i = 0; i < listDom.length; i++) {
-        console.log(this.getValue(listDom[i].getElementsByClassName('formValue')[0]));
-      }
+    this.formDom.addEventListener('mouseleave', () => {
+      this.addFormInfo();
+      this.ee.emit('save', this.formInfo);
     });
   }
 }
