@@ -14,10 +14,9 @@ const playlist = WaveGeneral.init({
     width: 200,
   },
 });
-
 playlist.load([
   {
-    src: 'media/audio/BassDrums30.mp3',
+    src: 'media/audio/20150905_215404.wav',
     name: 'Guitar',
     start: 0,
     fadeOut: {

@@ -1398,6 +1398,7 @@ var WaveGeneral =
 	    key: 'saveLocalStorage',
 	    value: function saveLocalStorage() {
 	      localStorage.setItem(this.name, JSON.stringify(this.formInfo));
+	      return this.formInfo;
 	    }
 	    // 工具类
 	
@@ -1472,8 +1473,9 @@ var WaveGeneral =
 	      ee.on('save', function (formData) {
 	        _this2.saveLocalStorage(formData);
 	      });
-	      document.body.onmousewheel = function (e) {
+	      document.getElementById('wrap').onmousewheel = function (e) {
 	        var zoomIndex = e.deltaY === 100 ? 1 : -1;
+	        e.preventDefault();
 	        ee.emit('zoom', zoomIndex);
 	      };
 	    }
@@ -4752,7 +4754,7 @@ var WaveGeneral =
 	    key: 'setClassName',
 	    value: function setClassName(index) {
 	      this.clearClassName();
-	      document.getElementsByClassName('form-group')[index].className = 'form-group form-selected';
+	      document.getElementById('wrap').getElementsByClassName('form-group')[index].className = 'form-group form-selected';
 	    }
 	  }, {
 	    key: 'addFormInfo',

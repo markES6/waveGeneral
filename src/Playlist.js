@@ -102,6 +102,7 @@ export default class {
   // 保存数据
   saveLocalStorage() {
     localStorage.setItem(this.name, JSON.stringify(this.formInfo));
+    return this.formInfo;
   }
   // 工具类
   adjustDuration() {
@@ -162,8 +163,9 @@ export default class {
     ee.on('save', (formData) => {
       this.saveLocalStorage(formData);
     });
-    document.body.onmousewheel = (e) => {
+    document.getElementById('wrap').onmousewheel = (e) => {
       const zoomIndex = e.deltaY === 100 ? 1 : -1;
+      e.preventDefault();
       ee.emit('zoom', zoomIndex);
     };
   }

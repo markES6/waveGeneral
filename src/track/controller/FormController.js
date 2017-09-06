@@ -49,7 +49,7 @@ class FormController {
   }
   setClassName(index) {
     this.clearClassName();
-    document.getElementsByClassName('form-group')[index].className = 'form-group form-selected';
+    document.getElementById('wrap').getElementsByClassName('form-group')[index].className = 'form-group form-selected';
   }
   addFormInfo() {
     const formSlected = this.formDom.getElementsByClassName('form-selected')[0];
