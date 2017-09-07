@@ -1,6 +1,7 @@
 class FormController {
-  constructor(ee, formInfo) {
+  constructor(ee, formInfo, markInfo) {
     this.formInfo = formInfo;
+    this.markInfo = markInfo;
     this.ee = ee;
     this.formDom = document.getElementById('formInfo');
     this.selected = 0;
@@ -18,7 +19,7 @@ class FormController {
     }
     const type = formDom.type;
     let values = '';
-    let name = formDom.getAttribute('name');
+    const name = formDom.getAttribute('name');
     switch (type) {
       case 'text':
         values = formDom.value;
@@ -49,7 +50,8 @@ class FormController {
   }
   setClassName(index) {
     this.clearClassName();
-    document.getElementById('wrap').getElementsByClassName('form-group')[index].className = 'form-group form-selected';
+    document.getElementById('wrap')
+    .getElementsByClassName('form-group')[index].className = 'form-group form-selected';
   }
   addFormInfo() {
     const formSlected = this.formDom.getElementsByClassName('form-selected')[0];
@@ -72,12 +74,26 @@ class FormController {
   }
   bindEvent() {
     this.formDom.addEventListener('click', (e) => {
-      const name = e.target.getAttribute('name');
+      const name = e.target.getAttribute('name') || '';
       const group = this.getIndex(e.target);
       const index = group.getAttribute('name');
       this.setClassName(index);
       if (name === 'close' && this.selected === index) {
         this.ee.emit('deleteFrag', index);
+      }
+      if (name.indexOf('qualityState') >= 0) {
+        const errorsState = document.getElementsByClassName('quality-content')[index].getElementsByClassName('form-content')[1];
+        const fragDom = document.getElementsByClassName('frag');
+        if (e.target.getAttribute('value') === '0') {
+          errorsState.style.display = 'none';
+          fragDom[index].className = 'frag fragGreen';
+        } else if (e.target.getAttribute('value') === '1') {
+          errorsState.style.display = 'block';
+          fragDom[index].className = 'frag fragRed';
+          for (let i = 0; i < errorsState.getElementsByTagName('input').length; i++) {
+            errorsState.getElementsByTagName('input')[i].checked = false;
+          }
+        }
       }
       this.selected = index;
     });

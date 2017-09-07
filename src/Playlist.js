@@ -46,10 +46,17 @@ export default class {
     this.name = name;
   }
   // 设置初始值
-  setDataInfo() {
+  setDataInfo(info) {
+    if (info) {
+      this.formInfo = info;
+      return;
+    }
     if (localStorage[this.name] && localStorage[this.name] !== '[]') {
       this.formInfo = JSON.parse(localStorage[this.name]);
     }
+  }
+  setMarkInfo(markInfo) {
+    this.markInfo = markInfo;
   }
   // 设置循环
   setCycle(bol) {
@@ -100,7 +107,7 @@ export default class {
     this.controls = controlOptions;
   }
   // 保存数据
-  saveLocalStorage() {
+  saveLocalStorage(formInfo) {
     localStorage.setItem(this.name, JSON.stringify(this.formInfo));
     return this.formInfo;
   }
@@ -131,7 +138,7 @@ export default class {
     const ee = this.ee;
     this.fragController = new FragController(ee, this.fragDom, this.formInfo, this.samplesPerPixel, this.sampleRate);
     this.fragController.bindEvent();
-    this.formController = new FormController(ee, this.formInfo);
+    this.formController = new FormController(ee, this.formInfo, this.markInfo);
     this.formController.bindEvent();
     ee.on('play', (startTime, endTime) => {
       this.play(startTime, endTime);
@@ -161,6 +168,7 @@ export default class {
       this.zoom(index);
     });
     ee.on('save', (formData) => {
+      this.formInfo = formData;
       this.saveLocalStorage(formData);
     });
     document.getElementById('wrap').onmousewheel = (e) => {
@@ -247,7 +255,8 @@ export default class {
   // 暂停
   pause() {
     if (!this.isPlaying()) {
-      return Promise.all(this.playoutPromises);
+      return;
+      // return Promise.all(this.playoutPromises);
     }
     this.stopAnimation();
     this.pauseTime = this.lastPlay;
@@ -348,7 +357,7 @@ export default class {
   renderFrag() {
     this.fragHook = new FragHook(this.fragDom, this.formInfo, this.samplesPerPixel, this.sampleRate, this.ee);
     this.fragHook.render();
-    this.formHook = new FormHook(this.typeArr, this.formInfo, this.samplesPerPixel, this.sampleRate, this.ee);
+    this.formHook = new FormHook(this.typeArr, this.formInfo, this.samplesPerPixel, this.sampleRate, this.ee, this.markInfo);
     this.formHook.render();
   }
   // 加载页面

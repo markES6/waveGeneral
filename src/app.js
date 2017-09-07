@@ -49,7 +49,9 @@ export function init(options = {}, ee = EventEmitter()) {
   playlist.setColors(config.colors);
   playlist.setZoomLevels(config.zoomLevels);
   playlist.setZoomIndex(zoomIndex);
-  playlist.setDefault();
+  playlist.setDefault(config.markData);
+  playlist.setDataInfo(config.markData);
+  playlist.setMarkInfo(config.markInfo);
   playlist.isAutomaticScroll = config.isAutomaticScroll;
   playlist.isContinuousPlay = config.isContinuousPlay;
   playlist.linkedEndpoints = config.linkedEndpoints;

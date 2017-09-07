@@ -99,10 +99,12 @@ class FragController {
     const right = Math.max(playWidth, this.downPoint);
     const width = right - left;
     this.shortFrag.style.display = 'block';
-    this.shortFrag.style.left =  `${left}px`;
+    this.shortFrag.style.left = `${left}px`;
     this.shortFrag.style.width = `${width}px`;
   }
   pointStart(Point, out) {
+    console.log(Point);
+    console.log(out);
     let setUp = true;
     const points = pixelsToSeconds(Point, this.samplesPerPixel, this.sampleRate);
     this.formInfo.forEach((item, index) => {

@@ -1,9 +1,10 @@
 import { secondsToPixels } from '../utils/conversions';
 
 class FromHook {
-  constructor(typeArr, formInfo, samplesPerPixel, sampleRate, ee) {
+  constructor(typeArr, formInfo, samplesPerPixel, sampleRate, ee, markInfo = {}) {
     this.typeArr = typeArr;
     this.formInfo = formInfo;
+    this.markInfo = markInfo;
     this.samplesPerPixel = samplesPerPixel;
     this.sampleRate = sampleRate;
     this.ee = ee;
@@ -78,8 +79,20 @@ class FromHook {
   }
   qualityRender(formItem, errorInfo, index) {
     const qualityType = { type: 'radio', sort: 'qualityState', title: 'State', option: ['合格', '不合格'] };
-    const qualityState = this.renderRadio(formItem, qualityType, `qualityState${index}`);
-    const errorsState = this.renderCheckbox(formItem, errorInfo, `errorsState${index}`);
+    let qualityState = this.renderRadio(formItem, qualityType, `qualityState${index}`);
+    let errorsState = this.renderCheckbox(formItem, errorInfo, `errorsState${index}`);
+    if (this.markInfo.operationCase == 2) {
+      let checkValue = formItem.extend.errorInfo || '';
+      let errorValue = '';
+      if (typeof checkValue === 'string') {
+        checkValue = checkValue.split(',');
+      }
+      checkValue.forEach((item) => {
+        errorValue += `${errorInfo.option[item] || ''},`;
+      });
+      qualityState = `<div><p>状态:</p><span>${qualityType.option[formItem.extend.qualityState] || ''}</span></div>`;
+      errorsState = `<div><p>错误信息:</p><span>${errorValue}</span></div>`;
+    }
     const qualityDom = `<div class="quality-content">
                           ${qualityState}
                           ${errorsState}

@@ -122,7 +122,9 @@ var WaveGeneral =
 	  playlist.setColors(config.colors);
 	  playlist.setZoomLevels(config.zoomLevels);
 	  playlist.setZoomIndex(zoomIndex);
-	  playlist.setDefault();
+	  playlist.setDefault(config.markData);
+	  playlist.setDataInfo(config.markData);
+	  playlist.setMarkInfo(config.markInfo);
 	  playlist.isAutomaticScroll = config.isAutomaticScroll;
 	  playlist.isContinuousPlay = config.isContinuousPlay;
 	  playlist.linkedEndpoints = config.linkedEndpoints;
@@ -1304,10 +1306,19 @@ var WaveGeneral =
 	
 	  }, {
 	    key: 'setDataInfo',
-	    value: function setDataInfo() {
+	    value: function setDataInfo(info) {
+	      if (info) {
+	        this.formInfo = info;
+	        return;
+	      }
 	      if (localStorage[this.name] && localStorage[this.name] !== '[]') {
 	        this.formInfo = JSON.parse(localStorage[this.name]);
 	      }
+	    }
+	  }, {
+	    key: 'setMarkInfo',
+	    value: function setMarkInfo(markInfo) {
+	      this.markInfo = markInfo;
 	    }
 	    // 设置循环
 	
@@ -1396,7 +1407,7 @@ var WaveGeneral =
 	
 	  }, {
 	    key: 'saveLocalStorage',
-	    value: function saveLocalStorage() {
+	    value: function saveLocalStorage(formInfo) {
 	      localStorage.setItem(this.name, JSON.stringify(this.formInfo));
 	      return this.formInfo;
 	    }
@@ -1441,7 +1452,7 @@ var WaveGeneral =
 	      var ee = this.ee;
 	      this.fragController = new _FragController2.default(ee, this.fragDom, this.formInfo, this.samplesPerPixel, this.sampleRate);
 	      this.fragController.bindEvent();
-	      this.formController = new _FormController2.default(ee, this.formInfo);
+	      this.formController = new _FormController2.default(ee, this.formInfo, this.markInfo);
 	      this.formController.bindEvent();
 	      ee.on('play', function (startTime, endTime) {
 	        _this2.play(startTime, endTime);
@@ -1471,6 +1482,7 @@ var WaveGeneral =
 	        _this2.zoom(index);
 	      });
 	      ee.on('save', function (formData) {
+	        _this2.formInfo = formData;
 	        _this2.saveLocalStorage(formData);
 	      });
 	      document.getElementById('wrap').onmousewheel = function (e) {
@@ -1714,7 +1726,7 @@ var WaveGeneral =
 	    value: function renderFrag() {
 	      this.fragHook = new _FragHook2.default(this.fragDom, this.formInfo, this.samplesPerPixel, this.sampleRate, this.ee);
 	      this.fragHook.render();
-	      this.formHook = new _FormHook2.default(this.typeArr, this.formInfo, this.samplesPerPixel, this.sampleRate, this.ee);
+	      this.formHook = new _FormHook2.default(this.typeArr, this.formInfo, this.samplesPerPixel, this.sampleRate, this.ee, this.markInfo);
 	      this.formHook.render();
 	    }
 	    // 加载页面
@@ -4272,10 +4284,13 @@ var WaveGeneral =
 	
 	var FromHook = function () {
 	  function FromHook(typeArr, formInfo, samplesPerPixel, sampleRate, ee) {
+	    var markInfo = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : {};
+	
 	    _classCallCheck(this, FromHook);
 	
 	    this.typeArr = typeArr;
 	    this.formInfo = formInfo;
+	    this.markInfo = markInfo;
 	    this.samplesPerPixel = samplesPerPixel;
 	    this.sampleRate = sampleRate;
 	    this.ee = ee;
@@ -4340,6 +4355,18 @@ var WaveGeneral =
 	      var qualityType = { type: 'radio', sort: 'qualityState', title: 'State', option: ['合格', '不合格'] };
 	      var qualityState = this.renderRadio(formItem, qualityType, 'qualityState' + index);
 	      var errorsState = this.renderCheckbox(formItem, errorInfo, 'errorsState' + index);
+	      if (this.markInfo.operationCase == 2) {
+	        var checkValue = formItem.extend.errorInfo || '';
+	        var errorValue = '';
+	        if (typeof checkValue === 'string') {
+	          checkValue = checkValue.split(',');
+	        }
+	        checkValue.forEach(function (item) {
+	          errorValue += (errorInfo.option[item] || '') + ',';
+	        });
+	        qualityState = '<div><p>\u72B6\u6001:</p><span>' + (qualityType.option[formItem.extend.qualityState] || '') + '</span></div>';
+	        errorsState = '<div><p>\u9519\u8BEF\u4FE1\u606F:</p><span>' + errorValue + '</span></div>';
+	      }
 	      var qualityDom = '<div class="quality-content">\n                          ' + qualityState + '\n                          ' + errorsState + '\n                        </div>';
 	      return qualityDom;
 	    }
@@ -4695,10 +4722,11 @@ var WaveGeneral =
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
 	var FormController = function () {
-	  function FormController(ee, formInfo) {
+	  function FormController(ee, formInfo, markInfo) {
 	    _classCallCheck(this, FormController);
 	
 	    this.formInfo = formInfo;
+	    this.markInfo = markInfo;
 	    this.ee = ee;
 	    this.formDom = document.getElementById('formInfo');
 	    this.selected = 0;
@@ -4785,12 +4813,26 @@ var WaveGeneral =
 	      var _this = this;
 	
 	      this.formDom.addEventListener('click', function (e) {
-	        var name = e.target.getAttribute('name');
+	        var name = e.target.getAttribute('name') || '';
 	        var group = _this.getIndex(e.target);
 	        var index = group.getAttribute('name');
 	        _this.setClassName(index);
 	        if (name === 'close' && _this.selected === index) {
 	          _this.ee.emit('deleteFrag', index);
+	        }
+	        if (name.indexOf('qualityState') >= 0) {
+	          var errorsState = document.getElementsByClassName('quality-content')[index].getElementsByClassName('form-content')[1];
+	          var fragDom = document.getElementsByClassName('frag');
+	          if (e.target.getAttribute('value') === '0') {
+	            errorsState.style.display = 'none';
+	            fragDom[index].className = 'frag fragGreen';
+	          } else if (e.target.getAttribute('value') === '1') {
+	            errorsState.style.display = 'block';
+	            fragDom[index].className = 'frag fragRed';
+	            for (var i = 0; i < errorsState.getElementsByTagName('input').length; i++) {
+	              errorsState.getElementsByTagName('input')[i].checked = false;
+	            }
+	          }
 	        }
 	        _this.selected = index;
 	      });
