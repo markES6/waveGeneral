@@ -22,6 +22,7 @@ class FragHook {
     return dom;
   }
   renderAdd(frag, index) {
+    console.log(frag);
     const dom = this.creatDom(frag, index);
     this.fragDom.innerHTML += dom;
   }

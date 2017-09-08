@@ -107,7 +107,7 @@ export default class {
     this.controls = controlOptions;
   }
   // 保存数据
-  saveLocalStorage(formInfo) {
+  saveLocalStorage() {
     localStorage.setItem(this.name, JSON.stringify(this.formInfo));
     return this.formInfo;
   }
@@ -120,8 +120,9 @@ export default class {
   }
   // 添加新片段
   setFragHook(frag) {
-    this.fragHook.renderAdd(frag, this.formInfo.length - 1);
-    this.formHook.renderAdd(frag, this.formInfo.length - 1);
+    this.formInfo = frag;
+    this.fragHook.renderAdd(frag[frag.length - 1], frag.length - 1);
+    this.formHook.renderAdd(frag[frag.length - 1], frag.length - 1);
   }
   changeFragHook(frag, index) {
     this.formInfo.splice(index, 1, frag);
@@ -136,7 +137,8 @@ export default class {
   // 控制模块
   setUpEventEmitter() {
     const ee = this.ee;
-    this.fragController = new FragController(ee, this.fragDom, this.formInfo, this.samplesPerPixel, this.sampleRate);
+    this.fragController = new
+    FragController(ee, this.fragDom, this.formInfo, this.samplesPerPixel, this.sampleRate);
     this.fragController.bindEvent();
     this.formController = new FormController(ee, this.formInfo, this.markInfo);
     this.formController.bindEvent();
@@ -155,7 +157,6 @@ export default class {
       this.changeFragHook(frag, index);
     });
     ee.on('addFrag', (frag) => {
-      this.formInfo.push(frag);
       this.setFragHook(frag);
     });
     ee.on('selectdFrag', (index) => {
@@ -169,12 +170,24 @@ export default class {
     });
     ee.on('save', (formData) => {
       this.formInfo = formData;
-      this.saveLocalStorage(formData);
+      this.saveLocalStorage();
     });
     document.getElementById('wrap').onmousewheel = (e) => {
       const zoomIndex = e.deltaY === 100 ? 1 : -1;
       e.preventDefault();
       ee.emit('zoom', zoomIndex);
+    };
+    document.onkeyup = (e) => {
+      switch (e.keyCode) {
+        case 32:
+          this.isPlaying() ? this.pause() : this.play();
+          break;
+        case 8:
+          const index = document.getElementsByClassName('fragSelected')[0].getAttribute('name');
+          this.deleteFragHook(index);
+        default:
+          break;
+      }
     };
   }
   // 是否播放
@@ -355,7 +368,8 @@ export default class {
   }
   // 加载片段框
   renderFrag() {
-    this.fragHook = new FragHook(this.fragDom, this.formInfo, this.samplesPerPixel, this.sampleRate, this.ee);
+    this.fragHook = new
+    FragHook(this.fragDom, this.formInfo, this.samplesPerPixel, this.sampleRate, this.ee);
     this.fragHook.render();
     this.formHook = new FormHook(this.typeArr, this.formInfo, this.samplesPerPixel, this.sampleRate, this.ee, this.markInfo);
     this.formHook.render();

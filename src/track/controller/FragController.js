@@ -61,6 +61,19 @@ class FragController {
       this.downPoint = null;
       this.creatDom = false;
     });
+    this.fragId.addEventListener('mouseleave', (e) => {
+      if (e.which === 3) { return; }
+      // if (this.selected) {
+      //   this.upRightEvent();
+      //   return;
+      // }
+      if (this.creatDom) {
+        this.upEventCreat(e);
+      }
+      this.shortFrag.style.display = 'none';
+      this.downPoint = null;
+      this.creatDom = false;
+    });
   }
   getAttrName(e) {
     const name = e.target.getAttribute('name');
@@ -79,13 +92,13 @@ class FragController {
   getMouseLeft(e) {
     const canvasLeft = this.fragId.getBoundingClientRect().left;
     const mouseLeft = e.clientX;
-    const playWidth = mouseLeft - canvasLeft;
+    const playWidth = mouseLeft - parseInt(canvasLeft);
     return playWidth;
   }
   getHitPoint(e) {
     const canvasLeft = this.fragId.getBoundingClientRect().left;
     const selected = this.formInfo[this.selected];
-    const mouseLeft = pixelsToSeconds(e.clientX - canvasLeft, this.samplesPerPixel, this.sampleRate);
+    const mouseLeft = pixelsToSeconds(e.clientX - parseInt(canvasLeft), this.samplesPerPixel, this.sampleRate);
     let pointSlected = false;
     if (selected.end - 0.1 < mouseLeft && selected.end + 0.1 > mouseLeft) {
       pointSlected = 'end';
@@ -103,12 +116,10 @@ class FragController {
     this.shortFrag.style.width = `${width}px`;
   }
   pointStart(Point, out) {
-    console.log(Point);
-    console.log(out);
     let setUp = true;
     const points = pixelsToSeconds(Point, this.samplesPerPixel, this.sampleRate);
     this.formInfo.forEach((item, index) => {
-      if ((points > item.start && points < item.end) && out != index) {
+      if ((points > item.start && points < item.end) && parseInt(out) !== index) {
         setUp = false;
       }
     });
@@ -162,7 +173,8 @@ class FragController {
       title: '',
       extend: {},
     };
-    this.ee.emit('addFrag', frag);
+    this.formInfo.push(frag);
+    this.ee.emit('addFrag', this.formInfo);
   }
 
   rightEvent(e) {

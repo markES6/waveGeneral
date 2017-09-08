@@ -1425,8 +1425,9 @@ var WaveGeneral =
 	  }, {
 	    key: 'setFragHook',
 	    value: function setFragHook(frag) {
-	      this.fragHook.renderAdd(frag, this.formInfo.length - 1);
-	      this.formHook.renderAdd(frag, this.formInfo.length - 1);
+	      this.formInfo = frag;
+	      this.fragHook.renderAdd(frag[frag.length - 1], frag.length - 1);
+	      this.formHook.renderAdd(frag[frag.length - 1], frag.length - 1);
 	    }
 	  }, {
 	    key: 'changeFragHook',
@@ -1469,7 +1470,6 @@ var WaveGeneral =
 	        _this2.changeFragHook(frag, index);
 	      });
 	      ee.on('addFrag', function (frag) {
-	        _this2.formInfo.push(frag);
 	        _this2.setFragHook(frag);
 	      });
 	      ee.on('selectdFrag', function (index) {
@@ -1600,7 +1600,8 @@ var WaveGeneral =
 	    key: 'pause',
 	    value: function pause() {
 	      if (!this.isPlaying()) {
-	        return Promise.all(this.playoutPromises);
+	        return;
+	        // return Promise.all(this.playoutPromises);
 	      }
 	      this.stopAnimation();
 	      this.pauseTime = this.lastPlay;
@@ -4245,6 +4246,7 @@ var WaveGeneral =
 	  }, {
 	    key: 'renderAdd',
 	    value: function renderAdd(frag, index) {
+	      console.log(frag);
 	      var dom = this.creatDom(frag, index);
 	      this.fragDom.innerHTML += dom;
 	    }
@@ -4512,6 +4514,21 @@ var WaveGeneral =
 	        _this.downPoint = null;
 	        _this.creatDom = false;
 	      });
+	      this.fragId.addEventListener('mouseleave', function (e) {
+	        if (e.which === 3) {
+	          return;
+	        }
+	        // if (this.selected) {
+	        //   this.upRightEvent();
+	        //   return;
+	        // }
+	        if (_this.creatDom) {
+	          _this.upEventCreat(e);
+	        }
+	        _this.shortFrag.style.display = 'none';
+	        _this.downPoint = null;
+	        _this.creatDom = false;
+	      });
 	    }
 	  }, {
 	    key: 'getAttrName',
@@ -4538,7 +4555,7 @@ var WaveGeneral =
 	    value: function getMouseLeft(e) {
 	      var canvasLeft = this.fragId.getBoundingClientRect().left;
 	      var mouseLeft = e.clientX;
-	      var playWidth = mouseLeft - canvasLeft;
+	      var playWidth = mouseLeft - parseInt(canvasLeft);
 	      return playWidth;
 	    }
 	  }, {
@@ -4546,7 +4563,7 @@ var WaveGeneral =
 	    value: function getHitPoint(e) {
 	      var canvasLeft = this.fragId.getBoundingClientRect().left;
 	      var selected = this.formInfo[this.selected];
-	      var mouseLeft = (0, _conversions.pixelsToSeconds)(e.clientX - canvasLeft, this.samplesPerPixel, this.sampleRate);
+	      var mouseLeft = (0, _conversions.pixelsToSeconds)(e.clientX - parseInt(canvasLeft), this.samplesPerPixel, this.sampleRate);
 	      var pointSlected = false;
 	      if (selected.end - 0.1 < mouseLeft && selected.end + 0.1 > mouseLeft) {
 	        pointSlected = 'end';
@@ -4571,7 +4588,7 @@ var WaveGeneral =
 	      var setUp = true;
 	      var points = (0, _conversions.pixelsToSeconds)(Point, this.samplesPerPixel, this.sampleRate);
 	      this.formInfo.forEach(function (item, index) {
-	        if (points > item.start && points < item.end && out != index) {
+	        if (points > item.start && points < item.end && parseInt(out) !== index) {
 	          setUp = false;
 	        }
 	      });
@@ -4635,7 +4652,8 @@ var WaveGeneral =
 	        title: '',
 	        extend: {}
 	      };
-	      this.ee.emit('addFrag', frag);
+	      this.formInfo.push(frag);
+	      this.ee.emit('addFrag', this.formInfo);
 	    }
 	  }, {
 	    key: 'rightEvent',
