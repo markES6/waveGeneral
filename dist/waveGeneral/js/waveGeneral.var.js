@@ -1407,7 +1407,7 @@ var WaveGeneral =
 	
 	  }, {
 	    key: 'saveLocalStorage',
-	    value: function saveLocalStorage(formInfo) {
+	    value: function saveLocalStorage() {
 	      localStorage.setItem(this.name, JSON.stringify(this.formInfo));
 	      return this.formInfo;
 	    }
@@ -1427,7 +1427,7 @@ var WaveGeneral =
 	    value: function setFragHook(frag) {
 	      this.formInfo = frag;
 	      this.fragHook.renderAdd(frag[frag.length - 1], frag.length - 1);
-	      this.formHook.renderAdd(frag[frag.length - 1], frag.length - 1);
+	      this.formHook.renderAdd(this.formInfo);
 	    }
 	  }, {
 	    key: 'changeFragHook',
@@ -1483,12 +1483,24 @@ var WaveGeneral =
 	      });
 	      ee.on('save', function (formData) {
 	        _this2.formInfo = formData;
-	        _this2.saveLocalStorage(formData);
+	        _this2.saveLocalStorage();
 	      });
 	      document.getElementById('wrap').onmousewheel = function (e) {
 	        var zoomIndex = e.deltaY === 100 ? 1 : -1;
 	        e.preventDefault();
 	        ee.emit('zoom', zoomIndex);
+	      };
+	      document.onkeyup = function (e) {
+	        switch (e.keyCode) {
+	          case 32:
+	            _this2.isPlaying() ? _this2.pause() : _this2.play();
+	            break;
+	          case 8:
+	            var index = document.getElementsByClassName('fragSelected')[0].getAttribute('name');
+	            _this2.deleteFragHook(index);
+	          default:
+	            break;
+	        }
 	      };
 	    }
 	    // 是否播放
@@ -4179,6 +4191,7 @@ var WaveGeneral =
 	    this.sampleRate = sampleRate;
 	    this.duration = duration;
 	
+	    this.oDiv0 = document.getElementById('container');
 	    this.oDiv1 = document.getElementById('waveBack');
 	    this.oDiv2 = document.getElementById('wavePointer');
 	    this.oDiv3 = document.getElementById('played');
@@ -4190,6 +4203,7 @@ var WaveGeneral =
 	      var widthX = (0, _conversions.secondsToPixels)(this.seconds, this.samplesPerPixel, this.sampleRate);
 	      var allWidth = (0, _conversions.secondsToPixels)(this.duration, this.samplesPerPixel, this.sampleRate);
 	      var playedWid = widthX / allWidth;
+	      this.oDiv0.scrollLeft = '' + (widthX - 400);
 	      this.oDiv1.style.width = widthX + 'px';
 	      this.oDiv2.style.left = widthX + 'px';
 	      this.oDiv3.style.width = playedWid * 100 + '%';
@@ -4246,7 +4260,6 @@ var WaveGeneral =
 	  }, {
 	    key: 'renderAdd',
 	    value: function renderAdd(frag, index) {
-	      console.log(frag);
 	      var dom = this.creatDom(frag, index);
 	      this.fragDom.innerHTML += dom;
 	    }
@@ -4357,7 +4370,7 @@ var WaveGeneral =
 	      var qualityType = { type: 'radio', sort: 'qualityState', title: 'State', option: ['合格', '不合格'] };
 	      var qualityState = this.renderRadio(formItem, qualityType, 'qualityState' + index);
 	      var errorsState = this.renderCheckbox(formItem, errorInfo, 'errorsState' + index);
-	      if (this.markInfo.operationCase == 2) {
+	      if (this.markInfo.operationCase == 2 || this.markInfo.operationCase == 1) {
 	        var checkValue = formItem.extend.errorInfo || '';
 	        var errorValue = '';
 	        if (typeof checkValue === 'string') {
@@ -4403,9 +4416,15 @@ var WaveGeneral =
 	    }
 	  }, {
 	    key: 'renderAdd',
-	    value: function renderAdd(form, index) {
-	      var formContent = this.creatDom(form, index);
-	      this.formDom.innerHTML += formContent;
+	    value: function renderAdd(form) {
+	      this.formInfo = form;
+	      this.render();
+	      // let formContent = '';
+	      // this.formInfo.forEach((formItem, index) => {
+	      //   formContent += this.creatDom(formItem, index);
+	      // });
+	      // formContent += this.creatDom(form, indexs);
+	      // this.formDom.innerHTML = formContent;
 	    }
 	  }, {
 	    key: 'render',
@@ -4684,6 +4703,9 @@ var WaveGeneral =
 	    key: 'moveRightEvent',
 	    value: function moveRightEvent(e) {
 	      var selectedDom = document.getElementsByClassName('fragSelected')[0];
+	      if (!selectedDom) {
+	        return;
+	      }
 	      var left = void 0;
 	      var width = void 0;
 	      if (this.movePoint) {
@@ -4799,8 +4821,14 @@ var WaveGeneral =
 	  }, {
 	    key: 'setClassName',
 	    value: function setClassName(index) {
+	      var _this = this;
+	
 	      this.clearClassName();
 	      document.getElementById('wrap').getElementsByClassName('form-group')[index].className = 'form-group form-selected';
+	      this.formDom.getElementsByClassName('form-selected')[0].onmouseleave = function () {
+	        _this.addFormInfo();
+	        _this.ee.emit('save', _this.formInfo);
+	      };
 	    }
 	  }, {
 	    key: 'addFormInfo',
@@ -4828,15 +4856,15 @@ var WaveGeneral =
 	  }, {
 	    key: 'bindEvent',
 	    value: function bindEvent() {
-	      var _this = this;
+	      var _this2 = this;
 	
 	      this.formDom.addEventListener('click', function (e) {
 	        var name = e.target.getAttribute('name') || '';
-	        var group = _this.getIndex(e.target);
+	        var group = _this2.getIndex(e.target);
 	        var index = group.getAttribute('name');
-	        _this.setClassName(index);
-	        if (name === 'close' && _this.selected === index) {
-	          _this.ee.emit('deleteFrag', index);
+	        _this2.setClassName(index);
+	        if (name === 'close' && _this2.selected === index) {
+	          _this2.ee.emit('deleteFrag', index);
 	        }
 	        if (name.indexOf('qualityState') >= 0) {
 	          var errorsState = document.getElementsByClassName('quality-content')[index].getElementsByClassName('form-content')[1];
@@ -4852,12 +4880,14 @@ var WaveGeneral =
 	            }
 	          }
 	        }
-	        _this.selected = index;
+	        _this2.selected = index;
 	      });
-	      this.formDom.addEventListener('mouseleave', function () {
-	        _this.addFormInfo();
-	        _this.ee.emit('save', _this.formInfo);
-	      });
+	      // this.formDom.addEventListener('mouseleave', (e) => {
+	      //   console.log(e.target);
+	      //   // console.log(111)
+	      //   this.addFormInfo();
+	      //   this.ee.emit('save', this.formInfo);
+	      // });
 	    }
 	  }]);
 	

@@ -122,7 +122,7 @@ export default class {
   setFragHook(frag) {
     this.formInfo = frag;
     this.fragHook.renderAdd(frag[frag.length - 1], frag.length - 1);
-    this.formHook.renderAdd(frag[frag.length - 1], frag.length - 1);
+    this.formHook.renderAdd(this.formInfo);
   }
   changeFragHook(frag, index) {
     this.formInfo.splice(index, 1, frag);

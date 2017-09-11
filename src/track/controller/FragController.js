@@ -200,6 +200,7 @@ class FragController {
   }
   moveRightEvent(e) {
     const selectedDom = document.getElementsByClassName('fragSelected')[0];
+    if (!selectedDom) { return; }
     let left;
     let width;
     if (this.movePoint) {

@@ -81,7 +81,7 @@ class FromHook {
     const qualityType = { type: 'radio', sort: 'qualityState', title: 'State', option: ['合格', '不合格'] };
     let qualityState = this.renderRadio(formItem, qualityType, `qualityState${index}`);
     let errorsState = this.renderCheckbox(formItem, errorInfo, `errorsState${index}`);
-    if (this.markInfo.operationCase == 2) {
+    if (this.markInfo.operationCase == 2 || this.markInfo.operationCase == 1) {
       let checkValue = formItem.extend.errorInfo || '';
       let errorValue = '';
       if (typeof checkValue === 'string') {
@@ -128,9 +128,15 @@ class FromHook {
             ${qualityDom}
             </div>`;
   }
-  renderAdd(form, index) {
-    const formContent = this.creatDom(form, index);
-    this.formDom.innerHTML += formContent;
+  renderAdd(form) {
+    this.formInfo = form;
+    this.render();
+    // let formContent = '';
+    // this.formInfo.forEach((formItem, index) => {
+    //   formContent += this.creatDom(formItem, index);
+    // });
+    // formContent += this.creatDom(form, indexs);
+    // this.formDom.innerHTML = formContent;
   }
   render() {
     let formContent = '';
