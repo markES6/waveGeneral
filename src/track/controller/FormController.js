@@ -5,6 +5,7 @@ class FormController {
     this.ee = ee;
     this.formDom = document.getElementById('formInfo');
     this.selected = 0;
+    this.smallNav = document.getElementById('navList');
   }
   getIndex(target) {
     if (target.className === 'form-group' || target.className === 'form-group form-selected') {
@@ -91,9 +92,11 @@ class FormController {
         if (e.target.getAttribute('value') === '0') {
           errorsState.style.display = 'none';
           fragDom[index].className = 'frag fragGreen';
+          this.smallNav.getElementsByTagName('li')[index].className = 'btn green';
         } else if (e.target.getAttribute('value') === '1') {
           errorsState.style.display = 'block';
           fragDom[index].className = 'frag fragRed';
+          this.smallNav.getElementsByTagName('li')[index].className = 'btn red';
           for (let i = 0; i < errorsState.getElementsByTagName('input').length; i++) {
             errorsState.getElementsByTagName('input')[i].checked = false;
           }
@@ -107,6 +110,11 @@ class FormController {
     //   this.addFormInfo();
     //   this.ee.emit('save', this.formInfo);
     // });
+    this.smallNav.addEventListener('click', (e) => {
+      const name = e.target.getAttribute('name') || '';
+      this.ee.emit('selectdFrag', name);
+      this.ee.emit('playFrag', name);
+    });
   }
 }
 

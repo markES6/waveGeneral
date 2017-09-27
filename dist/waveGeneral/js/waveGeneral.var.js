@@ -1490,14 +1490,15 @@ var WaveGeneral =
 	        e.preventDefault();
 	        ee.emit('zoom', zoomIndex);
 	      };
-	      document.onkeyup = function (e) {
+	      document.onkeydown = function (e) {
 	        switch (e.keyCode) {
 	          case 32:
 	            _this2.isPlaying() ? _this2.pause() : _this2.play();
+	            e.preventDefault();
 	            break;
-	          case 8:
-	            var index = document.getElementsByClassName('fragSelected')[0].getAttribute('name');
-	            _this2.deleteFragHook(index);
+	          // case 8:
+	          //   const index = document.getElementsByClassName('fragSelected')[0].getAttribute('name');
+	          //   this.deleteFragHook(index);
 	          default:
 	            break;
 	        }

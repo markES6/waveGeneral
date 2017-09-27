@@ -104,10 +104,9 @@
     color: #2B2F41;
   }
   #btnGroup{
-    width: 90%;
     position: absolute;
     top: 8px;
-    left: 0px;
+    left: 800px;
   }
   #btnGroup div{
     float: left;
@@ -278,6 +277,49 @@
   .channel {
       height:auto !important;
   }
+  #smallNav{
+    width: 100%;
+    background: rgba(0,0,0,0.5);
+    position: fixed;
+    bottom: 0;
+    height: 40px;
+    z-index: 1000;
+  }
+  #smallNav .btn{
+    width: 32px;
+    height: 32px;
+    float: left;
+    background: rgba(0, 0, 0, 0.5);
+    margin-left: 3px;
+    margin-top:3px;
+    border:1px #fff solid;
+    text-align: center;
+    color: #fff;
+    line-height: 32px;
+    cursor: pointer;
+  }
+  #smallNav .pre{
+    position: absolute;
+    left: 3px;
+  }
+  #smallNav .next{
+    position: absolute;
+    right: 3px;
+  }
+  #smallNav ul{
+    position: absolute;
+    padding: 0 40px;
+  }
+  #smallNav ul li{
+    float: left;
+    list-style: none;
+  }
+  #smallNav ul .green{
+    background: rgba(36, 179, 0, 0.5);
+  }
+  #smallNav ul .red{
+    background: rgba(196, 30, 4, 0.5);
+  }
 </style>
 <body>
   <div id="wrap">
@@ -307,6 +349,13 @@
   <div id="btnGroup">
     <div id="cycle">cycle</div>
     <div id="save">save</div>
+    <div id="demo">demo</div>
+  </div>
+  <div id="smallNav">
+    <div class="btn pre"><</div>
+    <div class="btn next">></div>
+    <ul id="navList">
+    </ul>
   </div>
 </body>
 <script type="text/javascript" src="js/jquery.min.js"></script>

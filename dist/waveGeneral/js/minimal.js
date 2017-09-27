@@ -16,7 +16,17 @@ const playlist = WaveGeneral.init({
 });
 playlist.load([
   {
-    src: 'media/audio/20150905_215404.wav',
+    src: 'media/audio/BassDrums30.mp3',
+    name: 'Guitar',
+    start: 0,
+    fadeOut: {
+      shape: 'linear',
+      duration: 0.5,
+    },
+    cuein: 0,
+  },
+  {
+    src: 'media/audio/PianoSynth30.mp3',
     name: 'Guitar',
     start: 0,
     fadeOut: {

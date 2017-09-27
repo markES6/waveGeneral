@@ -22,6 +22,7 @@ export default class {
     this.tracks = [];
     this.timer = null;
     this.cycle = true;
+    this.allTime = 0;
 
     this.startTime = 0;
     this.stopTime = 0;
@@ -117,6 +118,7 @@ export default class {
       (duration, track) => Math.max(duration, track.getEndTime()),
       0,
     );
+    this.allTime += this.duration;
   }
   // 添加新片段
   setFragHook(frag) {
@@ -172,19 +174,24 @@ export default class {
       this.formInfo = formData;
       this.saveLocalStorage();
     });
+    ee.on('demo', () => {
+      console.log(this.lastPlay);
+      console.log(this.pauseTime);
+    });
     document.getElementById('wrap').onmousewheel = (e) => {
       const zoomIndex = e.deltaY === 100 ? 1 : -1;
       e.preventDefault();
       ee.emit('zoom', zoomIndex);
     };
-    document.onkeyup = (e) => {
+    document.onkeydown = (e) => {
       switch (e.keyCode) {
         case 32:
           this.isPlaying() ? this.pause() : this.play();
+          e.preventDefault();
           break;
-        case 8:
-          const index = document.getElementsByClassName('fragSelected')[0].getAttribute('name');
-          this.deleteFragHook(index);
+        // case 8:
+        //   const index = document.getElementsByClassName('fragSelected')[0].getAttribute('name');
+        //   this.deleteFragHook(index);
         default:
           break;
       }
@@ -204,7 +211,7 @@ export default class {
   // 停止
   playbackReset() {
     this.tracks.forEach((track) => {
-      track.scheduleStop();
+      track.scheduleStop(track, this.lastPlay);
     });
 
     return Promise.all(this.playoutPromises);
@@ -239,7 +246,7 @@ export default class {
   }
   // demo
   demo() {
-    this.ee.emit('selectdFrag', 0);
+    this.ee.emit('demo');
   }
 
   // 播放
@@ -258,7 +265,7 @@ export default class {
       playoutPromises.push(track.schedulePlay(currentTime, start, end, {
         shouldPlay: true,
         masterGain: this.masterGain,
-      }));
+      }, track));
     });
     this.playoutPromises = playoutPromises;
 
@@ -286,9 +293,8 @@ export default class {
   // 重新播放
   restartPlayFrom(start, end) {
     this.stopAnimation();
-
     this.tracks.forEach((editor) => {
-      editor.scheduleStop();
+      editor.scheduleStop(editor, this.lastPlay);
     });
 
     return Promise.all(this.playoutPromises).then(this.play.bind(this, start, end));
@@ -307,13 +313,18 @@ export default class {
 
   // 加载音频并初始化显示
   load(trackList) {
-    const loadPromises = trackList.map((trackInfo) => {
+    if (!trackList || trackList.length === 0) {
+      return;
+    }
+    const promiseTrack = [trackList[0]];
+    trackList.shift();
+    const loadPromises = promiseTrack.map((trackInfo) => {
       const loader = LoaderFactory.createLoader(trackInfo.src, this.ac, this.ee);
       return loader.load();
     });
     return Promise.all(loadPromises).then((audioBuffers) => {
       const tracks = audioBuffers.map((audioBuffer, index) => {
-        const info = trackList[index];
+        const info = promiseTrack[index];
         const name = info.name || 'Untitled';
         const cueIn = info.cuein || 0;
         const cueOut = info.cueout || audioBuffer.duration;
@@ -327,6 +338,7 @@ export default class {
         track.setName(name);
         track.setCues(cueIn, cueOut);
         track.setWaveOutlineColor(waveOutlineColor);
+        track.startTime = this.allTime;
 
         if (selection !== undefined) {
           this.setActiveTrack(track);
@@ -341,23 +353,22 @@ export default class {
         track.calculatePeaks(this.samplesPerPixel, this.sampleRate);
         return track;
       });
-
       this.tracks = this.tracks.concat(tracks);
       this.adjustDuration();
-      this.render();
+      this.render(trackList);
     });
   }
   // 时间刻度记载
   renderTimeScale() {
     const controlWidth = this.controls.show ? this.controls.width : 0;
-    const timeScale = new TimeScale(this.duration, this.scrollLeft,
+    const timeScale = new TimeScale(this.allTime, this.scrollLeft,
       this.samplesPerPixel, this.sampleRate, controlWidth);
     return timeScale.render();
   }
   // 波形图绘制
   renderTrackSection() {
     const trackElements = this.tracks.map(track =>
-      track.render(),
+      track.render(this.samplesPerPixel, this.sampleRate),
     );
     return trackElements;
   }
@@ -371,11 +382,12 @@ export default class {
     this.fragHook = new
     FragHook(this.fragDom, this.formInfo, this.samplesPerPixel, this.sampleRate, this.ee);
     this.fragHook.render();
-    this.formHook = new FormHook(this.typeArr, this.formInfo, this.samplesPerPixel, this.sampleRate, this.ee, this.markInfo);
+    this.formHook = new FormHook(this.typeArr, this.formInfo, this.samplesPerPixel,
+      this.sampleRate, this.ee, this.markInfo);
     this.formHook.render();
   }
   // 加载页面
-  render() {
+  render(trackList) {
     const timeTree = this.renderTimeScale();
     const timeNode = createElement(timeTree);
     document.getElementById('timescale').innerHTML = '';
@@ -389,7 +401,7 @@ export default class {
         this.canvasDom.appendChild(canvasNode);
       }
     }
-
     this.renderFrag();
+    this.load(trackList);
   }
 }

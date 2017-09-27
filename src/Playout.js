@@ -5,10 +5,12 @@ export default class {
     this.gain = 1;
     this.buffer = buffer;
     this.destination = this.ac.destination;
+    this.bol = false;
   }
 
   isPlaying() {
-    return this.source !== undefined;
+    // console.log(this.source !== undefined);
+    return this.bol;
   }
 
   getDuration() {
@@ -84,13 +86,20 @@ export default class {
     it is playing slightly more samples than it has it won't play at all.
     Unfortunately it doesn't seem to work if you just give it a start time.
   */
-  play(when, start, duration) {
-    this.source.start(when, start, duration);
+  play(when, start, duration, track) {
+    if (track.startTime <= start && track.startTime + duration >= start) {
+      this.source.start(when, start - track.startTime, duration);
+      this.bol = true;
+    }
   }
 
-  stop(when = 0) {
+  stop(track, now, when = 0) {
+    // const now = 10;
     if (this.source) {
-      this.source.stop(when);
+      if (track.startTime <= now && track.startTime + track.duration >= now) {
+        this.source.stop(when);
+        this.bol = false;
+      }
     }
   }
 }

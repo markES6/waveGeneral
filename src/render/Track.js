@@ -2,7 +2,7 @@ import _assign from 'lodash.assign';
 import h from 'virtual-dom/h';
 
 import extractPeaks from 'webaudio-peaks';
-import { secondsToSamples } from '../utils/conversions';
+import { secondsToSamples, secondsToPixels } from '../utils/conversions';
 import CanvasHook from '../render/CanvasHook';
 
 const MAX_CANVAS_WIDTH = 3000;
@@ -46,7 +46,6 @@ export default class {
     if (cueOut < cueIn) {
       throw new Error('cue out cannot be less than cue in');
     }
-
     this.cueIn = cueIn;
     this.cueOut = cueOut;
     this.duration = this.cueOut - this.cueIn;
@@ -65,7 +64,9 @@ export default class {
     return this.playout.isPlaying();
   }
   // 播放
-  schedulePlay(now, startTime, endTime, config) {
+  schedulePlay(now, startTime, endTime, config, track) {
+    // console.log(now);
+    // console.log(startTime);
     const defaultOptions = {
       shouldPlay: true,
       masterGain: 1,
@@ -78,26 +79,29 @@ export default class {
     playoutSystem.setVolumeGainLevel(1);
     playoutSystem.setShouldPlay(options.shouldPlay);
     playoutSystem.setMasterGainLevel(1);
-    playoutSystem.play(now, startTime, endTime);
+    playoutSystem.play(now, startTime, endTime, track);
     return sourcePromise;
   }
   // 停止
-  scheduleStop(when = 0) {
-    this.playout.stop(when);
+  scheduleStop(track, now, when = 0) {
+    this.playout.stop(track, now, when);
   }
 
   // 设置peaks
   calculatePeaks(samplesPerPixel, sampleRate) {
+    this.sampleRate = sampleRate;
     const cueIn = secondsToSamples(this.cueIn, sampleRate);
     const cueOut = secondsToSamples(this.cueOut, sampleRate);
     this.setPeaks(extractPeaks(this.buffer, samplesPerPixel, this.peakData.mono, cueIn, cueOut));
   }
 
   // 构造canvas声音波形
-  render() {
+  render(samplesPerPixel, sampleRate) {
     const canvasWidth = this.peaks.length;
+    const canvasLeft = secondsToPixels(this.startTime, samplesPerPixel, sampleRate);
+    const fragDomWid = secondsToPixels(this.startTime + this.endTime, samplesPerPixel, sampleRate);
     const canvasHeight = 300;
-    this.fragDom.style.width = `${canvasWidth}px`;
+    this.fragDom.style.width = `${fragDomWid}px`;
     const channels = Object.keys(this.peaks.data).map((channelNum) => {
       const channelChildren = [];
       let offset = 0;
@@ -122,7 +126,7 @@ export default class {
       return h(`div.channel.channel-${channelNum}`,
         {
           attributes: {
-            style: `height: ${canvasHeight}px; width: ${canvasWidth}px; top: ${channelNum * canvasHeight}px; position: absolute; margin: 0; padding: 0; z-index: 1;border-top: 20px #373B4D solid;border-bottom: 20px #373B4D solid;`,
+            style: `height: ${canvasHeight}px;left: ${canvasLeft}px; width: ${canvasWidth}px; top: ${channelNum * canvasHeight}px; position: absolute; margin: 0; padding: 0; z-index: 1;border-top: 20px #373B4D solid;border-bottom: 20px #373B4D solid;`,
           },
         },
         channelChildren,
