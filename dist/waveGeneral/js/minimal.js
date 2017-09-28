@@ -16,7 +16,7 @@ const playlist = WaveGeneral.init({
 });
 playlist.load([
   {
-    src: 'media/audio/BassDrums30.mp3',
+    src: 'media/audio/0.wav',
     name: 'Guitar',
     start: 0,
     fadeOut: {
@@ -26,7 +26,116 @@ playlist.load([
     cuein: 0,
   },
   {
-    src: 'media/audio/PianoSynth30.mp3',
+    src: 'media/audio/1.wav',
+    name: 'Guitar',
+    start: 0,
+    fadeOut: {
+      shape: 'linear',
+      duration: 0.5,
+    },
+    cuein: 0,
+  },
+  {
+    src: 'media/audio/2.wav',
+    name: 'Guitar',
+    start: 0,
+    fadeOut: {
+      shape: 'linear',
+      duration: 0.5,
+    },
+    cuein: 0,
+  },{
+    src: 'media/audio/3.wav',
+    name: 'Guitar',
+    start: 0,
+    fadeOut: {
+      shape: 'linear',
+      duration: 0.5,
+    },
+    cuein: 0,
+  },{
+    src: 'media/audio/4.wav',
+    name: 'Guitar',
+    start: 0,
+    fadeOut: {
+      shape: 'linear',
+      duration: 0.5,
+    },
+    cuein: 0,
+  },{
+    src: 'media/audio/5.wav',
+    name: 'Guitar',
+    start: 0,
+    fadeOut: {
+      shape: 'linear',
+      duration: 0.5,
+    },
+    cuein: 0,
+  },{
+    src: 'media/audio/6.wav',
+    name: 'Guitar',
+    start: 0,
+    fadeOut: {
+      shape: 'linear',
+      duration: 0.5,
+    },
+    cuein: 0,
+  },{
+    src: 'media/audio/7.wav',
+    name: 'Guitar',
+    start: 0,
+    fadeOut: {
+      shape: 'linear',
+      duration: 0.5,
+    },
+    cuein: 0,
+  },{
+    src: 'media/audio/8.wav',
+    name: 'Guitar',
+    start: 0,
+    fadeOut: {
+      shape: 'linear',
+      duration: 0.5,
+    },
+    cuein: 0,
+  },{
+    src: 'media/audio/9.wav',
+    name: 'Guitar',
+    start: 0,
+    fadeOut: {
+      shape: 'linear',
+      duration: 0.5,
+    },
+    cuein: 0,
+  },{
+    src: 'media/audio/10.wav',
+    name: 'Guitar',
+    start: 0,
+    fadeOut: {
+      shape: 'linear',
+      duration: 0.5,
+    },
+    cuein: 0,
+  },{
+    src: 'media/audio/11.wav',
+    name: 'Guitar',
+    start: 0,
+    fadeOut: {
+      shape: 'linear',
+      duration: 0.5,
+    },
+    cuein: 0,
+  },{
+    src: 'media/audio/12.wav',
+    name: 'Guitar',
+    start: 0,
+    fadeOut: {
+      shape: 'linear',
+      duration: 0.5,
+    },
+    cuein: 0,
+  },{
+    src: 'media/audio/13.wav',
     name: 'Guitar',
     start: 0,
     fadeOut: {

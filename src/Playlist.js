@@ -11,6 +11,7 @@ import FormHook from './render/FormHook';
 
 import FragController from './track/controller/FragController';
 import FormController from './track/controller/FormController';
+import OtherController from './track/controller/OtherController';
 
 import LoaderFactory from './track/loader/LoaderFactory';
 
@@ -144,6 +145,8 @@ export default class {
     this.fragController.bindEvent();
     this.formController = new FormController(ee, this.formInfo, this.markInfo);
     this.formController.bindEvent();
+    this.otherController = new OtherController(ee);
+    this.otherController.bindEvent();
     ee.on('play', (startTime, endTime) => {
       this.play(startTime, endTime);
     });
@@ -175,8 +178,7 @@ export default class {
       this.saveLocalStorage();
     });
     ee.on('demo', () => {
-      console.log(this.lastPlay);
-      console.log(this.pauseTime);
+      console.log('demo');
     });
     document.getElementById('wrap').onmousewheel = (e) => {
       const zoomIndex = e.deltaY === 100 ? 1 : -1;

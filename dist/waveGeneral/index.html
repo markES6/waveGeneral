@@ -18,7 +18,7 @@
     background: #f3f3f3;
     border:1px #ccc solid;
     position: relative;
-    padding:10px;
+    padding:10px 20px;
     height: 600px;
     float: left;
   }
@@ -264,6 +264,7 @@
     border-top:1px solid #000;
   }
   .Cross{
+    left: -20px;
     width: 100%;
     height: 1px;
     background: #f3f3f3;
@@ -301,14 +302,18 @@
   #smallNav .pre{
     position: absolute;
     left: 3px;
+    z-index: 100;
+    background: #000;
   }
   #smallNav .next{
     position: absolute;
     right: 3px;
+    z-index: 100;
+    background: #000;
   }
   #smallNav ul{
     position: absolute;
-    padding: 0 40px;
+    margin: 0 40px;
   }
   #smallNav ul li{
     float: left;
@@ -319,6 +324,12 @@
   }
   #smallNav ul .red{
     background: rgba(196, 30, 4, 0.5);
+  }
+  #ruler{
+    right: -2px;
+    top: 40px;
+    height: 340px;
+    position: absolute;
   }
 </style>
 <body>
@@ -334,6 +345,7 @@
           <div id="formInfo" class="cd-form floating-labels"></div>
       </div> 
     </div>
+    <img src="img/ruler.png" id="ruler" alt="ruler">
     <div class="Cross"></div>
     <div class="Cross Cross2"></div>
     <div id="progress">

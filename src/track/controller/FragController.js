@@ -229,6 +229,7 @@ class FragController {
   upRightEvent() {
     if (this.changeFrag) {
       this.ee.emit('changeFrag', this.changeFrag, this.selected);
+      this.formInfo[this.selected] = this.changeFrag;
     }
     this.movePoint = false;
     this.hitPoint = false;
