@@ -38,6 +38,9 @@ export function init(options = {}, ee = EventEmitter()) {
   }
   const playlist = new Playlist();
   playlist.setSampleName(config.name);
+  playlist.setDataInfo(config.markData);
+  playlist.setDefault(config.markData);
+  playlist.setMarkInfo(config.markInfo);
   playlist.setDataInfo();
   playlist.setSampleRate(config.sampleRate);
   playlist.setSamplesPerPixel(config.samplesPerPixel);
@@ -49,9 +52,6 @@ export function init(options = {}, ee = EventEmitter()) {
   playlist.setColors(config.colors);
   playlist.setZoomLevels(config.zoomLevels);
   playlist.setZoomIndex(zoomIndex);
-  playlist.setDefault(config.markData);
-  playlist.setDataInfo(config.markData);
-  playlist.setMarkInfo(config.markInfo);
   playlist.isAutomaticScroll = config.isAutomaticScroll;
   playlist.isContinuousPlay = config.isContinuousPlay;
   playlist.linkedEndpoints = config.linkedEndpoints;

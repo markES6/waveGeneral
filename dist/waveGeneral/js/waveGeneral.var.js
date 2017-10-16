@@ -111,6 +111,9 @@ var WaveGeneral =
 	  }
 	  var playlist = new _Playlist2.default();
 	  playlist.setSampleName(config.name);
+	  playlist.setDataInfo(config.markData);
+	  playlist.setDefault(config.markData);
+	  playlist.setMarkInfo(config.markInfo);
 	  playlist.setDataInfo();
 	  playlist.setSampleRate(config.sampleRate);
 	  playlist.setSamplesPerPixel(config.samplesPerPixel);
@@ -122,9 +125,6 @@ var WaveGeneral =
 	  playlist.setColors(config.colors);
 	  playlist.setZoomLevels(config.zoomLevels);
 	  playlist.setZoomIndex(zoomIndex);
-	  playlist.setDefault(config.markData);
-	  playlist.setDataInfo(config.markData);
-	  playlist.setMarkInfo(config.markInfo);
 	  playlist.isAutomaticScroll = config.isAutomaticScroll;
 	  playlist.isContinuousPlay = config.isContinuousPlay;
 	  playlist.linkedEndpoints = config.linkedEndpoints;
@@ -1258,7 +1258,11 @@ var WaveGeneral =
 	
 	var _FormController2 = _interopRequireDefault(_FormController);
 	
-	var _LoaderFactory = __webpack_require__(58);
+	var _OtherController = __webpack_require__(58);
+	
+	var _OtherController2 = _interopRequireDefault(_OtherController);
+	
+	var _LoaderFactory = __webpack_require__(59);
 	
 	var _LoaderFactory2 = _interopRequireDefault(_LoaderFactory);
 	
@@ -1276,6 +1280,7 @@ var WaveGeneral =
 	    this.tracks = [];
 	    this.timer = null;
 	    this.cycle = true;
+	    this.allTime = 0;
 	
 	    this.startTime = 0;
 	    this.stopTime = 0;
@@ -1311,9 +1316,9 @@ var WaveGeneral =
 	        this.formInfo = info;
 	        return;
 	      }
-	      if (localStorage[this.name] && localStorage[this.name] !== '[]') {
-	        this.formInfo = JSON.parse(localStorage[this.name]);
-	      }
+	      // if (localStorage[this.name] && localStorage[this.name] !== '[]') {
+	      //   this.formInfo = JSON.parse(localStorage[this.name]);
+	      // }
 	    }
 	  }, {
 	    key: 'setMarkInfo',
@@ -1419,6 +1424,7 @@ var WaveGeneral =
 	      this.duration = this.tracks.reduce(function (duration, track) {
 	        return Math.max(duration, track.getEndTime());
 	      }, 0);
+	      this.allTime += this.tracks[this.tracks.length - 1].duration;
 	    }
 	    // 添加新片段
 	
@@ -1426,6 +1432,8 @@ var WaveGeneral =
 	    key: 'setFragHook',
 	    value: function setFragHook(frag) {
 	      this.formInfo = frag;
+	      this.formController.setForminfo(this.formInfo);
+	      this.fragController.setForminfo(this.formInfo);
 	      this.fragHook.renderAdd(frag[frag.length - 1], frag.length - 1);
 	      this.formHook.renderAdd(this.formInfo);
 	    }
@@ -1439,6 +1447,8 @@ var WaveGeneral =
 	    key: 'deleteFragHook',
 	    value: function deleteFragHook(index) {
 	      this.formInfo.splice(index, 1);
+	      this.formController.setForminfo(this.formInfo);
+	      this.fragController.setForminfo(this.formInfo);
 	      this.fragHook.render();
 	      this.formHook.render();
 	    }
@@ -1455,6 +1465,8 @@ var WaveGeneral =
 	      this.fragController.bindEvent();
 	      this.formController = new _FormController2.default(ee, this.formInfo, this.markInfo);
 	      this.formController.bindEvent();
+	      this.otherController = new _OtherController2.default(ee);
+	      this.otherController.bindEvent();
 	      ee.on('play', function (startTime, endTime) {
 	        _this2.play(startTime, endTime);
 	      });
@@ -1484,6 +1496,9 @@ var WaveGeneral =
 	      ee.on('save', function (formData) {
 	        _this2.formInfo = formData;
 	        _this2.saveLocalStorage();
+	      });
+	      ee.on('demo', function () {
+	        console.log('demo');
 	      });
 	      document.getElementById('wrap').onmousewheel = function (e) {
 	        var zoomIndex = e.deltaY === 100 ? 1 : -1;
@@ -1525,8 +1540,10 @@ var WaveGeneral =
 	  }, {
 	    key: 'playbackReset',
 	    value: function playbackReset() {
+	      var _this3 = this;
+	
 	      this.tracks.forEach(function (track) {
-	        track.scheduleStop();
+	        track.scheduleStop(track, _this3.lastPlay);
 	      });
 	
 	      return Promise.all(this.playoutPromises);
@@ -1536,24 +1553,24 @@ var WaveGeneral =
 	  }, {
 	    key: 'startAnimation',
 	    value: function startAnimation() {
-	      var _this3 = this;
+	      var _this4 = this;
 	
 	      this.stopAnimation();
 	      this.timer = requestAnimationFrame(function (step) {
-	        _this3.stepStart = step;
-	        _this3.animationRequest(step);
+	        _this4.stepStart = step;
+	        _this4.animationRequest(step);
 	      });
 	    }
 	  }, {
 	    key: 'animationRequest',
 	    value: function animationRequest(step) {
-	      var _this4 = this;
+	      var _this5 = this;
 	
 	      var stepStart = (step - this.stepStart) / 1000;
 	      this.lastPlay = this.startTime ? this.startTime + stepStart : this.pauseTime + stepStart;
 	      this.renderPlayed(this.lastPlay);
 	      this.timer = requestAnimationFrame(function (steps) {
-	        _this4.animationRequest(steps);
+	        _this5.animationRequest(steps);
 	      });
 	      if (this.lastPlay >= this.startTime + this.endTime) {
 	        if (this.cycle) {
@@ -1562,6 +1579,9 @@ var WaveGeneral =
 	        }
 	        this.stopAnimation();
 	        this.pauseTime = this.lastPlay;
+	      }
+	      if (this.lastPlay >= this.allTime) {
+	        this.stop();
 	      }
 	    }
 	    // 停止动画
@@ -1576,7 +1596,7 @@ var WaveGeneral =
 	  }, {
 	    key: 'demo',
 	    value: function demo() {
-	      this.ee.emit('selectdFrag', 0);
+	      this.ee.emit('demo');
 	    }
 	
 	    // 播放
@@ -1584,7 +1604,7 @@ var WaveGeneral =
 	  }, {
 	    key: 'play',
 	    value: function play(startTime, endTime) {
-	      var _this5 = this;
+	      var _this6 = this;
 	
 	      var start = startTime || this.pauseTime;
 	      var end = endTime || this.duration;
@@ -1599,8 +1619,8 @@ var WaveGeneral =
 	      this.tracks.forEach(function (track) {
 	        playoutPromises.push(track.schedulePlay(currentTime, start, end, {
 	          shouldPlay: true,
-	          masterGain: _this5.masterGain
-	        }));
+	          masterGain: _this6.masterGain
+	        }, track));
 	      });
 	      this.playoutPromises = playoutPromises;
 	
@@ -1636,10 +1656,11 @@ var WaveGeneral =
 	  }, {
 	    key: 'restartPlayFrom',
 	    value: function restartPlayFrom(start, end) {
-	      this.stopAnimation();
+	      var _this7 = this;
 	
+	      this.stopAnimation();
 	      this.tracks.forEach(function (editor) {
-	        editor.scheduleStop();
+	        editor.scheduleStop(editor, _this7.lastPlay);
 	      });
 	
 	      return Promise.all(this.playoutPromises).then(this.play.bind(this, start, end));
@@ -1650,8 +1671,11 @@ var WaveGeneral =
 	    key: 'zoom',
 	    value: function zoom(zoomStyle) {
 	      var index = this.zoomIndex + zoomStyle;
-	      if (index < this.zoomLevels.length && index >= 0) {
+	      if (index < this.zoomLevels.length && index >= 0 && this.zoomBol) {
 	        this.zoomIndex = index;
+	        this.zoomBol = false;
+	      } else {
+	        return;
 	      }
 	      this.setZoom(this.zoomIndex);
 	      this.fragController.setSamples(this.samplesPerPixel, this.sampleRate);
@@ -1664,32 +1688,39 @@ var WaveGeneral =
 	  }, {
 	    key: 'load',
 	    value: function load(trackList) {
-	      var _this6 = this;
+	      var _this8 = this;
 	
-	      var loadPromises = trackList.map(function (trackInfo) {
-	        var loader = _LoaderFactory2.default.createLoader(trackInfo.src, _this6.ac, _this6.ee);
+	      if (!trackList || trackList.length === 0) {
+	        this.zoomBol = true;
+	        return;
+	      }
+	      var promiseTrack = [trackList[0]];
+	      trackList.shift();
+	      var loadPromises = promiseTrack.map(function (trackInfo) {
+	        var loader = _LoaderFactory2.default.createLoader(trackInfo.src, _this8.ac, _this8.ee);
 	        return loader.load();
 	      });
 	      return Promise.all(loadPromises).then(function (audioBuffers) {
 	        var tracks = audioBuffers.map(function (audioBuffer, index) {
-	          var info = trackList[index];
+	          var info = promiseTrack[index];
 	          var name = info.name || 'Untitled';
 	          var cueIn = info.cuein || 0;
 	          var cueOut = info.cueout || audioBuffer.duration;
 	          var selection = info.selected;
-	          var peaks = info.peaks || { type: 'WebAudio', mono: _this6.mono };
+	          var peaks = info.peaks || { type: 'WebAudio', mono: _this8.mono };
 	          var waveOutlineColor = info.waveOutlineColor || undefined;
-	          var playout = new _Playout2.default(_this6.ac, audioBuffer);
-	          var track = new _Track2.default(_this6.fragDom);
+	          var playout = new _Playout2.default(_this8.ac, audioBuffer);
+	          var track = new _Track2.default(_this8.fragDom);
 	          track.src = info.src;
 	          track.setBuffer(audioBuffer);
 	          track.setName(name);
 	          track.setCues(cueIn, cueOut);
 	          track.setWaveOutlineColor(waveOutlineColor);
+	          track.startTime = _this8.allTime;
 	
 	          if (selection !== undefined) {
-	            _this6.setActiveTrack(track);
-	            _this6.setTimeSelection(selection.start, selection.end);
+	            _this8.setActiveTrack(track);
+	            _this8.setTimeSelection(selection.start, selection.end);
 	          }
 	          if (peaks !== undefined) {
 	            track.setPeakData(peaks);
@@ -1697,13 +1728,12 @@ var WaveGeneral =
 	
 	          track.setPlayout(playout);
 	
-	          track.calculatePeaks(_this6.samplesPerPixel, _this6.sampleRate);
+	          track.calculatePeaks(_this8.samplesPerPixel, _this8.sampleRate);
 	          return track;
 	        });
-	
-	        _this6.tracks = _this6.tracks.concat(tracks);
-	        _this6.adjustDuration();
-	        _this6.render();
+	        _this8.tracks = _this8.tracks.concat(tracks);
+	        _this8.adjustDuration();
+	        _this8.render(trackList);
 	      });
 	    }
 	    // 时间刻度记载
@@ -1712,7 +1742,7 @@ var WaveGeneral =
 	    key: 'renderTimeScale',
 	    value: function renderTimeScale() {
 	      var controlWidth = this.controls.show ? this.controls.width : 0;
-	      var timeScale = new _TimeScale2.default(this.duration, this.scrollLeft, this.samplesPerPixel, this.sampleRate, controlWidth);
+	      var timeScale = new _TimeScale2.default(this.allTime, this.scrollLeft, this.samplesPerPixel, this.sampleRate, controlWidth);
 	      return timeScale.render();
 	    }
 	    // 波形图绘制
@@ -1720,8 +1750,10 @@ var WaveGeneral =
 	  }, {
 	    key: 'renderTrackSection',
 	    value: function renderTrackSection() {
+	      var _this9 = this;
+	
 	      var trackElements = this.tracks.map(function (track) {
-	        return track.render();
+	        return track.render(_this9.samplesPerPixel, _this9.sampleRate);
 	      });
 	      return trackElements;
 	    }
@@ -1747,7 +1779,7 @@ var WaveGeneral =
 	
 	  }, {
 	    key: 'render',
-	    value: function render() {
+	    value: function render(trackList) {
 	      var timeTree = this.renderTimeScale();
 	      var timeNode = (0, _createElement2.default)(timeTree);
 	      document.getElementById('timescale').innerHTML = '';
@@ -1761,8 +1793,8 @@ var WaveGeneral =
 	          this.canvasDom.appendChild(canvasNode);
 	        }
 	      }
-	
 	      this.renderFrag();
+	      this.load(trackList);
 	    }
 	  }]);
 
@@ -3702,7 +3734,6 @@ var WaveGeneral =
 	      if (cueOut < cueIn) {
 	        throw new Error('cue out cannot be less than cue in');
 	      }
-	
 	      this.cueIn = cueIn;
 	      this.cueOut = cueOut;
 	      this.duration = this.cueOut - this.cueIn;
@@ -3733,7 +3764,7 @@ var WaveGeneral =
 	
 	  }, {
 	    key: 'schedulePlay',
-	    value: function schedulePlay(now, startTime, endTime, config) {
+	    value: function schedulePlay(now, startTime, endTime, config, track) {
 	      var defaultOptions = {
 	        shouldPlay: true,
 	        masterGain: 1,
@@ -3746,17 +3777,17 @@ var WaveGeneral =
 	      playoutSystem.setVolumeGainLevel(1);
 	      playoutSystem.setShouldPlay(options.shouldPlay);
 	      playoutSystem.setMasterGainLevel(1);
-	      playoutSystem.play(now, startTime, endTime);
+	      playoutSystem.play(now, startTime, endTime, track);
 	      return sourcePromise;
 	    }
 	    // 停止
 	
 	  }, {
 	    key: 'scheduleStop',
-	    value: function scheduleStop() {
-	      var when = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+	    value: function scheduleStop(track, now) {
+	      var when = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
 	
-	      this.playout.stop(when);
+	      this.playout.stop(track, now, when);
 	    }
 	
 	    // 设置peaks
@@ -3764,6 +3795,7 @@ var WaveGeneral =
 	  }, {
 	    key: 'calculatePeaks',
 	    value: function calculatePeaks(samplesPerPixel, sampleRate) {
+	      this.sampleRate = sampleRate;
 	      var cueIn = (0, _conversions.secondsToSamples)(this.cueIn, sampleRate);
 	      var cueOut = (0, _conversions.secondsToSamples)(this.cueOut, sampleRate);
 	      this.setPeaks((0, _webaudioPeaks2.default)(this.buffer, samplesPerPixel, this.peakData.mono, cueIn, cueOut));
@@ -3773,12 +3805,14 @@ var WaveGeneral =
 	
 	  }, {
 	    key: 'render',
-	    value: function render() {
+	    value: function render(samplesPerPixel, sampleRate) {
 	      var _this = this;
 	
 	      var canvasWidth = this.peaks.length;
+	      var canvasLeft = (0, _conversions.secondsToPixels)(this.startTime, samplesPerPixel, sampleRate);
+	      var fragDomWid = (0, _conversions.secondsToPixels)(this.startTime + this.endTime, samplesPerPixel, sampleRate);
 	      var canvasHeight = 300;
-	      this.fragDom.style.width = canvasWidth + 'px';
+	      this.fragDom.style.width = fragDomWid + 'px';
 	      var channels = Object.keys(this.peaks.data).map(function (channelNum) {
 	        var channelChildren = [];
 	        var offset = 0;
@@ -3802,7 +3836,7 @@ var WaveGeneral =
 	
 	        return (0, _h2.default)('div.channel.channel-' + channelNum, {
 	          attributes: {
-	            style: 'height: ' + canvasHeight + 'px; width: ' + canvasWidth + 'px; top: ' + channelNum * canvasHeight + 'px; position: absolute; margin: 0; padding: 0; z-index: 1;border-top: 20px #373B4D solid;border-bottom: 20px #373B4D solid;'
+	            style: 'height: ' + canvasHeight + 'px;left: ' + canvasLeft + 'px; width: ' + canvasWidth + 'px; top: ' + channelNum * canvasHeight + 'px; position: absolute; margin: 0; padding: 0; z-index: 1;border-top: 20px #373B4D solid;border-bottom: 20px #373B4D solid;'
 	          }
 	        }, channelChildren);
 	      });
@@ -4057,12 +4091,14 @@ var WaveGeneral =
 	    this.gain = 1;
 	    this.buffer = buffer;
 	    this.destination = this.ac.destination;
+	    this.bol = false;
 	  }
 	
 	  _createClass(_class, [{
 	    key: "isPlaying",
 	    value: function isPlaying() {
-	      return this.source !== undefined;
+	      // console.log(this.source !== undefined);
+	      return this.bol;
 	    }
 	  }, {
 	    key: "getDuration",
@@ -4148,16 +4184,23 @@ var WaveGeneral =
 	
 	  }, {
 	    key: "play",
-	    value: function play(when, start, duration) {
-	      this.source.start(when, start, duration);
+	    value: function play(when, start, duration, track) {
+	      if (track.startTime <= start && track.startTime + track.endTime >= start) {
+	        this.source.start(when, start - track.startTime, duration);
+	        this.bol = true;
+	      }
 	    }
 	  }, {
 	    key: "stop",
-	    value: function stop() {
-	      var when = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+	    value: function stop(track, now) {
+	      var when = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
 	
+	      // const now = 10;
 	      if (this.source) {
-	        this.source.stop(when);
+	        if (track.startTime <= now && track.startTime + track.duration >= now) {
+	          this.source.stop(when);
+	          this.bol = false;
+	        }
 	      }
 	    }
 	  }]);
@@ -4240,6 +4283,7 @@ var WaveGeneral =
 	    this.samplesPerPixel = samplesPerPixel;
 	    this.sampleRate = sampleRate;
 	    this.fragDom = fragDom;
+	    this.smallNav = document.getElementById('navList');
 	  }
 	
 	  _createClass(FragHook, [{
@@ -4259,10 +4303,24 @@ var WaveGeneral =
 	      return dom;
 	    }
 	  }, {
+	    key: 'creatNav',
+	    value: function creatNav(frag, index) {
+	      var className = 'btn';
+	      if (frag.extend.qualityState === '0') {
+	        className += ' green';
+	      } else if (frag.extend.qualityState === '1') {
+	        className += ' red';
+	      }
+	      var dom = '<li class="' + className + '" name="' + index + '">' + index + '</li>';
+	      return dom;
+	    }
+	  }, {
 	    key: 'renderAdd',
 	    value: function renderAdd(frag, index) {
 	      var dom = this.creatDom(frag, index);
+	      var nav = this.creatNav(frag, index);
 	      this.fragDom.innerHTML += dom;
+	      this.smallNav.innerHTML += nav;
 	    }
 	  }, {
 	    key: 'render',
@@ -4270,10 +4328,13 @@ var WaveGeneral =
 	      var _this = this;
 	
 	      var domAll = '';
+	      var domNav = '';
 	      this.formArr.forEach(function (item, index) {
 	        domAll += _this.creatDom(item, index);
+	        domNav += _this.creatNav(item, index);
 	      });
 	      this.fragDom.innerHTML = domAll;
+	      this.smallNav.innerHTML = domNav;
 	    }
 	  }]);
 	
@@ -4485,6 +4546,11 @@ var WaveGeneral =
 	    value: function setSamples(samplesPerPixel, sampleRate) {
 	      this.samplesPerPixel = samplesPerPixel;
 	      this.sampleRate = sampleRate;
+	    }
+	  }, {
+	    key: 'setForminfo',
+	    value: function setForminfo(formInfo) {
+	      this.formInfo = formInfo;
 	    }
 	  }, {
 	    key: 'bindEvent',
@@ -4737,6 +4803,7 @@ var WaveGeneral =
 	    value: function upRightEvent() {
 	      if (this.changeFrag) {
 	        this.ee.emit('changeFrag', this.changeFrag, this.selected);
+	        this.formInfo[this.selected] = this.changeFrag;
 	      }
 	      this.movePoint = false;
 	      this.hitPoint = false;
@@ -4771,9 +4838,15 @@ var WaveGeneral =
 	    this.ee = ee;
 	    this.formDom = document.getElementById('formInfo');
 	    this.selected = 0;
+	    this.smallNav = document.getElementById('navList');
 	  }
 	
 	  _createClass(FormController, [{
+	    key: 'setForminfo',
+	    value: function setForminfo(formInfo) {
+	      this.formInfo = formInfo;
+	    }
+	  }, {
 	    key: 'getIndex',
 	    value: function getIndex(target) {
 	      if (target.className === 'form-group' || target.className === 'form-group form-selected') {
@@ -4873,9 +4946,11 @@ var WaveGeneral =
 	          if (e.target.getAttribute('value') === '0') {
 	            errorsState.style.display = 'none';
 	            fragDom[index].className = 'frag fragGreen';
+	            _this2.smallNav.getElementsByTagName('li')[index].className = 'btn green';
 	          } else if (e.target.getAttribute('value') === '1') {
 	            errorsState.style.display = 'block';
 	            fragDom[index].className = 'frag fragRed';
+	            _this2.smallNav.getElementsByTagName('li')[index].className = 'btn red';
 	            for (var i = 0; i < errorsState.getElementsByTagName('input').length; i++) {
 	              errorsState.getElementsByTagName('input')[i].checked = false;
 	            }
@@ -4889,6 +4964,11 @@ var WaveGeneral =
 	      //   this.addFormInfo();
 	      //   this.ee.emit('save', this.formInfo);
 	      // });
+	      this.smallNav.addEventListener('click', function (e) {
+	        var name = e.target.getAttribute('name') || '';
+	        _this2.ee.emit('selectdFrag', name);
+	        _this2.ee.emit('playFrag', name);
+	      });
 	    }
 	  }]);
 	
@@ -4899,6 +4979,57 @@ var WaveGeneral =
 
 /***/ }),
 /* 58 */
+/***/ (function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var OtherController = function () {
+	  function OtherController(ee) {
+	    _classCallCheck(this, OtherController);
+	
+	    this.ee = ee;
+	    this.smallNav = document.getElementById('smallNav');
+	    this.navList = document.getElementById('navList');
+	  }
+	
+	  _createClass(OtherController, [{
+	    key: 'bindEvent',
+	    value: function bindEvent() {
+	      var _this = this;
+	
+	      var next = this.smallNav.getElementsByClassName('btn')[0];
+	      var pre = this.smallNav.getElementsByClassName('btn')[1];
+	      pre.addEventListener('click', function (e) {
+	        e.stopPropagation();
+	        _this.navList.style.left = parseInt(_this.navList.style.left || 0) - 90 + '%';
+	      });
+	      next.addEventListener('click', function (e) {
+	        e.stopPropagation();
+	        var left = parseInt(_this.navList.style.left) || 0;
+	        if (left >= -90) {
+	          _this.navList.style.left = '0%';
+	        } else {
+	          _this.navList.style.left = left + 90 + '%';
+	        }
+	      });
+	    }
+	  }]);
+	
+	  return OtherController;
+	}();
+	
+	exports.default = OtherController;
+
+/***/ }),
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -4909,7 +5040,7 @@ var WaveGeneral =
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
-	var _XHRLoader = __webpack_require__(59);
+	var _XHRLoader = __webpack_require__(60);
 	
 	var _XHRLoader2 = _interopRequireDefault(_XHRLoader);
 	
@@ -4939,7 +5070,7 @@ var WaveGeneral =
 	exports.default = _class;
 
 /***/ }),
-/* 59 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -4952,7 +5083,7 @@ var WaveGeneral =
 	
 	var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
 	
-	var _Loader2 = __webpack_require__(60);
+	var _Loader2 = __webpack_require__(61);
 	
 	var _Loader3 = _interopRequireDefault(_Loader2);
 	
@@ -5014,7 +5145,7 @@ var WaveGeneral =
 	exports.default = _class;
 
 /***/ }),
-/* 60 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';

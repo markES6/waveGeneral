@@ -19,6 +19,9 @@ class FragController {
     this.samplesPerPixel = samplesPerPixel;
     this.sampleRate = sampleRate;
   }
+  setForminfo(formInfo) {
+    this.formInfo = formInfo;
+  }
   bindEvent() {
     // oncontextmenu
     this.fragId.addEventListener('contextmenu', (e) => {
@@ -227,7 +230,7 @@ class FragController {
     this.changeFrag = { start: starts, end: ends, title: this.formInfo[index].title, extend: this.formInfo[index].extend };
   }
   upRightEvent() {
-    if (this.changeFrag) {
+    if (this.changeFrag && !isNaN(this.changeFrag.start)) {
       this.ee.emit('changeFrag', this.changeFrag, this.selected);
       this.formInfo[this.selected] = this.changeFrag;
     }

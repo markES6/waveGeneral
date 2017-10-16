@@ -65,8 +65,6 @@ export default class {
   }
   // 播放
   schedulePlay(now, startTime, endTime, config, track) {
-    // console.log(now);
-    // console.log(startTime);
     const defaultOptions = {
       shouldPlay: true,
       masterGain: 1,

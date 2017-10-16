@@ -24,6 +24,7 @@ export default class {
     this.timer = null;
     this.cycle = true;
     this.allTime = 0;
+    this.loadFirst = true;
 
     this.startTime = 0;
     this.stopTime = 0;
@@ -53,9 +54,9 @@ export default class {
       this.formInfo = info;
       return;
     }
-    if (localStorage[this.name] && localStorage[this.name] !== '[]') {
-      this.formInfo = JSON.parse(localStorage[this.name]);
-    }
+    // if (localStorage[this.name] && localStorage[this.name] !== '[]') {
+    //   this.formInfo = JSON.parse(localStorage[this.name]);
+    // }
   }
   setMarkInfo(markInfo) {
     this.markInfo = markInfo;
@@ -119,11 +120,13 @@ export default class {
       (duration, track) => Math.max(duration, track.getEndTime()),
       0,
     );
-    this.allTime += this.duration;
+    this.allTime += this.tracks[this.tracks.length - 1].duration;
   }
   // 添加新片段
   setFragHook(frag) {
     this.formInfo = frag;
+    this.formController.setForminfo(this.formInfo);
+    this.fragController.setForminfo(this.formInfo);
     this.fragHook.renderAdd(frag[frag.length - 1], frag.length - 1);
     this.formHook.renderAdd(this.formInfo);
   }
@@ -133,6 +136,8 @@ export default class {
   }
   deleteFragHook(index) {
     this.formInfo.splice(index, 1);
+    this.formController.setForminfo(this.formInfo);
+    this.fragController.setForminfo(this.formInfo);
     this.fragHook.render();
     this.formHook.render();
   }
@@ -176,6 +181,13 @@ export default class {
     ee.on('save', (formData) => {
       this.formInfo = formData;
       this.saveLocalStorage();
+    });
+    ee.on('loadFirst', () => {
+      const self = this;
+      // if (this.loadFirst) {
+      //   setTimeout(() => self.play(), 1000);
+      //   this.loadFirst = false;
+      // }
     });
     ee.on('demo', () => {
       console.log('demo');
@@ -229,10 +241,6 @@ export default class {
   animationRequest(step) {
     const stepStart = (step - this.stepStart) / 1000;
     this.lastPlay = this.startTime ? this.startTime + stepStart : this.pauseTime + stepStart;
-    this.renderPlayed(this.lastPlay);
-    this.timer = requestAnimationFrame((steps) => {
-      this.animationRequest(steps);
-    });
     if (this.lastPlay >= this.startTime + this.endTime) {
       if (this.cycle) {
         this.play(this.startTime, this.endTime);
@@ -240,6 +248,14 @@ export default class {
       }
       this.stopAnimation();
       this.pauseTime = this.lastPlay;
+    } else {
+      this.renderPlayed(this.lastPlay);
+      this.timer = requestAnimationFrame((steps) => {
+        this.animationRequest(steps);
+      });
+    }
+    if (this.lastPlay >= this.allTime) {
+      this.stop();
     }
   }
   // 停止动画
@@ -304,8 +320,11 @@ export default class {
   // 缩放大小
   zoom(zoomStyle) {
     const index = this.zoomIndex + zoomStyle;
-    if (index < this.zoomLevels.length && index >= 0) {
+    if (index < this.zoomLevels.length && index >= 0 && this.zoomBol) {
       this.zoomIndex = index;
+      this.zoomBol = false;
+    } else {
+      return;
     }
     this.setZoom(this.zoomIndex);
     this.fragController.setSamples(this.samplesPerPixel, this.sampleRate);
@@ -316,6 +335,7 @@ export default class {
   // 加载音频并初始化显示
   load(trackList) {
     if (!trackList || trackList.length === 0) {
+      this.zoomBol = true;
       return;
     }
     const promiseTrack = [trackList[0]];

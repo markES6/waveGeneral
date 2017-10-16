@@ -80,26 +80,26 @@ export default class {
     }
   }
 
-  /*
-    source.start is picky when passing the end time.
-    If rounding error causes a number to make the source think
-    it is playing slightly more samples than it has it won't play at all.
-    Unfortunately it doesn't seem to work if you just give it a start time.
-  */
+  // when:延时 offset 偏移量 duration 持续时间
+  // when：当前时间轴 start：开始时间 duration：持续时间 track：音频信息
   play(when, start, duration, track) {
-    if (track.startTime <= start && track.startTime + duration >= start) {
-      this.source.start(when, start - track.startTime, duration);
-      this.bol = true;
+    const offset = start - track.startTime <=0 ? 0 : start - track.startTime;
+    if (offset >= duration) {
+      this.source.start(1000000, 0, duration);
+    } else {
+      const whens = when + track.startTime - start <= 0 ? 0 : when + track.startTime - start;
+      console.log([whens, offset, duration]);
+      this.source.start(whens, offset, duration);
     }
+    this.bol = true;
   }
 
   stop(track, now, when = 0) {
-    // const now = 10;
     if (this.source) {
-      if (track.startTime <= now && track.startTime + track.duration >= now) {
-        this.source.stop(when);
+    //   if (track.startTime <= now && track.startTime + track.duration >= now) {
+        this.source.stop(0);
         this.bol = false;
-      }
+      // }
     }
   }
 }

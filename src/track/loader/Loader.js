@@ -29,13 +29,12 @@ export default class {
     if (e.lengthComputable) {
       percentComplete = (e.loaded / e.total) * 100;
     }
-
     this.ee.emit('loadprogress', percentComplete, this.src);
   }
 
   fileLoad(e) {
     const audioData = e.target.response || e.target.result;
-
+    this.ee.emit('loadFirst');
     this.setStateChange(STATE_DECODING);
 
     return new Promise((resolve, reject) => {

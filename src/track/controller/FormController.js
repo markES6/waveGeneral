@@ -7,6 +7,9 @@ class FormController {
     this.selected = 0;
     this.smallNav = document.getElementById('navList');
   }
+  setForminfo(formInfo) {
+    this.formInfo = formInfo;
+  }
   getIndex(target) {
     if (target.className === 'form-group' || target.className === 'form-group form-selected') {
       return target;
