@@ -80,26 +80,26 @@ export default class {
     }
   }
 
-  // whensd:延时 offset 偏移量 duration 持续时间
+  // whens:延时 offset 偏移量 duration 持续时间
   // when：当前时间轴 start：开始时间 duration：持续时间 track：音频信息
-  // TODO 整体修改
   play(when, start, duration, track) {
     const offset = start - track.startTime <=0 ? 0 : start - track.startTime;
-    console.log(offset);
-    console.log(duration);
     if (offset >= duration) {
-      this.source.start(10000, 0, duration);
+      this.source.start(1000000, 0, duration);
     } else {
       const whens = when + track.startTime - start <= 0 ? 0 : when + track.startTime - start;
-      this.source.start(whens, offset, 10000);
+      console.log([whens, offset, duration]);
+      this.source.start(whens, offset, duration);
     }
     this.bol = true;
   }
 
   stop(track, now, when = 0) {
     if (this.source) {
-      this.source.stop(when);
-      this.bol = false;
+    //   if (track.startTime <= now && track.startTime + track.duration >= now) {
+        this.source.stop(0);
+        this.bol = false;
+      // }
     }
   }
 }

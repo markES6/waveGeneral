@@ -161,7 +161,7 @@ export default class {
     ee.on('playFrag', (index) => {
       const start = this.formInfo[index].start;
       const end = this.formInfo[index].end - start;
-      ee.emit('play', start, end);
+      this.play(start, end);
     });
     ee.on('changeFrag', (frag, index) => {
       this.changeFragHook(frag, index);
@@ -274,12 +274,8 @@ export default class {
     this.startTime = startTime;
     this.endTime = end;
     if (this.isPlaying()) {
-      this.pause();
-      return;
+      return this.restartPlayFrom(start, end);
     }
-    // if (this.isPlaying()) {
-    //   return this.restartPlayFrom(start, end);
-    // }
     this.startAnimation();
     const playoutPromises = [];
     const currentTime = this.ac.currentTime;
@@ -319,7 +315,8 @@ export default class {
       editor.scheduleStop(editor, this.lastPlay);
     });
 
-    return Promise.all(this.playoutPromises).then(this.play.bind(this, start, end));
+    // return Promise.all(this.playoutPromises).then(this.play.bind(this, start, end));
+    return Promise.all(this.playoutPromises).then(console.log(111));
   }
   // 缩放大小
   zoom(zoomStyle) {
