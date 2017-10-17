@@ -161,7 +161,7 @@ export default class {
     ee.on('playFrag', (index) => {
       const start = this.formInfo[index].start;
       const end = this.formInfo[index].end - start;
-      this.play(start, end);
+      ee.emit('play', start, end);
     });
     ee.on('changeFrag', (frag, index) => {
       this.changeFragHook(frag, index);
@@ -274,8 +274,12 @@ export default class {
     this.startTime = startTime;
     this.endTime = end;
     if (this.isPlaying()) {
-      return this.restartPlayFrom(start, end);
+      this.pause();
+      return;
     }
+    // if (this.isPlaying()) {
+    //   return this.restartPlayFrom(start, end);
+    // }
     this.startAnimation();
     const playoutPromises = [];
     const currentTime = this.ac.currentTime;
