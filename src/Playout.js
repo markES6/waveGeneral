@@ -9,8 +9,7 @@ export default class {
   }
 
   isPlaying() {
-    // console.log(this.source !== undefined);
-    return this.bol;
+    return this.source !== undefined;
   }
 
   getDuration() {
@@ -80,26 +79,19 @@ export default class {
     }
   }
 
-  // whens:延时 offset 偏移量 duration 持续时间
+  // whens:延时 offset 片段内部偏移量 duration 持续时间
   // when：当前时间轴 start：开始时间 duration：持续时间 track：音频信息
   play(when, start, duration, track) {
-    const offset = start - track.startTime <=0 ? 0 : start - track.startTime;
-    if (offset >= duration) {
-      this.source.start(1000000, 0, duration);
-    } else {
-      const whens = when + track.startTime - start <= 0 ? 0 : when + track.startTime - start;
-      console.log([whens, offset, duration]);
-      this.source.start(whens, offset, duration);
-    }
-    this.bol = true;
+    const onseTime = track.startTime;
+    const playTime = when + onseTime;
+    const offset = start - onseTime <= 0 ? 0 : start - onseTime;
+    const whens = playTime - start <= 0 ? 0 : playTime - start;
+    this.source.start(whens, offset, duration);
   }
 
   stop(track, now, when = 0) {
     if (this.source) {
-    //   if (track.startTime <= now && track.startTime + track.duration >= now) {
-        this.source.stop(0);
-        this.bol = false;
-      // }
+      this.source.stop(when);
     }
   }
 }

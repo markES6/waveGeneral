@@ -213,10 +213,13 @@ export default class {
   }
   // 是否播放
   isPlaying() {
-    return this.tracks.reduce(
-      (isPlaying, track) => isPlaying || track.isPlaying(),
-      false,
-    );
+    let isplay = false;
+    this.tracks.forEach((track) => {
+      if (track.isPlaying()) {
+        isplay = true;
+      }
+    });
+    return isplay;
   }
   // 获取间隔时间TODO
   getElapsedTime() {
@@ -315,8 +318,7 @@ export default class {
       editor.scheduleStop(editor, this.lastPlay);
     });
 
-    // return Promise.all(this.playoutPromises).then(this.play.bind(this, start, end));
-    return Promise.all(this.playoutPromises).then(console.log(111));
+    return Promise.all(this.playoutPromises).then(this.play.bind(this, start, end));
   }
   // 缩放大小
   zoom(zoomStyle) {
