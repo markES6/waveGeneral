@@ -1281,6 +1281,7 @@ var WaveGeneral =
 	    this.timer = null;
 	    this.cycle = true;
 	    this.allTime = 0;
+	    this.loadFirst = true;
 	
 	    this.startTime = 0;
 	    this.stopTime = 0;
@@ -1497,6 +1498,13 @@ var WaveGeneral =
 	        _this2.formInfo = formData;
 	        _this2.saveLocalStorage();
 	      });
+	      ee.on('loadFirst', function () {
+	        var self = _this2;
+	        // if (this.loadFirst) {
+	        //   setTimeout(() => self.play(), 1000);
+	        //   this.loadFirst = false;
+	        // }
+	      });
 	      ee.on('demo', function () {
 	        console.log('demo');
 	      });
@@ -1524,9 +1532,13 @@ var WaveGeneral =
 	  }, {
 	    key: 'isPlaying',
 	    value: function isPlaying() {
-	      return this.tracks.reduce(function (isPlaying, track) {
-	        return isPlaying || track.isPlaying();
-	      }, false);
+	      var isplay = false;
+	      this.tracks.forEach(function (track) {
+	        if (track.isPlaying()) {
+	          isplay = true;
+	        }
+	      });
+	      return isplay;
 	    }
 	    // 获取间隔时间TODO
 	
@@ -1568,10 +1580,6 @@ var WaveGeneral =
 	
 	      var stepStart = (step - this.stepStart) / 1000;
 	      this.lastPlay = this.startTime ? this.startTime + stepStart : this.pauseTime + stepStart;
-	      this.renderPlayed(this.lastPlay);
-	      this.timer = requestAnimationFrame(function (steps) {
-	        _this5.animationRequest(steps);
-	      });
 	      if (this.lastPlay >= this.startTime + this.endTime) {
 	        if (this.cycle) {
 	          this.play(this.startTime, this.endTime);
@@ -1579,6 +1587,11 @@ var WaveGeneral =
 	        }
 	        this.stopAnimation();
 	        this.pauseTime = this.lastPlay;
+	      } else {
+	        this.renderPlayed(this.lastPlay);
+	        this.timer = requestAnimationFrame(function (steps) {
+	          _this5.animationRequest(steps);
+	        });
 	      }
 	      if (this.lastPlay >= this.allTime) {
 	        this.stop();
@@ -4097,8 +4110,7 @@ var WaveGeneral =
 	  _createClass(_class, [{
 	    key: "isPlaying",
 	    value: function isPlaying() {
-	      // console.log(this.source !== undefined);
-	      return this.bol;
+	      return this.source !== undefined;
 	    }
 	  }, {
 	    key: "getDuration",
@@ -4175,32 +4187,25 @@ var WaveGeneral =
 	      }
 	    }
 	
-	    /*
-	      source.start is picky when passing the end time.
-	      If rounding error causes a number to make the source think
-	      it is playing slightly more samples than it has it won't play at all.
-	      Unfortunately it doesn't seem to work if you just give it a start time.
-	    */
+	    // whens:延时 offset 片段内部偏移量 duration 持续时间
+	    // when：当前时间轴 start：开始时间 duration：持续时间 track：音频信息
 	
 	  }, {
 	    key: "play",
 	    value: function play(when, start, duration, track) {
-	      if (track.startTime <= start && track.startTime + track.endTime >= start) {
-	        this.source.start(when, start - track.startTime, duration);
-	        this.bol = true;
-	      }
+	      var onseTime = track.startTime;
+	      var playTime = when + onseTime;
+	      var offset = start - onseTime <= 0 ? 0 : start - onseTime;
+	      var whens = playTime - start <= 0 ? 0 : playTime - start;
+	      this.source.start(whens, offset, duration);
 	    }
 	  }, {
 	    key: "stop",
 	    value: function stop(track, now) {
 	      var when = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
 	
-	      // const now = 10;
 	      if (this.source) {
-	        if (track.startTime <= now && track.startTime + track.duration >= now) {
-	          this.source.stop(when);
-	          this.bol = false;
-	        }
+	        this.source.stop(when);
 	      }
 	    }
 	  }]);
@@ -4801,7 +4806,7 @@ var WaveGeneral =
 	  }, {
 	    key: 'upRightEvent',
 	    value: function upRightEvent() {
-	      if (this.changeFrag) {
+	      if (this.changeFrag && !isNaN(this.changeFrag.start)) {
 	        this.ee.emit('changeFrag', this.changeFrag, this.selected);
 	        this.formInfo[this.selected] = this.changeFrag;
 	      }
@@ -5200,7 +5205,6 @@ var WaveGeneral =
 	      if (e.lengthComputable) {
 	        percentComplete = e.loaded / e.total * 100;
 	      }
-	
 	      this.ee.emit('loadprogress', percentComplete, this.src);
 	    }
 	  }, {
@@ -5209,7 +5213,7 @@ var WaveGeneral =
 	      var _this = this;
 	
 	      var audioData = e.target.response || e.target.result;
-	
+	      this.ee.emit('loadFirst');
 	      this.setStateChange(STATE_DECODING);
 	
 	      return new Promise(function (resolve, reject) {
