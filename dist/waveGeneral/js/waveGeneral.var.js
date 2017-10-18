@@ -1450,6 +1450,7 @@ var WaveGeneral =
 	      this.formInfo.splice(index, 1);
 	      this.formController.setForminfo(this.formInfo);
 	      this.fragController.setForminfo(this.formInfo);
+	      this.fragController.setSelected();
 	      this.fragHook.render();
 	      this.formHook.render();
 	    }
@@ -1500,10 +1501,12 @@ var WaveGeneral =
 	      });
 	      ee.on('loadFirst', function () {
 	        var self = _this2;
-	        // if (this.loadFirst) {
-	        //   setTimeout(() => self.play(), 1000);
-	        //   this.loadFirst = false;
-	        // }
+	        if (_this2.loadFirst) {
+	          setTimeout(function () {
+	            return self.play();
+	          }, 1000);
+	          _this2.loadFirst = false;
+	        }
 	      });
 	      ee.on('demo', function () {
 	        console.log('demo');
@@ -1662,6 +1665,7 @@ var WaveGeneral =
 	      this.stopAnimation();
 	      this.pauseTime = 0;
 	      this.renderPlayed(this.pauseTime);
+	      document.getElementById('play').style.display = 'block';
 	      return this.playbackReset();
 	    }
 	    // 重新播放
@@ -1775,7 +1779,7 @@ var WaveGeneral =
 	  }, {
 	    key: 'renderPlayed',
 	    value: function renderPlayed(seconds) {
-	      var played = new _PlayedHook2.default(seconds, this.samplesPerPixel, this.sampleRate, this.duration);
+	      var played = new _PlayedHook2.default(seconds, this.samplesPerPixel, this.sampleRate, this.allTime);
 	      return played.render();
 	    }
 	    // 加载片段框
@@ -4435,8 +4439,10 @@ var WaveGeneral =
 	    key: 'qualityRender',
 	    value: function qualityRender(formItem, errorInfo, index) {
 	      var qualityType = { type: 'radio', sort: 'qualityState', title: 'State', option: ['合格', '不合格'] };
+	      var errorType = { type: 'input', sort: 'errorsMessage', title: 'ErrMessage' };
 	      var qualityState = this.renderRadio(formItem, qualityType, 'qualityState' + index);
 	      var errorsState = this.renderCheckbox(formItem, errorInfo, 'errorsState' + index);
+	      var errorsMessage = this.renderInput(formItem, errorType, 'errorsMessage' + index);
 	      if (this.markInfo.operationCase == 2 || this.markInfo.operationCase == 1) {
 	        var checkValue = formItem.extend.errorInfo || '';
 	        var errorValue = '';
@@ -4446,10 +4452,12 @@ var WaveGeneral =
 	        checkValue.forEach(function (item) {
 	          errorValue += (errorInfo.option[item] || '') + ',';
 	        });
+	        var errorMes = formItem.extend.errorsMessage || '';
 	        qualityState = '<div><p>\u72B6\u6001:</p><span>' + (qualityType.option[formItem.extend.qualityState] || '') + '</span></div>';
 	        errorsState = '<div><p>\u9519\u8BEF\u4FE1\u606F:</p><span>' + errorValue + '</span></div>';
+	        errorsMessage = '<div><p>\u9519\u8BEF\u4FE1\u606F:</p><span>' + errorMes + '</span></div>';
 	      }
-	      var qualityDom = '<div class="quality-content">\n                          ' + qualityState + '\n                          ' + errorsState + '\n                        </div>';
+	      var qualityDom = '<div class="quality-content">\n                          ' + qualityState + '\n                          ' + errorsState + '\n                          ' + errorsMessage + '\n                        </div>';
 	      return qualityDom;
 	    }
 	  }, {
@@ -4558,17 +4566,25 @@ var WaveGeneral =
 	      this.formInfo = formInfo;
 	    }
 	  }, {
+	    key: 'setSelected',
+	    value: function setSelected(selected) {
+	      this.selected = selected;
+	    }
+	  }, {
 	    key: 'bindEvent',
 	    value: function bindEvent() {
 	      var _this = this;
 	
 	      // oncontextmenu
 	      this.fragId.addEventListener('contextmenu', function (e) {
-	        _this.rightEvent(e);
+	        e.stopPropagation();
 	        e.preventDefault();
+	        _this.rightEvent(e);
 	      });
 	      this.fragId.addEventListener('mousedown', function (e) {
 	        // 选中状态
+	        e.stopPropagation();
+	        e.preventDefault();
 	        if (e.which === 1) {
 	          if (_this.selected) {
 	            _this.downRightEvent(e);
@@ -4579,6 +4595,8 @@ var WaveGeneral =
 	      });
 	      this.fragId.addEventListener('mousemove', function (e) {
 	        // 选中状态
+	        e.stopPropagation();
+	        e.preventDefault();
 	        if (_this.selected) {
 	          _this.moveRightEvent(e);
 	          return;
@@ -4589,6 +4607,8 @@ var WaveGeneral =
 	      });
 	      this.fragId.addEventListener('mouseup', function (e) {
 	        // 选中状态
+	        e.stopPropagation();
+	        e.preventDefault();
 	        if (e.which === 3) {
 	          return;
 	        }
@@ -4606,6 +4626,8 @@ var WaveGeneral =
 	        _this.creatDom = false;
 	      });
 	      this.fragId.addEventListener('mouseleave', function (e) {
+	        e.stopPropagation();
+	        e.preventDefault();
 	        if (e.which === 3) {
 	          return;
 	        }
@@ -4646,7 +4668,7 @@ var WaveGeneral =
 	    value: function getMouseLeft(e) {
 	      var canvasLeft = this.fragId.getBoundingClientRect().left;
 	      var mouseLeft = e.clientX;
-	      var playWidth = mouseLeft - parseInt(canvasLeft);
+	      var playWidth = mouseLeft - parseFloat(canvasLeft);
 	      return playWidth;
 	    }
 	  }, {
@@ -4654,7 +4676,7 @@ var WaveGeneral =
 	    value: function getHitPoint(e) {
 	      var canvasLeft = this.fragId.getBoundingClientRect().left;
 	      var selected = this.formInfo[this.selected];
-	      var mouseLeft = (0, _conversions.pixelsToSeconds)(e.clientX - parseInt(canvasLeft), this.samplesPerPixel, this.sampleRate);
+	      var mouseLeft = (0, _conversions.pixelsToSeconds)(e.clientX - parseFloat(canvasLeft), this.samplesPerPixel, this.sampleRate);
 	      var pointSlected = false;
 	      if (selected.end - 0.1 < mouseLeft && selected.end + 0.1 > mouseLeft) {
 	        pointSlected = 'end';
@@ -4743,7 +4765,7 @@ var WaveGeneral =
 	        title: '',
 	        extend: {}
 	      };
-	      this.formInfo.push(frag);
+	      this.formInfo.push(this.checkedFrag(frag, -1));
 	      this.ee.emit('addFrag', this.formInfo);
 	    }
 	  }, {
@@ -4780,18 +4802,23 @@ var WaveGeneral =
 	      }
 	      var left = void 0;
 	      var width = void 0;
+	      if (this.getHitPoint(e)) {
+	        selectedDom.style.cursor = 'w-resize';
+	      } else {
+	        selectedDom.style.cursor = 'move';
+	      }
 	      if (this.movePoint) {
 	        if (this.hitPoint) {
 	          if (this.hitPoint === 'end') {
-	            left = window.parseInt(selectedDom.style.left);
-	            width = window.parseInt(selectedDom.style.width) + e.movementX;
+	            left = window.parseFloat(selectedDom.style.left);
+	            width = window.parseFloat(selectedDom.style.width) + e.movementX;
 	          } else if (this.hitPoint === 'start') {
-	            left = window.parseInt(selectedDom.style.left) + e.movementX;
-	            width = window.parseInt(selectedDom.style.width) - e.movementX;
+	            left = window.parseFloat(selectedDom.style.left) + e.movementX;
+	            width = window.parseFloat(selectedDom.style.width) - e.movementX;
 	          }
 	        } else {
-	          left = window.parseInt(selectedDom.style.left) + e.movementX;
-	          width = window.parseInt(selectedDom.style.width);
+	          left = window.parseFloat(selectedDom.style.left) + e.movementX;
+	          width = window.parseFloat(selectedDom.style.width);
 	        }
 	      }
 	      if (this.pointStart(left, this.selected) && this.pointStart(left + width, this.selected)) {
@@ -4801,17 +4828,38 @@ var WaveGeneral =
 	      var starts = (0, _conversions.pixelsToSeconds)(left, this.samplesPerPixel, this.sampleRate);
 	      var ends = (0, _conversions.pixelsToSeconds)(left + width, this.samplesPerPixel, this.sampleRate);
 	      var index = selectedDom.getAttribute('name');
+	      var newPoint = e.target.getAttribute('name');
+	      if (index !== newPoint && newPoint !== 'waveFrag') {
+	        this.upRightEvent();
+	        return;
+	      }
 	      this.changeFrag = { start: starts, end: ends, title: this.formInfo[index].title, extend: this.formInfo[index].extend };
 	    }
 	  }, {
 	    key: 'upRightEvent',
 	    value: function upRightEvent() {
 	      if (this.changeFrag && !isNaN(this.changeFrag.start)) {
-	        this.ee.emit('changeFrag', this.changeFrag, this.selected);
+	        var frag = this.checkedFrag(this.changeFrag, this.selected);
+	        this.ee.emit('changeFrag', frag, this.selected);
 	        this.formInfo[this.selected] = this.changeFrag;
 	      }
 	      this.movePoint = false;
 	      this.hitPoint = false;
+	    }
+	  }, {
+	    key: 'checkedFrag',
+	    value: function checkedFrag(frag, name) {
+	      this.formInfo.forEach(function (item, index) {
+	        var itemStart = item.start;
+	        var itemEnd = item.end;
+	        if (frag.start > itemStart && frag.start < itemEnd && index !== parseInt(name)) {
+	          frag.start = itemEnd;
+	        }
+	        if (frag.end > itemStart && frag.end < itemEnd && index !== parseInt(name)) {
+	          frag.end = itemStart;
+	        }
+	      });
+	      return frag;
 	    }
 	  }]);
 	

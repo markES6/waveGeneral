@@ -22,14 +22,20 @@ class FragController {
   setForminfo(formInfo) {
     this.formInfo = formInfo;
   }
+  setSelected(selected) {
+    this.selected = selected;
+  }
   bindEvent() {
     // oncontextmenu
     this.fragId.addEventListener('contextmenu', (e) => {
-      this.rightEvent(e);
+      e.stopPropagation();
       e.preventDefault();
+      this.rightEvent(e);
     });
     this.fragId.addEventListener('mousedown', (e) => {
       // 选中状态
+      e.stopPropagation();
+      e.preventDefault();
       if (e.which === 1) {
         if (this.selected) {
           this.downRightEvent(e);
@@ -40,6 +46,8 @@ class FragController {
     });
     this.fragId.addEventListener('mousemove', (e) => {
       // 选中状态
+      e.stopPropagation();
+      e.preventDefault();
       if (this.selected) {
         this.moveRightEvent(e);
         return;
@@ -50,6 +58,8 @@ class FragController {
     });
     this.fragId.addEventListener('mouseup', (e) => {
       // 选中状态
+      e.stopPropagation();
+      e.preventDefault();
       if (e.which === 3) { return; }
       if (this.selected) {
         this.upRightEvent();
@@ -65,6 +75,8 @@ class FragController {
       this.creatDom = false;
     });
     this.fragId.addEventListener('mouseleave', (e) => {
+      e.stopPropagation();
+      e.preventDefault();
       if (e.which === 3) { return; }
       // if (this.selected) {
       //   this.upRightEvent();
@@ -95,13 +107,13 @@ class FragController {
   getMouseLeft(e) {
     const canvasLeft = this.fragId.getBoundingClientRect().left;
     const mouseLeft = e.clientX;
-    const playWidth = mouseLeft - parseInt(canvasLeft);
+    const playWidth = mouseLeft - parseFloat(canvasLeft);
     return playWidth;
   }
   getHitPoint(e) {
     const canvasLeft = this.fragId.getBoundingClientRect().left;
     const selected = this.formInfo[this.selected];
-    const mouseLeft = pixelsToSeconds(e.clientX - parseInt(canvasLeft), this.samplesPerPixel, this.sampleRate);
+    const mouseLeft = pixelsToSeconds(e.clientX - parseFloat(canvasLeft), this.samplesPerPixel, this.sampleRate);
     let pointSlected = false;
     if (selected.end - 0.1 < mouseLeft && selected.end + 0.1 > mouseLeft) {
       pointSlected = 'end';
@@ -176,7 +188,7 @@ class FragController {
       title: '',
       extend: {},
     };
-    this.formInfo.push(frag);
+    this.formInfo.push(this.checkedFrag(frag, -1));
     this.ee.emit('addFrag', this.formInfo);
   }
 
@@ -206,18 +218,23 @@ class FragController {
     if (!selectedDom) { return; }
     let left;
     let width;
+    if (this.getHitPoint(e)) {
+      selectedDom.style.cursor = 'w-resize';
+    } else {
+      selectedDom.style.cursor = 'move';
+    }
     if (this.movePoint) {
       if (this.hitPoint) {
         if (this.hitPoint === 'end') {
-          left = window.parseInt(selectedDom.style.left);
-          width = window.parseInt(selectedDom.style.width) + e.movementX;
+          left = window.parseFloat(selectedDom.style.left);
+          width = window.parseFloat(selectedDom.style.width) + e.movementX;
         } else if (this.hitPoint === 'start') {
-          left = window.parseInt(selectedDom.style.left) + e.movementX;
-          width = window.parseInt(selectedDom.style.width) - e.movementX;
+          left = window.parseFloat(selectedDom.style.left) + e.movementX;
+          width = window.parseFloat(selectedDom.style.width) - e.movementX;
         }
       } else {
-        left = window.parseInt(selectedDom.style.left) + e.movementX;
-        width = window.parseInt(selectedDom.style.width);
+        left = window.parseFloat(selectedDom.style.left) + e.movementX;
+        width = window.parseFloat(selectedDom.style.width);
       }
     }
     if (this.pointStart(left, this.selected) && this.pointStart(left + width, this.selected)) {
@@ -227,15 +244,34 @@ class FragController {
     const starts = pixelsToSeconds(left, this.samplesPerPixel, this.sampleRate);
     const ends = pixelsToSeconds(left + width, this.samplesPerPixel, this.sampleRate);
     const index = selectedDom.getAttribute('name');
+    const newPoint = e.target.getAttribute('name');
+    if (index !== newPoint && newPoint !== 'waveFrag') {
+      this.upRightEvent();
+      return;
+    }
     this.changeFrag = { start: starts, end: ends, title: this.formInfo[index].title, extend: this.formInfo[index].extend };
   }
   upRightEvent() {
     if (this.changeFrag && !isNaN(this.changeFrag.start)) {
-      this.ee.emit('changeFrag', this.changeFrag, this.selected);
+      const frag = this.checkedFrag(this.changeFrag, this.selected);
+      this.ee.emit('changeFrag', frag, this.selected);
       this.formInfo[this.selected] = this.changeFrag;
     }
     this.movePoint = false;
     this.hitPoint = false;
+  }
+  checkedFrag(frag, name) {
+    this.formInfo.forEach((item, index) => {
+      const itemStart = item.start;
+      const itemEnd = item.end;
+      if (frag.start > itemStart && frag.start < itemEnd && index !== parseInt(name)) {
+        frag.start = itemEnd;
+      }
+      if (frag.end > itemStart && frag.end < itemEnd && index !== parseInt(name)) {
+        frag.end = itemStart;
+      }
+    });
+    return frag;
   }
 }
 

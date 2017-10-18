@@ -138,6 +138,7 @@ export default class {
     this.formInfo.splice(index, 1);
     this.formController.setForminfo(this.formInfo);
     this.fragController.setForminfo(this.formInfo);
+    this.fragController.setSelected();
     this.fragHook.render();
     this.formHook.render();
   }
@@ -184,10 +185,10 @@ export default class {
     });
     ee.on('loadFirst', () => {
       const self = this;
-      // if (this.loadFirst) {
-      //   setTimeout(() => self.play(), 1000);
-      //   this.loadFirst = false;
-      // }
+      if (this.loadFirst) {
+        setTimeout(() => self.play(), 1000);
+        this.loadFirst = false;
+      }
     });
     ee.on('demo', () => {
       console.log('demo');
@@ -309,6 +310,7 @@ export default class {
     this.stopAnimation();
     this.pauseTime = 0;
     this.renderPlayed(this.pauseTime);
+    document.getElementById('play').style.display = 'block';
     return this.playbackReset();
   }
   // 重新播放
@@ -399,7 +401,7 @@ export default class {
   }
   // 播放过音频控制
   renderPlayed(seconds) {
-    const played = new PlayedHook(seconds, this.samplesPerPixel, this.sampleRate, this.duration);
+    const played = new PlayedHook(seconds, this.samplesPerPixel, this.sampleRate, this.allTime);
     return played.render();
   }
   // 加载片段框
