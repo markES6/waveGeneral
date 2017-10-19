@@ -19,6 +19,9 @@ class FragController {
     this.samplesPerPixel = samplesPerPixel;
     this.sampleRate = sampleRate;
   }
+  setAllTime(allTime) {
+    this.allTime = allTime;
+  }
   setForminfo(formInfo) {
     this.formInfo = formInfo;
   }
@@ -135,6 +138,9 @@ class FragController {
     const points = pixelsToSeconds(Point, this.samplesPerPixel, this.sampleRate);
     this.formInfo.forEach((item, index) => {
       if ((points > item.start && points < item.end) && parseInt(out) !== index) {
+        setUp = false;
+      }
+      if (points <= 0 || points > this.allTime) {
         setUp = false;
       }
     });

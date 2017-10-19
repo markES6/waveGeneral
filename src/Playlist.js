@@ -257,9 +257,9 @@ export default class {
       this.timer = requestAnimationFrame((steps) => {
         this.animationRequest(steps);
       });
-    }
-    if (this.lastPlay >= this.allTime) {
-      this.stop();
+      if (this.lastPlay >= this.allTime) {
+        this.stop();
+      }
     }
   }
   // 停止动画
@@ -388,6 +388,7 @@ export default class {
   // 时间刻度记载
   renderTimeScale() {
     const controlWidth = this.controls.show ? this.controls.width : 0;
+    this.fragController.setAllTime(this.allTime);
     const timeScale = new TimeScale(this.allTime, this.scrollLeft,
       this.samplesPerPixel, this.sampleRate, controlWidth);
     return timeScale.render();
