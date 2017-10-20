@@ -107,6 +107,16 @@ class FormController {
       }
       this.selected = index;
     });
+    this.formDom.onkeydown = (e) => {
+      switch (e.keyCode) {
+        case 32:
+          console.log(111);
+          e.stopPropagation();
+          break;
+        default:
+          break;
+      }
+    };
     // this.formDom.addEventListener('mouseleave', (e) => {
     //   console.log(e.target);
     //   // console.log(111)

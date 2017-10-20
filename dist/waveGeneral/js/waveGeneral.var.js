@@ -1595,9 +1595,9 @@ var WaveGeneral =
 	        this.timer = requestAnimationFrame(function (steps) {
 	          _this5.animationRequest(steps);
 	        });
-	      }
-	      if (this.lastPlay >= this.allTime) {
-	        this.stop();
+	        if (this.lastPlay >= this.allTime) {
+	          this.stop();
+	        }
 	      }
 	    }
 	    // 停止动画
@@ -1759,6 +1759,7 @@ var WaveGeneral =
 	    key: 'renderTimeScale',
 	    value: function renderTimeScale() {
 	      var controlWidth = this.controls.show ? this.controls.width : 0;
+	      this.fragController.setAllTime(this.allTime);
 	      var timeScale = new _TimeScale2.default(this.allTime, this.scrollLeft, this.samplesPerPixel, this.sampleRate, controlWidth);
 	      return timeScale.render();
 	    }
@@ -4561,6 +4562,11 @@ var WaveGeneral =
 	      this.sampleRate = sampleRate;
 	    }
 	  }, {
+	    key: 'setAllTime',
+	    value: function setAllTime(allTime) {
+	      this.allTime = allTime;
+	    }
+	  }, {
 	    key: 'setForminfo',
 	    value: function setForminfo(formInfo) {
 	      this.formInfo = formInfo;
@@ -4698,10 +4704,15 @@ var WaveGeneral =
 	  }, {
 	    key: 'pointStart',
 	    value: function pointStart(Point, out) {
+	      var _this2 = this;
+	
 	      var setUp = true;
 	      var points = (0, _conversions.pixelsToSeconds)(Point, this.samplesPerPixel, this.sampleRate);
 	      this.formInfo.forEach(function (item, index) {
 	        if (points > item.start && points < item.end && parseInt(out) !== index) {
+	          setUp = false;
+	        }
+	        if (points <= 0 || points > _this2.allTime) {
 	          setUp = false;
 	        }
 	      });
@@ -5011,6 +5022,16 @@ var WaveGeneral =
 	        }
 	        _this2.selected = index;
 	      });
+	      this.formDom.onkeydown = function (e) {
+	        switch (e.keyCode) {
+	          case 32:
+	            console.log(111);
+	            e.stopPropagation();
+	            break;
+	          default:
+	            break;
+	        }
+	      };
 	      // this.formDom.addEventListener('mouseleave', (e) => {
 	      //   console.log(e.target);
 	      //   // console.log(111)
