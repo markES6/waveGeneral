@@ -12,12 +12,12 @@ class FromHook {
 
     this.formDom = document.getElementById('formInfo');
   }
-  renderInput(item, typeInfo) {
+  renderInput(item, typeInfo, state) {
     const checkValue = item.extend[typeInfo.sort] || '';
-    const inputDom = `<div class="form-content"><p>${typeInfo.title}:</p><input type="text" value="${checkValue}" class="formValue" name="${typeInfo.sort}"></div>`;
+    const inputDom = `<div class="form-content" style="display:${state}"><p>${typeInfo.title}:</p><input type="text" value="${checkValue}" class="formValue" name="${typeInfo.sort}"></div>`;
     return inputDom;
   }
-  renderCheckbox(item, typeInfo, index) {
+  renderCheckbox(item, typeInfo, index, state) {
     let listDom = '';
     let checkValue = item.extend[typeInfo.sort] || [];
     if (typeof checkValue === 'string') {
@@ -36,7 +36,7 @@ class FromHook {
                   </li>
                 `;
     });
-    const checkboxDom = `<div class="form-content" ><p>${typeInfo.title}:</p> 
+    const checkboxDom = `<div class="form-content" style="display:${state}"><p>${typeInfo.title}:</p> 
                           <ul class="cd-form-list formValue" name="${typeInfo.sort}" type="checkbox">
                             ${listDom}
                           </ul>
@@ -78,11 +78,12 @@ class FromHook {
     return selectDom;
   }
   qualityRender(formItem, errorInfo, index) {
+    const state = formItem.extend.qualityState == '0' ? 'none' : 'block';
     const qualityType = { type: 'radio', sort: 'qualityState', title: 'State', option: ['合格', '不合格'] };
     const errorType = { type: 'input', sort: 'errorsMessage', title: 'ErrMessage'};
     let qualityState = this.renderRadio(formItem, qualityType, `qualityState${index}`);
-    let errorsState = this.renderCheckbox(formItem, errorInfo, `errorsState${index}`);
-    let errorsMessage = this.renderInput(formItem, errorType, `errorsMessage${index}`);
+    let errorsState = this.renderCheckbox(formItem, errorInfo, `errorsState${index}`, state);
+    let errorsMessage = this.renderInput(formItem, errorType, state);
     if (this.markInfo.operationCase == 2 || this.markInfo.operationCase == 1) {
       let checkValue = formItem.extend.errorInfo || '';
       let errorValue = '';
@@ -133,6 +134,16 @@ class FromHook {
             ${qualityDom}
             </div>`;
   }
+  setDataInfo() {
+    let successTime = 0;
+    const dataInfo = document.getElementById('dataInfo').getElementsByTagName('p');
+    dataInfo[0].innerHTML = `总段落数量：${this.formInfo.length}`;
+    this.formInfo.forEach((item) => {
+      const time = item.end - item.start;
+      successTime += time;
+    });
+    dataInfo[1].innerHTML = `有效时长合计：${successTime.toFixed(2)}`;
+  }
   renderAdd(form) {
     this.formInfo = form;
     this.render();
@@ -144,6 +155,7 @@ class FromHook {
     // this.formDom.innerHTML = formContent;
   }
   render() {
+    this.setDataInfo();
     let formContent = '';
     this.formInfo.forEach((formItem, index) => {
       formContent += this.creatDom(formItem, index);

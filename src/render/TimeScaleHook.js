@@ -23,7 +23,6 @@ export default class {
     const ctx = canvas.getContext('2d');
 
     ctx.clearRect(0, 0, width, height);
-
     Object.keys(this.tickInfo).forEach((x) => {
       const scaleHeight = this.tickInfo[x];
       const scaleY = height - scaleHeight;

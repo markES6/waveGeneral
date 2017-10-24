@@ -16,7 +16,7 @@ export function init(options = {}, ee = EventEmitter()) {
   const defaults = {
     ac: audioContext,
     sampleRate: audioContext.sampleRate,
-    samplesPerPixel: 128,
+    samplesPerPixel: 1500,
     controls: {
       show: false,
       width: 150,
@@ -27,9 +27,8 @@ export function init(options = {}, ee = EventEmitter()) {
       fadeColor: 'black',
     },
     waveHeight: 256,
-    zoomLevels: [128, 256, 512, 1024, 2048, 4096, 8192, 16384],
+    zoomLevels: [400, 750, 1500, 3000, 6000, 11000, 19000],
   };
-
   const config = _assign(defaults, options);
   const zoomIndex = config.zoomLevels.indexOf(config.samplesPerPixel);
 

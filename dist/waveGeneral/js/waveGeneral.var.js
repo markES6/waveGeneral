@@ -89,7 +89,7 @@ var WaveGeneral =
 	  var defaults = {
 	    ac: audioContext,
 	    sampleRate: audioContext.sampleRate,
-	    samplesPerPixel: 128,
+	    samplesPerPixel: 1500,
 	    controls: {
 	      show: false,
 	      width: 150
@@ -100,9 +100,8 @@ var WaveGeneral =
 	      fadeColor: 'black'
 	    },
 	    waveHeight: 256,
-	    zoomLevels: [128, 256, 512, 1024, 2048, 4096, 8192, 16384]
+	    zoomLevels: [400, 750, 1500, 3000, 6000, 11000, 19000]
 	  };
-	
 	  var config = (0, _lodash2.default)(defaults, options);
 	  var zoomIndex = config.zoomLevels.indexOf(config.samplesPerPixel);
 	
@@ -1445,6 +1444,14 @@ var WaveGeneral =
 	      this.formHook.render();
 	    }
 	  }, {
+	    key: 'clearInfo',
+	    value: function clearInfo() {
+	      this.formInfo = [];
+	      this.formController.setForminfo(this.formInfo);
+	      this.fragController.setForminfo(this.formInfo);
+	      this.render();
+	    }
+	  }, {
 	    key: 'deleteFragHook',
 	    value: function deleteFragHook(index) {
 	      this.formInfo.splice(index, 1);
@@ -1508,8 +1515,11 @@ var WaveGeneral =
 	          _this2.loadFirst = false;
 	        }
 	      });
+	      ee.on('clear', function () {
+	        _this2.clearInfo();
+	      });
 	      ee.on('demo', function () {
-	        console.log('demo');
+	        console.log(111);
 	      });
 	      document.getElementById('wrap').onmousewheel = function (e) {
 	        var zoomIndex = e.deltaY === 100 ? 1 : -1;
@@ -1595,7 +1605,7 @@ var WaveGeneral =
 	        this.timer = requestAnimationFrame(function (steps) {
 	          _this5.animationRequest(steps);
 	        });
-	        if (this.lastPlay >= this.allTime) {
+	        if (this.lastPlay > this.allTime) {
 	          this.stop();
 	        }
 	      }
@@ -1623,7 +1633,7 @@ var WaveGeneral =
 	      var _this6 = this;
 	
 	      var start = startTime || this.pauseTime;
-	      var end = endTime || this.duration;
+	      var end = endTime || this.allTime;
 	      this.startTime = startTime;
 	      this.endTime = end;
 	      if (this.isPlaying()) {
@@ -2849,7 +2859,6 @@ var WaveGeneral =
 	    this.samplesPerPixel = samplesPerPixel;
 	    this.sampleRate = sampleRate;
 	    this.marginLeft = 0;
-	
 	    this.timeinfo = {
 	      20000: {
 	        marker: 30000,
@@ -3638,7 +3647,6 @@ var WaveGeneral =
 	      var ctx = canvas.getContext('2d');
 	
 	      ctx.clearRect(0, 0, width, height);
-	
 	      Object.keys(this.tickInfo).forEach(function (x) {
 	        var scaleHeight = _this.tickInfo[x];
 	        var scaleY = height - scaleHeight;
@@ -4387,14 +4395,14 @@ var WaveGeneral =
 	
 	  _createClass(FromHook, [{
 	    key: 'renderInput',
-	    value: function renderInput(item, typeInfo) {
+	    value: function renderInput(item, typeInfo, state) {
 	      var checkValue = item.extend[typeInfo.sort] || '';
-	      var inputDom = '<div class="form-content"><p>' + typeInfo.title + ':</p><input type="text" value="' + checkValue + '" class="formValue" name="' + typeInfo.sort + '"></div>';
+	      var inputDom = '<div class="form-content" style="display:' + state + '"><p>' + typeInfo.title + ':</p><input type="text" value="' + checkValue + '" class="formValue" name="' + typeInfo.sort + '"></div>';
 	      return inputDom;
 	    }
 	  }, {
 	    key: 'renderCheckbox',
-	    value: function renderCheckbox(item, typeInfo, index) {
+	    value: function renderCheckbox(item, typeInfo, index, state) {
 	      var listDom = '';
 	      var checkValue = item.extend[typeInfo.sort] || [];
 	      if (typeof checkValue === 'string') {
@@ -4409,7 +4417,7 @@ var WaveGeneral =
 	        });
 	        listDom += '<li>\n                    <input type="checkbox" name="checkbox-' + index + '" value=\'' + indexT + '\' ' + checked + '>\n                    <label>' + name + '</label>\n                  </li>\n                ';
 	      });
-	      var checkboxDom = '<div class="form-content" ><p>' + typeInfo.title + ':</p> \n                          <ul class="cd-form-list formValue" name="' + typeInfo.sort + '" type="checkbox">\n                            ' + listDom + '\n                          </ul>\n                        </div>';
+	      var checkboxDom = '<div class="form-content" style="display:' + state + '"><p>' + typeInfo.title + ':</p> \n                          <ul class="cd-form-list formValue" name="' + typeInfo.sort + '" type="checkbox">\n                            ' + listDom + '\n                          </ul>\n                        </div>';
 	      return checkboxDom;
 	    }
 	  }, {
@@ -4439,11 +4447,12 @@ var WaveGeneral =
 	  }, {
 	    key: 'qualityRender',
 	    value: function qualityRender(formItem, errorInfo, index) {
+	      var state = formItem.extend.qualityState == '0' ? 'none' : 'block';
 	      var qualityType = { type: 'radio', sort: 'qualityState', title: 'State', option: ['合格', '不合格'] };
 	      var errorType = { type: 'input', sort: 'errorsMessage', title: 'ErrMessage' };
 	      var qualityState = this.renderRadio(formItem, qualityType, 'qualityState' + index);
-	      var errorsState = this.renderCheckbox(formItem, errorInfo, 'errorsState' + index);
-	      var errorsMessage = this.renderInput(formItem, errorType, 'errorsMessage' + index);
+	      var errorsState = this.renderCheckbox(formItem, errorInfo, 'errorsState' + index, state);
+	      var errorsMessage = this.renderInput(formItem, errorType, state);
 	      if (this.markInfo.operationCase == 2 || this.markInfo.operationCase == 1) {
 	        var checkValue = formItem.extend.errorInfo || '';
 	        var errorValue = '';
@@ -4491,6 +4500,18 @@ var WaveGeneral =
 	      return '<div class="form-group" style="left:' + left + 'px" name="' + index + '">\n            <div class="form-title"><h1>' + index + '</h1><h2 name="close">X</h2></div>\n            ' + formContent + '\n            ' + qualityDom + '\n            </div>';
 	    }
 	  }, {
+	    key: 'setDataInfo',
+	    value: function setDataInfo() {
+	      var successTime = 0;
+	      var dataInfo = document.getElementById('dataInfo').getElementsByTagName('p');
+	      dataInfo[0].innerHTML = '\u603B\u6BB5\u843D\u6570\u91CF\uFF1A' + this.formInfo.length;
+	      this.formInfo.forEach(function (item) {
+	        var time = item.end - item.start;
+	        successTime += time;
+	      });
+	      dataInfo[1].innerHTML = '\u6709\u6548\u65F6\u957F\u5408\u8BA1\uFF1A' + successTime.toFixed(2);
+	    }
+	  }, {
 	    key: 'renderAdd',
 	    value: function renderAdd(form) {
 	      this.formInfo = form;
@@ -4507,6 +4528,7 @@ var WaveGeneral =
 	    value: function render() {
 	      var _this2 = this;
 	
+	      this.setDataInfo();
 	      var formContent = '';
 	      this.formInfo.forEach(function (formItem, index) {
 	        formContent += _this2.creatDom(formItem, index);
@@ -4730,6 +4752,9 @@ var WaveGeneral =
 	          point2 = item.end;
 	        }
 	      });
+	      if (point2 > this.allTime) {
+	        point2 = this.allTime;
+	      }
 	      return (0, _conversions.secondsToPixels)(point2, this.samplesPerPixel, this.sampleRate);
 	    }
 	  }, {
@@ -4769,10 +4794,11 @@ var WaveGeneral =
 	    value: function upEventCreat(e) {
 	      var upPoint = this.pointEnd(this.getMouseLeft(e));
 	      var start = Math.min(upPoint, this.downPoint);
-	      var end = Math.max(upPoint, this.downPoint);
+	      var end = (0, _conversions.pixelsToSeconds)(Math.max(upPoint, this.downPoint), this.samplesPerPixel, this.sampleRate);
+	      var endTime = end >= this.allTime ? this.allTime : end;
 	      var frag = {
 	        start: (0, _conversions.pixelsToSeconds)(start, this.samplesPerPixel, this.sampleRate),
-	        end: (0, _conversions.pixelsToSeconds)(end, this.samplesPerPixel, this.sampleRate),
+	        end: endTime,
 	        title: '',
 	        extend: {}
 	      };
@@ -5006,13 +5032,16 @@ var WaveGeneral =
 	        }
 	        if (name.indexOf('qualityState') >= 0) {
 	          var errorsState = document.getElementsByClassName('quality-content')[index].getElementsByClassName('form-content')[1];
+	          var errorsState2 = document.getElementsByClassName('quality-content')[index].getElementsByClassName('form-content')[2];
 	          var fragDom = document.getElementsByClassName('frag');
 	          if (e.target.getAttribute('value') === '0') {
 	            errorsState.style.display = 'none';
+	            errorsState2.style.display = 'none';
 	            fragDom[index].className = 'frag fragGreen';
 	            _this2.smallNav.getElementsByTagName('li')[index].className = 'btn green';
 	          } else if (e.target.getAttribute('value') === '1') {
 	            errorsState.style.display = 'block';
+	            errorsState2.style.display = 'block';
 	            fragDom[index].className = 'frag fragRed';
 	            _this2.smallNav.getElementsByTagName('li')[index].className = 'btn red';
 	            for (var i = 0; i < errorsState.getElementsByTagName('input').length; i++) {

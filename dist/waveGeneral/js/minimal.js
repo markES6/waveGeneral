@@ -1,6 +1,6 @@
 const playlist = WaveGeneral.init({
   name: 'demo1',
-  samplesPerPixel: 512,
+  samplesPerPixel: 750,
   waveHeight: 500,
   container: document.getElementById('wavelist'),
   colors: {

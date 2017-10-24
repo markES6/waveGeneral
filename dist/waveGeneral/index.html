@@ -106,6 +106,15 @@
     font-size: 12px;
     color: #2B2F41;
   }
+  #dataInfo{
+    width: 90%;
+    position: absolute;
+    top: 5px;
+  }
+  #dataInfo p{
+      font-size:12px;
+      float:left;
+  }
   #btnGroup{
     position: absolute;
     top: 8px;
@@ -357,9 +366,9 @@
           <div id="formInfo" class="cd-form floating-labels"></div>
       </div> 
     </div>
-    <img src="img/ruler.png" id="ruler" alt="ruler">
     <div class="Cross"></div>
     <div class="Cross Cross2"></div>
+    <img src="http://cdn.crowd.datatang.com/Scripts/wavegenerals/img/ruler.png" id="ruler" alt="ruler">
     <div id="progress">
       <div id="played"></div>
       <div id="loading"></div>
@@ -371,9 +380,13 @@
     </div>
   </div>
   <div id="btnGroup">
-    <div id="cycle">cycle</div>
-    <div id="save">save</div>
-    <div id="demo">demo</div>
+    <div id="clear"  class="btn-freeze">清空</div>
+    <div id="save"  class="btn-freeze">保存</div>
+  </div>
+  <div  id="dataInfo">
+      <p>总段落数量：10</p>
+      <p>有效时长合计：10</p>
+      <p>无效时长合计：10</p>
   </div>
   <div id="smallNav">
     <div class="btn pre"><</div>

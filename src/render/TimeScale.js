@@ -10,7 +10,6 @@ class TimeScale {
     this.samplesPerPixel = samplesPerPixel;
     this.sampleRate = sampleRate;
     this.marginLeft = 0;
-
     this.timeinfo = {
       20000: {
         marker: 30000,

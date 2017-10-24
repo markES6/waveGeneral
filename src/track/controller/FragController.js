@@ -156,6 +156,9 @@ class FragController {
         point2 = item.end;
       }
     });
+    if (point2 > this.allTime) {
+      point2 = this.allTime;
+    }
     return secondsToPixels(point2, this.samplesPerPixel, this.sampleRate);
   }
   downEvent(e) {
@@ -187,10 +190,11 @@ class FragController {
   upEventCreat(e) {
     const upPoint = this.pointEnd(this.getMouseLeft(e));
     const start = Math.min(upPoint, this.downPoint);
-    const end = Math.max(upPoint, this.downPoint);
+    const end = pixelsToSeconds(Math.max(upPoint, this.downPoint), this.samplesPerPixel, this.sampleRate);
+    const endTime = end >= this.allTime ? this.allTime : end;
     const frag = {
       start: pixelsToSeconds(start, this.samplesPerPixel, this.sampleRate),
-      end: pixelsToSeconds(end, this.samplesPerPixel, this.sampleRate),
+      end: endTime,
       title: '',
       extend: {},
     };

@@ -134,6 +134,12 @@ export default class {
     this.formInfo.splice(index, 1, frag);
     this.formHook.render();
   }
+  clearInfo(){
+    this.formInfo = [];
+    this.formController.setForminfo(this.formInfo);
+    this.fragController.setForminfo(this.formInfo);
+    this.render();
+  }
   deleteFragHook(index) {
     this.formInfo.splice(index, 1);
     this.formController.setForminfo(this.formInfo);
@@ -190,8 +196,11 @@ export default class {
         this.loadFirst = false;
       }
     });
+    ee.on('clear', () => {
+      this.clearInfo();
+    });
     ee.on('demo', () => {
-      console.log('demo');
+      console.log(111);
     });
     document.getElementById('wrap').onmousewheel = (e) => {
       const zoomIndex = e.deltaY === 100 ? 1 : -1;
@@ -257,7 +266,7 @@ export default class {
       this.timer = requestAnimationFrame((steps) => {
         this.animationRequest(steps);
       });
-      if (this.lastPlay >= this.allTime) {
+      if (this.lastPlay > this.allTime) {
         this.stop();
       }
     }
@@ -274,7 +283,7 @@ export default class {
   // 播放
   play(startTime, endTime) {
     const start = startTime || this.pauseTime;
-    const end = endTime || this.duration;
+    const end = endTime || this.allTime;
     this.startTime = startTime;
     this.endTime = end;
     if (this.isPlaying()) {

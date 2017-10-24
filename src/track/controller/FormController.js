@@ -91,13 +91,16 @@ class FormController {
       }
       if (name.indexOf('qualityState') >= 0) {
         const errorsState = document.getElementsByClassName('quality-content')[index].getElementsByClassName('form-content')[1];
+        const errorsState2 = document.getElementsByClassName('quality-content')[index].getElementsByClassName('form-content')[2];
         const fragDom = document.getElementsByClassName('frag');
         if (e.target.getAttribute('value') === '0') {
           errorsState.style.display = 'none';
+          errorsState2.style.display = 'none';
           fragDom[index].className = 'frag fragGreen';
           this.smallNav.getElementsByTagName('li')[index].className = 'btn green';
         } else if (e.target.getAttribute('value') === '1') {
           errorsState.style.display = 'block';
+          errorsState2.style.display = 'block';
           fragDom[index].className = 'frag fragRed';
           this.smallNav.getElementsByTagName('li')[index].className = 'btn red';
           for (let i = 0; i < errorsState.getElementsByTagName('input').length; i++) {
@@ -110,8 +113,7 @@ class FormController {
     this.formDom.onkeydown = (e) => {
       switch (e.keyCode) {
         case 32:
-          console.log(111);
-          e.stopPropagation();
+           e.stopPropagation();
           break;
         default:
           break;
