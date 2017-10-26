@@ -70,6 +70,7 @@ class FormController {
     const listDom = formSlected.getElementsByClassName('form-content');
     this.formInfo[name].extend.formValue = [];
     const operationCase = this.markInfo.operationCase;
+    // const operationCase = 32;
     if (operationCase !== 4 && operationCase !== 32 && operationCase !== 128 && operationCase !== 256) {
       const state = formSlected.getElementsByClassName('quality-content')[0].getElementsByTagName('span')[0].innerHTML;
       if (state === '不合格' || state === '合格') {

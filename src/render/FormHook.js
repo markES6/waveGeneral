@@ -1,8 +1,9 @@
 import { secondsToPixels } from '../utils/conversions';
 
 class FromHook {
-  constructor(typeArr, formInfo, samplesPerPixel, sampleRate, ee, markInfo = {}) {
+  constructor(typeArr, errorInfo, formInfo, samplesPerPixel, sampleRate, ee, markInfo = {}) {
     this.typeArr = typeArr;
+    this.errorInfo = errorInfo;
     this.formInfo = formInfo;
     this.markInfo = markInfo;
     this.samplesPerPixel = samplesPerPixel;
@@ -106,10 +107,9 @@ class FromHook {
     return qualityDom;
   }
   creatDom(formItem, index) {
-    const errorInfo = { type: 'checkbox', sort: 'errorInfo', title: 'errorInfo', option: ['错误1', '错误2', '错误3'] };
     const left = secondsToPixels(formItem.start, this.samplesPerPixel, this.sampleRate);
     let formContent = '';
-    const qualityDom =  this.qualityRender(formItem, errorInfo, index);
+    const qualityDom =  this.qualityRender(formItem, this.errorInfo, index);
     this.typeArr.forEach((typeItem) => {
       switch (typeItem.type) {
         case 'input':
@@ -134,16 +134,6 @@ class FromHook {
             ${qualityDom}
             </div>`;
   }
-  setDataInfo() {
-    let successTime = 0;
-    const dataInfo = document.getElementById('dataInfo').getElementsByTagName('p');
-    dataInfo[0].innerHTML = `总段落数量：${this.formInfo.length}`;
-    this.formInfo.forEach((item) => {
-      const time = item.end - item.start;
-      successTime += time;
-    });
-    dataInfo[1].innerHTML = `有效时长合计：${successTime.toFixed(2)}`;
-  }
   renderAdd(form) {
     this.formInfo = form;
     this.render();
@@ -155,7 +145,7 @@ class FromHook {
     // this.formDom.innerHTML = formContent;
   }
   render() {
-    this.setDataInfo();
+    this.ee.emit('saveFun', this.formInfo);
     let formContent = '';
     this.formInfo.forEach((formItem, index) => {
       formContent += this.creatDom(formItem, index);

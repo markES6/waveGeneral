@@ -26,6 +26,15 @@ export function init(options = {}, ee = EventEmitter()) {
       timeColor: 'grey',
       fadeColor: 'black',
     },
+    typeArr: [{ type: 'input', sort: 'form1', title: '标题', option: '' },
+              { type: 'select', sort: 'form2', title: 'select', option: ['苹果', '香蕉', '橘子'] },
+           // { type: 'checkbox', sort: 'form3', title: 'checkbox', option: ['苹果', '香蕉', '橘子'] },
+           // { type: 'radio', sort: 'form4', title: 'radio', option: ['苹果', '香蕉', '橘子'] }
+          ],
+    saveFun: (info) => {
+      console.log(info);
+    },
+    errorInfo: { type: 'checkbox', sort: 'errorInfo', title: 'errorInfo', option: ['错误1', '错误2', '错误3'] },
     waveHeight: 256,
     zoomLevels: [400, 750, 1500, 3000, 6000, 11000, 19000],
   };
@@ -41,6 +50,9 @@ export function init(options = {}, ee = EventEmitter()) {
   playlist.setDefault(config.markData);
   playlist.setMarkInfo(config.markInfo);
   playlist.setDataInfo();
+  playlist.setTypeArr(config.typeArr);
+  playlist.setErrorInfo(config.errorInfo);
+  playlist.setSaveFun(config.saveFun);
   playlist.setSampleRate(config.sampleRate);
   playlist.setSamplesPerPixel(config.samplesPerPixel);
   playlist.setAudioContext(config.ac);
@@ -51,6 +63,7 @@ export function init(options = {}, ee = EventEmitter()) {
   playlist.setColors(config.colors);
   playlist.setZoomLevels(config.zoomLevels);
   playlist.setZoomIndex(zoomIndex);
+
   playlist.isAutomaticScroll = config.isAutomaticScroll;
   playlist.isContinuousPlay = config.isContinuousPlay;
   playlist.linkedEndpoints = config.linkedEndpoints;

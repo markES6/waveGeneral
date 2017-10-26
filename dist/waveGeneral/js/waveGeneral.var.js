@@ -99,6 +99,11 @@ var WaveGeneral =
 	      timeColor: 'grey',
 	      fadeColor: 'black'
 	    },
+	    typeArr: [{ type: 'input', sort: 'form1', title: '标题', option: '' }, { type: 'select', sort: 'form2', title: 'select', option: ['苹果', '香蕉', '橘子'] }],
+	    saveFun: function saveFun(info) {
+	      console.log(info);
+	    },
+	    errorInfo: { type: 'checkbox', sort: 'errorInfo', title: 'errorInfo', option: ['错误1', '错误2', '错误3'] },
 	    waveHeight: 256,
 	    zoomLevels: [400, 750, 1500, 3000, 6000, 11000, 19000]
 	  };
@@ -114,6 +119,9 @@ var WaveGeneral =
 	  playlist.setDefault(config.markData);
 	  playlist.setMarkInfo(config.markInfo);
 	  playlist.setDataInfo();
+	  playlist.setTypeArr(config.typeArr);
+	  playlist.setErrorInfo(config.errorInfo);
+	  playlist.setSaveFun(config.saveFun);
 	  playlist.setSampleRate(config.sampleRate);
 	  playlist.setSamplesPerPixel(config.samplesPerPixel);
 	  playlist.setAudioContext(config.ac);
@@ -124,6 +132,7 @@ var WaveGeneral =
 	  playlist.setColors(config.colors);
 	  playlist.setZoomLevels(config.zoomLevels);
 	  playlist.setZoomIndex(zoomIndex);
+	
 	  playlist.isAutomaticScroll = config.isAutomaticScroll;
 	  playlist.isContinuousPlay = config.isContinuousPlay;
 	  playlist.linkedEndpoints = config.linkedEndpoints;
@@ -1287,7 +1296,6 @@ var WaveGeneral =
 	    this.pauseTime = 0;
 	    this.lastPlay = 0;
 	    this.formInfo = [];
-	    this.typeArr = [{ type: 'input', sort: 'form1', title: '标题', option: '' }, { type: 'select', sort: 'form2', title: 'select', option: ['苹果', '香蕉', '橘子'] }];
 	
 	    this.fragDom = document.getElementById('waveFrag');
 	    this.canvasDom = document.getElementById('waveCanvse');
@@ -1319,6 +1327,21 @@ var WaveGeneral =
 	      // if (localStorage[this.name] && localStorage[this.name] !== '[]') {
 	      //   this.formInfo = JSON.parse(localStorage[this.name]);
 	      // }
+	    }
+	  }, {
+	    key: 'setTypeArr',
+	    value: function setTypeArr(typeArr) {
+	      this.typeArr = typeArr;
+	    }
+	  }, {
+	    key: 'setErrorInfo',
+	    value: function setErrorInfo(errorInfo) {
+	      this.errorInfo = errorInfo;
+	    }
+	  }, {
+	    key: 'setSaveFun',
+	    value: function setSaveFun(saveFun) {
+	      this.saveFun = saveFun;
 	    }
 	  }, {
 	    key: 'setMarkInfo',
@@ -1505,6 +1528,10 @@ var WaveGeneral =
 	      ee.on('save', function (formData) {
 	        _this2.formInfo = formData;
 	        _this2.saveLocalStorage();
+	        _this2.saveFun(_this2.formInfo);
+	      });
+	      ee.on('saveFun', function (formInfo) {
+	        _this2.saveFun(formInfo);
 	      });
 	      ee.on('loadFirst', function () {
 	        var self = _this2;
@@ -1812,7 +1839,7 @@ var WaveGeneral =
 	    value: function renderFrag() {
 	      this.fragHook = new _FragHook2.default(this.fragDom, this.formInfo, this.samplesPerPixel, this.sampleRate, this.ee);
 	      this.fragHook.render();
-	      this.formHook = new _FormHook2.default(this.typeArr, this.formInfo, this.samplesPerPixel, this.sampleRate, this.ee, this.markInfo);
+	      this.formHook = new _FormHook2.default(this.typeArr, this.errorInfo, this.formInfo, this.samplesPerPixel, this.sampleRate, this.ee, this.markInfo);
 	      this.formHook.render();
 	    }
 	    // 加载页面
@@ -4399,12 +4426,13 @@ var WaveGeneral =
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
 	var FromHook = function () {
-	  function FromHook(typeArr, formInfo, samplesPerPixel, sampleRate, ee) {
-	    var markInfo = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : {};
+	  function FromHook(typeArr, errorInfo, formInfo, samplesPerPixel, sampleRate, ee) {
+	    var markInfo = arguments.length > 6 && arguments[6] !== undefined ? arguments[6] : {};
 	
 	    _classCallCheck(this, FromHook);
 	
 	    this.typeArr = typeArr;
+	    this.errorInfo = errorInfo;
 	    this.formInfo = formInfo;
 	    this.markInfo = markInfo;
 	    this.samplesPerPixel = samplesPerPixel;
@@ -4496,10 +4524,9 @@ var WaveGeneral =
 	    value: function creatDom(formItem, index) {
 	      var _this = this;
 	
-	      var errorInfo = { type: 'checkbox', sort: 'errorInfo', title: 'errorInfo', option: ['错误1', '错误2', '错误3'] };
 	      var left = (0, _conversions.secondsToPixels)(formItem.start, this.samplesPerPixel, this.sampleRate);
 	      var formContent = '';
-	      var qualityDom = this.qualityRender(formItem, errorInfo, index);
+	      var qualityDom = this.qualityRender(formItem, this.errorInfo, index);
 	      this.typeArr.forEach(function (typeItem) {
 	        switch (typeItem.type) {
 	          case 'input':
@@ -4521,18 +4548,6 @@ var WaveGeneral =
 	      return '<div class="form-group" style="left:' + left + 'px" name="' + index + '">\n            <div class="form-title"><h1>' + index + '</h1><h2 name="close">X</h2></div>\n            ' + formContent + '\n            ' + qualityDom + '\n            </div>';
 	    }
 	  }, {
-	    key: 'setDataInfo',
-	    value: function setDataInfo() {
-	      var successTime = 0;
-	      var dataInfo = document.getElementById('dataInfo').getElementsByTagName('p');
-	      dataInfo[0].innerHTML = '\u603B\u6BB5\u843D\u6570\u91CF\uFF1A' + this.formInfo.length;
-	      this.formInfo.forEach(function (item) {
-	        var time = item.end - item.start;
-	        successTime += time;
-	      });
-	      dataInfo[1].innerHTML = '\u6709\u6548\u65F6\u957F\u5408\u8BA1\uFF1A' + successTime.toFixed(2);
-	    }
-	  }, {
 	    key: 'renderAdd',
 	    value: function renderAdd(form) {
 	      this.formInfo = form;
@@ -4549,7 +4564,7 @@ var WaveGeneral =
 	    value: function render() {
 	      var _this2 = this;
 	
-	      this.setDataInfo();
+	      this.ee.emit('saveFun', this.formInfo);
 	      var formContent = '';
 	      this.formInfo.forEach(function (formItem, index) {
 	        formContent += _this2.creatDom(formItem, index);
@@ -5026,6 +5041,7 @@ var WaveGeneral =
 	      var listDom = formSlected.getElementsByClassName('form-content');
 	      this.formInfo[name].extend.formValue = [];
 	      var operationCase = this.markInfo.operationCase;
+	      // const operationCase = 32;
 	      if (operationCase !== 4 && operationCase !== 32 && operationCase !== 128 && operationCase !== 256) {
 	        var state = formSlected.getElementsByClassName('quality-content')[0].getElementsByTagName('span')[0].innerHTML;
 	        if (state === '不合格' || state === '合格') {

@@ -31,11 +31,7 @@ export default class {
     this.pauseTime = 0;
     this.lastPlay = 0;
     this.formInfo = [];
-    this.typeArr = [{ type: 'input', sort: 'form1', title: '标题', option: '' },
-                     { type: 'select', sort: 'form2', title: 'select', option: ['苹果', '香蕉', '橘子'] },
-                     // { type: 'checkbox', sort: 'form3', title: 'checkbox', option: ['苹果', '香蕉', '橘子'] },
-                     // { type: 'radio', sort: 'form4', title: 'radio', option: ['苹果', '香蕉', '橘子'] }
-                     ];
+
 
     this.fragDom = document.getElementById('waveFrag');
     this.canvasDom = document.getElementById('waveCanvse');
@@ -57,6 +53,15 @@ export default class {
     // if (localStorage[this.name] && localStorage[this.name] !== '[]') {
     //   this.formInfo = JSON.parse(localStorage[this.name]);
     // }
+  }
+  setTypeArr(typeArr) {
+    this.typeArr = typeArr;
+  }
+  setErrorInfo(errorInfo) {
+    this.errorInfo = errorInfo;
+  }
+  setSaveFun(saveFun) {
+    this.saveFun = saveFun;
   }
   setMarkInfo(markInfo) {
     this.markInfo = markInfo;
@@ -188,6 +193,10 @@ export default class {
     ee.on('save', (formData) => {
       this.formInfo = formData;
       this.saveLocalStorage();
+      this.saveFun(this.formInfo);
+    });
+    ee.on('saveFun', (formInfo) => {
+      this.saveFun(formInfo);
     });
     ee.on('loadFirst', () => {
       const self = this;
@@ -429,7 +438,7 @@ export default class {
     this.fragHook = new
     FragHook(this.fragDom, this.formInfo, this.samplesPerPixel, this.sampleRate, this.ee);
     this.fragHook.render();
-    this.formHook = new FormHook(this.typeArr, this.formInfo, this.samplesPerPixel,
+    this.formHook = new FormHook(this.typeArr, this.errorInfo, this.formInfo, this.samplesPerPixel,
       this.sampleRate, this.ee, this.markInfo);
     this.formHook.render();
   }
