@@ -53,6 +53,12 @@ class TimeScale {
         smallStep: 100,
         secondStep: 1 / 10,
       },
+      300: {
+        marker: 1000,
+        bigStep: 500,
+        smallStep: 100,
+        secondStep: 1 / 10,
+      },
     };
   }
 
@@ -125,7 +131,7 @@ class TimeScale {
     return h('div.playlist-time-scale',
       {
         attributes: {
-          style: `position: relative; left: 0; right: 0; margin-left: ${this.marginLeft}px;`,
+          style: `position: relative; left: 0; right: 0; margin-left: ${pixOffset}px;`,
         },
       },
       [

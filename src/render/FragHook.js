@@ -25,9 +25,12 @@ class FragHook {
   creatNav(frag, index) {
     let className = 'btn';
     if (frag.extend.qualityState === '0') {
-    className += ' green';
+      className += ' green';
     } else if (frag.extend.qualityState === '1') {
       className += ' red';
+    }
+    if (frag.extend.change) {
+      className += ' yellow';
     }
     const dom = `<li class="${className}" name="${index}">${index}</li>`;
     return dom;

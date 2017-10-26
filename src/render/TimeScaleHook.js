@@ -17,7 +17,6 @@ export default class {
       && (prev.samplesPerPixel === this.samplesPerPixel)) {
       return;
     }
-
     const width = canvas.width;
     const height = canvas.height;
     const ctx = canvas.getContext('2d');

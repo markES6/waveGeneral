@@ -396,9 +396,19 @@ export default class {
   }
   // 时间刻度记载
   renderTimeScale() {
-    const controlWidth = this.controls.show ? this.controls.width : 0;
     this.fragController.setAllTime(this.allTime);
-    const timeScale = new TimeScale(this.allTime, this.scrollLeft,
+    let timeScaleArr = [];
+    let surplusTime = this.allTime;
+    while (surplusTime >= 60) {
+      surplusTime -= 60;
+      timeScaleArr.push(this.renderTime(60, timeScaleArr.length));
+    }
+    timeScaleArr.push(this.renderTime(surplusTime, timeScaleArr.length));
+    return timeScaleArr;
+  }
+  renderTime(time, length) {
+    const controlWidth = this.controls.show ? this.controls.width : 0;
+    const timeScale = new TimeScale(time, 60 * length,
       this.samplesPerPixel, this.sampleRate, controlWidth);
     return timeScale.render();
   }
@@ -426,10 +436,11 @@ export default class {
   // 加载页面
   render(trackList) {
     const timeTree = this.renderTimeScale();
-    const timeNode = createElement(timeTree);
     document.getElementById('timescale').innerHTML = '';
-    document.getElementById('timescale').appendChild(timeNode);
-
+    timeTree.forEach(item => {
+      const timeNode = createElement(item);
+      document.getElementById('timescale').appendChild(timeNode);
+    });
     const canvasTree = this.renderTrackSection();
     this.canvasDom.innerHTML = '';
     if (canvasTree.length !== 0) {

@@ -1768,9 +1768,21 @@ var WaveGeneral =
 	  }, {
 	    key: 'renderTimeScale',
 	    value: function renderTimeScale() {
-	      var controlWidth = this.controls.show ? this.controls.width : 0;
 	      this.fragController.setAllTime(this.allTime);
-	      var timeScale = new _TimeScale2.default(this.allTime, this.scrollLeft, this.samplesPerPixel, this.sampleRate, controlWidth);
+	      var timeScaleArr = [];
+	      var surplusTime = this.allTime;
+	      while (surplusTime >= 60) {
+	        surplusTime -= 60;
+	        timeScaleArr.push(this.renderTime(60, timeScaleArr.length));
+	      }
+	      timeScaleArr.push(this.renderTime(surplusTime, timeScaleArr.length));
+	      return timeScaleArr;
+	    }
+	  }, {
+	    key: 'renderTime',
+	    value: function renderTime(time, length) {
+	      var controlWidth = this.controls.show ? this.controls.width : 0;
+	      var timeScale = new _TimeScale2.default(time, 60 * length, this.samplesPerPixel, this.sampleRate, controlWidth);
 	      return timeScale.render();
 	    }
 	    // 波形图绘制
@@ -1809,10 +1821,11 @@ var WaveGeneral =
 	    key: 'render',
 	    value: function render(trackList) {
 	      var timeTree = this.renderTimeScale();
-	      var timeNode = (0, _createElement2.default)(timeTree);
 	      document.getElementById('timescale').innerHTML = '';
-	      document.getElementById('timescale').appendChild(timeNode);
-	
+	      timeTree.forEach(function (item) {
+	        var timeNode = (0, _createElement2.default)(item);
+	        document.getElementById('timescale').appendChild(timeNode);
+	      });
 	      var canvasTree = this.renderTrackSection();
 	      this.canvasDom.innerHTML = '';
 	      if (canvasTree.length !== 0) {
@@ -2901,6 +2914,12 @@ var WaveGeneral =
 	        bigStep: 500,
 	        smallStep: 100,
 	        secondStep: 1 / 10
+	      },
+	      300: {
+	        marker: 1000,
+	        bigStep: 500,
+	        smallStep: 100,
+	        secondStep: 1 / 10
 	      }
 	    };
 	  }
@@ -2967,7 +2986,7 @@ var WaveGeneral =
 	      }
 	      return (0, _h2.default)('div.playlist-time-scale', {
 	        attributes: {
-	          style: 'position: relative; left: 0; right: 0; margin-left: ' + this.marginLeft + 'px;'
+	          style: 'position: relative; left: 0; right: 0; margin-left: ' + pixOffset + 'px;'
 	        }
 	      }, [timeMarkers, (0, _h2.default)('canvas', {
 	        attributes: {
@@ -3641,7 +3660,6 @@ var WaveGeneral =
 	      if (prev !== undefined && prev.offset === this.offset && prev.duration === this.duration && prev.samplesPerPixel === this.samplesPerPixel) {
 	        return;
 	      }
-	
 	      var width = canvas.width;
 	      var height = canvas.height;
 	      var ctx = canvas.getContext('2d');
@@ -4329,6 +4347,9 @@ var WaveGeneral =
 	      } else if (frag.extend.qualityState === '1') {
 	        className += ' red';
 	      }
+	      if (frag.extend.change) {
+	        className += ' yellow';
+	      }
 	      var dom = '<li class="' + className + '" name="' + index + '">' + index + '</li>';
 	      return dom;
 	    }
@@ -5004,6 +5025,15 @@ var WaveGeneral =
 	      var name = formSlected.getAttribute('name');
 	      var listDom = formSlected.getElementsByClassName('form-content');
 	      this.formInfo[name].extend.formValue = [];
+	      var operationCase = this.markInfo.operationCase;
+	      if (operationCase !== 4 && operationCase !== 32 && operationCase !== 128 && operationCase !== 256) {
+	        var state = formSlected.getElementsByClassName('quality-content')[0].getElementsByTagName('span')[0].innerHTML;
+	        if (state === '不合格' || state === '合格') {
+	          this.formInfo[name].extend.change = true;
+	        }
+	      } else {
+	        this.formInfo[name].extend.change = false;
+	      }
 	      for (var i = 0; i < listDom.length; i++) {
 	        var formValue = this.getValue(listDom[i].getElementsByClassName('formValue')[0]);
 	        this.formInfo[name].extend[formValue[0]] = formValue[1];
@@ -5054,7 +5084,6 @@ var WaveGeneral =
 	      this.formDom.onkeydown = function (e) {
 	        switch (e.keyCode) {
 	          case 32:
-	            console.log(111);
 	            e.stopPropagation();
 	            break;
 	          default:
@@ -5112,15 +5141,15 @@ var WaveGeneral =
 	      var pre = this.smallNav.getElementsByClassName('btn')[1];
 	      pre.addEventListener('click', function (e) {
 	        e.stopPropagation();
-	        _this.navList.style.left = parseInt(_this.navList.style.left || 0) - 90 + '%';
+	        _this.navList.style.left = parseInt(_this.navList.style.left || 0) - 95 + '%';
 	      });
 	      next.addEventListener('click', function (e) {
 	        e.stopPropagation();
 	        var left = parseInt(_this.navList.style.left) || 0;
-	        if (left >= -90) {
+	        if (left >= -95) {
 	          _this.navList.style.left = '0%';
 	        } else {
-	          _this.navList.style.left = left + 90 + '%';
+	          _this.navList.style.left = left + 95 + '%';
 	        }
 	      });
 	    }

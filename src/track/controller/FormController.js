@@ -69,6 +69,15 @@ class FormController {
     const name = formSlected.getAttribute('name');
     const listDom = formSlected.getElementsByClassName('form-content');
     this.formInfo[name].extend.formValue = [];
+    const operationCase = this.markInfo.operationCase;
+    if (operationCase !== 4 && operationCase !== 32 && operationCase !== 128 && operationCase !== 256) {
+      const state = formSlected.getElementsByClassName('quality-content')[0].getElementsByTagName('span')[0].innerHTML;
+      if (state === '不合格' || state === '合格') {
+        this.formInfo[name].extend.change = true;
+      }
+    } else {
+      this.formInfo[name].extend.change = false;
+    }
     for (let i = 0; i < listDom.length; i++) {
       const formValue = this.getValue(listDom[i].getElementsByClassName('formValue')[0]);
       this.formInfo[name].extend[formValue[0]] = formValue[1];
