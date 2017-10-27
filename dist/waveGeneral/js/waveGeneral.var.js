@@ -4497,23 +4497,26 @@ var WaveGeneral =
 	    key: 'qualityRender',
 	    value: function qualityRender(formItem, errorInfo, index) {
 	      var state = formItem.extend.qualityState == '0' ? 'none' : 'block';
-	      var qualityType = { type: 'radio', sort: 'qualityState', title: 'State', option: ['合格', '不合格'] };
-	      var errorType = { type: 'input', sort: 'errorsMessage', title: 'ErrMessage' };
+	      var qualityType = { type: 'radio', sort: 'qualityState', title: '质检状态', option: ['合格', '不合格'] };
+	      var errorType = { type: 'input', sort: 'errorsMessage', title: '错误信息' };
 	      var qualityState = this.renderRadio(formItem, qualityType, 'qualityState' + index);
 	      var errorsState = this.renderCheckbox(formItem, errorInfo, 'errorsState' + index, state);
 	      var errorsMessage = this.renderInput(formItem, errorType, state);
-	      if (this.markInfo.operationCase == 2 || this.markInfo.operationCase == 1) {
+	      var operationCase = this.markInfo.operationCase;
+	      if (operationCase !== 4 && operationCase !== 32 && operationCase !== 128 && operationCase !== 256) {
 	        var checkValue = formItem.extend.errorInfo || '';
 	        var errorValue = '';
 	        if (typeof checkValue === 'string') {
 	          checkValue = checkValue.split(',');
 	        }
 	        checkValue.forEach(function (item) {
-	          errorValue += (errorInfo.option[item] || '') + ',';
+	          if (errorInfo.option[item]) {
+	            errorValue += errorInfo.option[item] + ',';
+	          }
 	        });
 	        var errorMes = formItem.extend.errorsMessage || '';
-	        qualityState = '<div><p>\u72B6\u6001:</p><span>' + (qualityType.option[formItem.extend.qualityState] || '') + '</span></div>';
-	        errorsState = '<div><p>\u9519\u8BEF\u4FE1\u606F:</p><span>' + errorValue + '</span></div>';
+	        qualityState = '<div><p>\u8D28\u68C0\u72B6\u6001:</p><span>' + (qualityType.option[formItem.extend.qualityState] || '') + '</span></div>';
+	        errorsState = '<div><p>\u9519\u8BEF\u7C7B\u578B:</p><span>' + errorValue + '</span></div>';
 	        errorsMessage = '<div><p>\u9519\u8BEF\u4FE1\u606F:</p><span>' + errorMes + '</span></div>';
 	      }
 	      var qualityDom = '<div class="quality-content">\n                          ' + qualityState + '\n                          ' + errorsState + '\n                          ' + errorsMessage + '\n                        </div>';
@@ -4999,17 +5002,17 @@ var WaveGeneral =
 	          break;
 	        case 'checkbox':
 	          var checkboxList = formDom.getElementsByTagName('input');
-	          for (var x in checkboxList) {
-	            if (checkboxList[x].checked) {
-	              values += checkboxList[x].value + ',';
+	          for (var i = 0; i < checkboxList.length; i++) {
+	            if (checkboxList[i].checked) {
+	              values += checkboxList[i].value + ',';
 	            }
 	          }
 	          break;
 	        case 'radio':
 	          var radioList = formDom.getElementsByTagName('input');
-	          for (var _x in radioList) {
-	            if (radioList[_x].checked) {
-	              values = radioList[_x].value;
+	          for (var x in radioList) {
+	            if (radioList[x].checked) {
+	              values = radioList[x].value;
 	            }
 	          }
 	          break;

@@ -33,9 +33,9 @@ class FormController {
         break;
       case 'checkbox':
         const checkboxList = formDom.getElementsByTagName('input');
-        for (const x in checkboxList) {
-          if (checkboxList[x].checked) {
-            values += `${checkboxList[x].value},`;
+        for (let i = 0; i < checkboxList.length;i ++) {
+          if (checkboxList[i].checked) {
+            values += `${checkboxList[i].value},`;
           }
         }
         break;

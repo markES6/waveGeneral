@@ -80,23 +80,26 @@ class FromHook {
   }
   qualityRender(formItem, errorInfo, index) {
     const state = formItem.extend.qualityState == '0' ? 'none' : 'block';
-    const qualityType = { type: 'radio', sort: 'qualityState', title: 'State', option: ['合格', '不合格'] };
-    const errorType = { type: 'input', sort: 'errorsMessage', title: 'ErrMessage'};
+    const qualityType = { type: 'radio', sort: 'qualityState', title: '质检状态', option: ['合格', '不合格'] };
+    const errorType = { type: 'input', sort: 'errorsMessage', title: '错误信息'};
     let qualityState = this.renderRadio(formItem, qualityType, `qualityState${index}`);
     let errorsState = this.renderCheckbox(formItem, errorInfo, `errorsState${index}`, state);
     let errorsMessage = this.renderInput(formItem, errorType, state);
-    if (this.markInfo.operationCase == 2 || this.markInfo.operationCase == 1) {
+    const operationCase = this.markInfo.operationCase;
+    if (operationCase !== 4 && operationCase !== 32 && operationCase !== 128 && operationCase !== 256) {
       let checkValue = formItem.extend.errorInfo || '';
       let errorValue = '';
       if (typeof checkValue === 'string') {
         checkValue = checkValue.split(',');
       }
       checkValue.forEach((item) => {
-        errorValue += `${errorInfo.option[item] || ''},`;
+        if (errorInfo.option[item]) {
+          errorValue += `${errorInfo.option[item]},`;
+        }
       });
       const errorMes = formItem.extend.errorsMessage || '';
-      qualityState = `<div><p>状态:</p><span>${qualityType.option[formItem.extend.qualityState] || ''}</span></div>`;
-      errorsState = `<div><p>错误信息:</p><span>${errorValue}</span></div>`;
+      qualityState = `<div><p>质检状态:</p><span>${qualityType.option[formItem.extend.qualityState] || ''}</span></div>`;
+      errorsState = `<div><p>错误类型:</p><span>${errorValue}</span></div>`;
       errorsMessage = `<div><p>错误信息:</p><span>${errorMes}</span></div>`;
     }
     const qualityDom = `<div class="quality-content">
