@@ -1508,7 +1508,11 @@ var WaveGeneral =
 	      ee.on('playFrag', function (index) {
 	        var start = _this2.formInfo[index].start;
 	        var end = _this2.formInfo[index].end - start;
-	        _this2.play(start, end);
+	        if (_this2.isPlaying()) {
+	          _this2.pause();
+	        } else {
+	          _this2.play(start, end);
+	        }
 	      });
 	      ee.on('changeFrag', function (frag, index) {
 	        _this2.changeFragHook(frag, index);
@@ -1552,6 +1556,9 @@ var WaveGeneral =
 	        var zoomIndex = e.deltaY === 100 ? 1 : -1;
 	        e.preventDefault();
 	        ee.emit('zoom', zoomIndex);
+	      };
+	      document.getElementById('container').onscroll = function (e) {
+	        document.getElementById('formInfo').style.left = '-' + e.path[0].scrollLeft + 'px';
 	      };
 	      document.onkeydown = function (e) {
 	        switch (e.keyCode) {

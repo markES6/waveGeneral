@@ -28,10 +28,11 @@
     float: left;
     overflow-x: auto;
     margin-bottom: 10px;
+    z-index: 9;
   }
   #wavelist{
     width: auto;
-    height: 550px;
+    height: 370px;
     position: relative;
     float: left;
   }
@@ -132,9 +133,15 @@
     margin-left: 30px;
     cursor: pointer;
   }
+  #formInfoBox{
+    width: 100%;
+    overflow: hidden;
+    position: absolute;
+    top: 390px;
+    height: 200px;
+  }
   #formInfo{
     position: absolute;
-    top: 370px;
   }
   #formInfo .form-group{
     background: #fff;
@@ -363,9 +370,9 @@
           <div id="wavePointer"></div>
           <div id="waveFrag" name="waveFrag"></div>
           <div id="shortFrag"></div>
-          <div id="formInfo" class="cd-form floating-labels"></div>
-      </div> 
+      </div>
     </div>
+    <div id="formInfoBox"><div id="formInfo" class="cd-form floating-labels"></div></div>
     <div class="Cross"></div>
     <div class="Cross Cross2"></div>
     <img src="http://cdn.crowd.datatang.com/Scripts/wavegenerals/img/ruler.png" id="ruler" alt="ruler">

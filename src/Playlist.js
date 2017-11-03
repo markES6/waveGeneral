@@ -173,7 +173,11 @@ export default class {
     ee.on('playFrag', (index) => {
       const start = this.formInfo[index].start;
       const end = this.formInfo[index].end - start;
-      this.play(start, end);
+      if (this.isPlaying()) {
+        this.pause();
+      } else {
+        this.play(start, end);
+      }
     });
     ee.on('changeFrag', (frag, index) => {
       this.changeFragHook(frag, index);
@@ -215,6 +219,9 @@ export default class {
       const zoomIndex = e.deltaY === 100 ? 1 : -1;
       e.preventDefault();
       ee.emit('zoom', zoomIndex);
+    };
+    document.getElementById('container').onscroll = (e) => {
+      document.getElementById('formInfo').style.left = `-${e.path[0].scrollLeft}px`;
     };
     document.onkeydown = (e) => {
       switch (e.keyCode) {
