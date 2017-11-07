@@ -34,6 +34,7 @@ export function init(options = {}, ee = EventEmitter()) {
     saveFun: (info) => {
       console.log(info);
     },
+    canMove: false,
     errorInfo: { type: 'checkbox', sort: 'errorInfo', title: 'errorInfo', option: ['错误1', '错误2', '错误3'] },
     waveHeight: 256,
     zoomLevels: [400, 750, 1500, 3000, 6000, 11000, 19000],
@@ -53,6 +54,7 @@ export function init(options = {}, ee = EventEmitter()) {
   playlist.setTypeArr(config.typeArr);
   playlist.setErrorInfo(config.errorInfo);
   playlist.setSaveFun(config.saveFun);
+  playlist.setCanMove(config.canMove);
   playlist.setSampleRate(config.sampleRate);
   playlist.setSamplesPerPixel(config.samplesPerPixel);
   playlist.setAudioContext(config.ac);

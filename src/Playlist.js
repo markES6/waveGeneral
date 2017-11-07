@@ -63,6 +63,9 @@ export default class {
   setSaveFun(saveFun) {
     this.saveFun = saveFun;
   }
+  setCanMove(canmove) {
+    this.canMove = canmove;
+  }
   setMarkInfo(markInfo) {
     this.markInfo = markInfo;
   }
@@ -157,8 +160,8 @@ export default class {
   // 控制模块
   setUpEventEmitter() {
     const ee = this.ee;
-    this.fragController = new
-    FragController(ee, this.fragDom, this.formInfo, this.samplesPerPixel, this.sampleRate);
+    this.fragController = new FragController(ee, this.fragDom,
+      this.formInfo, this.samplesPerPixel, this.sampleRate, this.canMove);
     this.fragController.bindEvent();
     this.formController = new FormController(ee, this.formInfo, this.markInfo);
     this.formController.bindEvent();
@@ -228,6 +231,9 @@ export default class {
         case 32:
           this.isPlaying() ? this.pause() : this.play();
           e.preventDefault();
+          break;
+        case 82:
+          this.ee.emit('rightEvent', e);
           break;
         // case 8:
         //   const index = document.getElementsByClassName('fragSelected')[0].getAttribute('name');

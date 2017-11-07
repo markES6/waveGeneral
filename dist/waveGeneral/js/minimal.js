@@ -15,6 +15,7 @@ const playlist = WaveGeneral.init({
   typeArr: [{ type: 'input', sort: 'form1', title: '标题', option: '' }],
   errorInfo: { type: 'checkbox', sort: 'errorInfo', title: '标题', option: ['测试1', '测试2', '测试3'] },
   timescale: true,
+  canMove: true,
   controls: {
     show: true,
     width: 200,

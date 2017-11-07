@@ -103,6 +103,7 @@ var WaveGeneral =
 	    saveFun: function saveFun(info) {
 	      console.log(info);
 	    },
+	    canMove: false,
 	    errorInfo: { type: 'checkbox', sort: 'errorInfo', title: 'errorInfo', option: ['错误1', '错误2', '错误3'] },
 	    waveHeight: 256,
 	    zoomLevels: [400, 750, 1500, 3000, 6000, 11000, 19000]
@@ -122,6 +123,7 @@ var WaveGeneral =
 	  playlist.setTypeArr(config.typeArr);
 	  playlist.setErrorInfo(config.errorInfo);
 	  playlist.setSaveFun(config.saveFun);
+	  playlist.setCanMove(config.canMove);
 	  playlist.setSampleRate(config.sampleRate);
 	  playlist.setSamplesPerPixel(config.samplesPerPixel);
 	  playlist.setAudioContext(config.ac);
@@ -1344,6 +1346,11 @@ var WaveGeneral =
 	      this.saveFun = saveFun;
 	    }
 	  }, {
+	    key: 'setCanMove',
+	    value: function setCanMove(canmove) {
+	      this.canMove = canmove;
+	    }
+	  }, {
 	    key: 'setMarkInfo',
 	    value: function setMarkInfo(markInfo) {
 	      this.markInfo = markInfo;
@@ -1493,7 +1500,7 @@ var WaveGeneral =
 	      var _this2 = this;
 	
 	      var ee = this.ee;
-	      this.fragController = new _FragController2.default(ee, this.fragDom, this.formInfo, this.samplesPerPixel, this.sampleRate);
+	      this.fragController = new _FragController2.default(ee, this.fragDom, this.formInfo, this.samplesPerPixel, this.sampleRate, this.canMove);
 	      this.fragController.bindEvent();
 	      this.formController = new _FormController2.default(ee, this.formInfo, this.markInfo);
 	      this.formController.bindEvent();
@@ -1565,6 +1572,9 @@ var WaveGeneral =
 	          case 32:
 	            _this2.isPlaying() ? _this2.pause() : _this2.play();
 	            e.preventDefault();
+	            break;
+	          case 82:
+	            _this2.ee.emit('rightEvent', e);
 	            break;
 	          // case 8:
 	          //   const index = document.getElementsByClassName('fragSelected')[0].getAttribute('name');
@@ -4606,7 +4616,7 @@ var WaveGeneral =
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
 	var FragController = function () {
-	  function FragController(ee, fragId, formInfo, samplesPerPixel, sampleRate) {
+	  function FragController(ee, fragId, formInfo, samplesPerPixel, sampleRate, canmove) {
 	    _classCallCheck(this, FragController);
 	
 	    this.ee = ee;
@@ -4615,6 +4625,8 @@ var WaveGeneral =
 	    this.samplesPerPixel = samplesPerPixel;
 	    this.sampleRate = sampleRate;
 	    this.shortFrag = document.getElementById('shortFrag');
+	    this.mouseE;
+	    this.canMove = canmove;
 	
 	    this.downPoint = null;
 	    this.creatDom = false;
@@ -4650,10 +4662,16 @@ var WaveGeneral =
 	      var _this = this;
 	
 	      // oncontextmenu
+	      var self = this;
 	      this.fragId.addEventListener('contextmenu', function (e) {
 	        e.stopPropagation();
 	        e.preventDefault();
 	        _this.rightEvent(e);
+	      });
+	      this.ee.on('rightEvent', function (e) {
+	        e.stopPropagation();
+	        e.preventDefault();
+	        _this.rightEvent(_this.mouseE);
 	      });
 	      this.fragId.addEventListener('mousedown', function (e) {
 	        // 选中状态
@@ -4668,6 +4686,7 @@ var WaveGeneral =
 	        }
 	      });
 	      this.fragId.addEventListener('mousemove', function (e) {
+	        _this.mouseE = e;
 	        // 选中状态
 	        e.stopPropagation();
 	        e.preventDefault();
@@ -4899,7 +4918,7 @@ var WaveGeneral =
 	            left = window.parseFloat(selectedDom.style.left) + e.movementX;
 	            width = window.parseFloat(selectedDom.style.width) - e.movementX;
 	          }
-	        } else {
+	        } else if (!this.canMove) {
 	          left = window.parseFloat(selectedDom.style.left) + e.movementX;
 	          width = window.parseFloat(selectedDom.style.width);
 	        }

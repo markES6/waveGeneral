@@ -1,13 +1,15 @@
 import { pixelsToSeconds, secondsToPixels } from '../../utils/conversions';
 
 class FragController {
-  constructor(ee, fragId, formInfo, samplesPerPixel, sampleRate) {
+  constructor(ee, fragId, formInfo, samplesPerPixel, sampleRate, canmove) {
     this.ee = ee;
     this.fragId = fragId;
     this.formInfo = formInfo;
     this.samplesPerPixel = samplesPerPixel;
     this.sampleRate = sampleRate;
     this.shortFrag = document.getElementById('shortFrag');
+    this.mouseE;
+    this.canMove = canmove;
 
     this.downPoint = null;
     this.creatDom = false;
@@ -35,6 +37,11 @@ class FragController {
       e.preventDefault();
       this.rightEvent(e);
     });
+    this.ee.on('rightEvent', (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+      this.rightEvent(this.mouseE);
+    });
     this.fragId.addEventListener('mousedown', (e) => {
       // 选中状态
       e.stopPropagation();
@@ -48,6 +55,7 @@ class FragController {
       }
     });
     this.fragId.addEventListener('mousemove', (e) => {
+      this.mouseE = e;
       // 选中状态
       e.stopPropagation();
       e.preventDefault();
@@ -242,7 +250,7 @@ class FragController {
           left = window.parseFloat(selectedDom.style.left) + e.movementX;
           width = window.parseFloat(selectedDom.style.width) - e.movementX;
         }
-      } else {
+      } else if (!this.canMove) {
         left = window.parseFloat(selectedDom.style.left) + e.movementX;
         width = window.parseFloat(selectedDom.style.width);
       }
