@@ -4662,7 +4662,6 @@ var WaveGeneral =
 	      var _this = this;
 	
 	      // oncontextmenu
-	      var self = this;
 	      this.fragId.addEventListener('contextmenu', function (e) {
 	        e.stopPropagation();
 	        e.preventDefault();
@@ -4675,8 +4674,8 @@ var WaveGeneral =
 	      });
 	      this.fragId.addEventListener('mousedown', function (e) {
 	        // 选中状态
-	        e.stopPropagation();
-	        e.preventDefault();
+	        // e.stopPropagation();
+	        // e.preventDefault();
 	        if (e.which === 1) {
 	          if (_this.selected) {
 	            _this.downRightEvent(e);

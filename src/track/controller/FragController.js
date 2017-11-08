@@ -44,8 +44,8 @@ class FragController {
     });
     this.fragId.addEventListener('mousedown', (e) => {
       // 选中状态
-      e.stopPropagation();
-      e.preventDefault();
+      // e.stopPropagation();
+      // e.preventDefault();
       if (e.which === 1) {
         if (this.selected) {
           this.downRightEvent(e);

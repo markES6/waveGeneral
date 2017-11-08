@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>waveGeneral</title>
+</head>
+<style type="text/css">
+  #demoBtn>div{
+    float: left;
+    width: 40%;
+    height: 40px;
+  }
+  #demoBtn>div p{
+    font-size: 12px;
+    float: left;
+    margin-left:10px;
+  }
+  #demoBtn>div input{
+    float: left;
+    margin-left: 10px;
+    font-size: 12px;
+  }
+  #demoBtn>div .btn{
+    float: left;
+    margin-left: 10px;
+    width: 80px;
+    line-height: 20px;
+    height: 20px;
+    font-size: 12px;
+    text-align: center;
+    line-height: 20px;
+    border:1px #ccc solid;
+    cursor: pointer;
+  }
+</style>
+<link rel="stylesheet" type="text/css" href="css/style.css">
+<link rel="stylesheet" type="text/css" href="css/default.css">
+<body>
+  <div id="wrap">
+    <div id="container">
+      <div id="wavelist">
+          <div id="timescale"></div>
+          <div id="waveCanvse">LOADING</div>
+          <div id="waveBack"></div>
+          <div id="wavePointer"></div>
+          <div id="waveFrag" name="waveFrag"></div>
+          <div id="shortFrag"></div>
+      </div>
+    </div>
+    <div id="formInfoBox"><div id="formInfo" class="cd-form floating-labels"></div></div>
+    <div class="Cross"></div>
+    <div class="Cross Cross2"></div>
+    <img src="http://cdn.crowd.datatang.com/Scripts/wavegenerals/img/ruler.png" id="ruler" alt="ruler">
+    <div id="progress">
+      <div id="played"></div>
+      <div id="loading"></div>
+    </div>
+    <div id="controllBtn">
+      <div id="play"></div>
+      <div id="pause"></div>
+      <div id="stop"></div>
+    </div>
+  </div>
+  <div id="btnGroup">
+  </div>
+  <div  id="dataInfo">
+  </div>
+  <div id="smallNav">
+    <div class="btn pre"><</div>
+    <div class="btn next">></div>
+    <ul id="navList">
+    </ul>
+  </div>
+  <div id="demoBtn">
+    <div>
+      <p>声音设置：</p>
+      <input type="text" placeholder="声音大小">
+      <div class="btn sound">确定</div>
+    </div>
+    <div>
+      <p>跳转播放：</p>
+      <input type="text" placeholder="播放时间">
+      <div class="btn play">确定</div>
+    </div>
+    <div>
+      <p>功能按键：</p>
+      <div class="btn play">播放</div>
+      <div class="btn pause">暂停</div>
+      <div class="btn stop">停止</div>
+      <div class="btn cycle">循环</div>
+    </div>
+    <div>
+      <p>播放片段：</p>
+      <input type="text" placeholder="片段index">
+      <div class="btn playFrag">确定</div>
+    </div>
+    <div>
+      <p>删除片段：</p>
+      <input type="text" placeholder="片段index">
+      <div class="btn delecteFrag">确定</div>
+    </div>
+    <div>
+      <p>添加片段：</p>
+      <input type="text" placeholder="起始时间">
+      <input type="text" placeholder="结束时间">
+      <div class="btn addFrag">确定</div>
+    </div>
+    <div>
+      <p>改变片段：</p>
+      <input type="text" placeholder="片段index">
+      <input type="text" placeholder="起始时间">
+      <input type="text" placeholder="结束时间">
+      <div class="btn changeFrag">确定</div>
+    </div>
+    <div>
+      <p>设置表单：</p>
+      <input type="text" placeholder="表单数组">
+      <div class="btn quality">确定</div>
+    </div>
+    <div>
+      <p>设置质检：</p>
+      <input type="text" placeholder="质检数组">
+      <div class="btn form">确定</div>
+    </div>
+    <div>
+      <p>缩放设置：</p>
+      <input type="text" placeholder="缩放index">
+      <div class="btn zoom">确定</div>
+    </div>
+    <div>
+      <p>波形重绘：</p>
+      <div class="btn waveRender">确定</div>
+    </div>
+    <div>
+      <p>时间重绘：</p>
+      <div class="btn timeRender">确定</div>
+    </div>
+    <div>
+      <p>获取数据：</p>
+      <div class="btn formInfo">确定</div>
+    </div>
+    <div>
+      <p>统计信息：</p>
+      <div class="btn statistics">确定</div>
+    </div>
+  </div>
+</body>
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/wark.min.js"></script>
+<script type="text/javascript" src="js/demo6.js"></script>
+</html>

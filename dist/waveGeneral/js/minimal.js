@@ -3,61 +3,28 @@ const playlist = WaveGeneral.init({
   samplesPerPixel: 750,
   waveHeight: 500,
   container: document.getElementById('wavelist'),
-  colors: {
-    waveOutlineColor: '#1E90FF',
-    timeColor: 'grey',
-    fadeColor: 'black',
-  },
-  saveFun: function(info) {
+  saveFun: (info) => {
     console.log(info);
   },
-  markInfo: { operationCase: 32 },
+  markInfo: { operationCase: 1 },
   typeArr: [{ type: 'input', sort: 'form1', title: '标题', option: '' }],
   errorInfo: { type: 'checkbox', sort: 'errorInfo', title: '标题', option: ['测试1', '测试2', '测试3'] },
   timescale: true,
   canMove: true,
-  controls: {
-    show: true,
-    width: 200,
-  },
 });
 playlist.load([
   {
     src: 'media/audio/0.wav',
     name: 'Guitar',
-    start: 0,
-    fadeOut: {
-      shape: 'linear',
-      duration: 0.5,
-    },
-    cuein: 0,
   }, {
     src: 'media/audio/1.wav',
     name: 'Guitar',
-    start: 0,
-    fadeOut: {
-      shape: 'linear',
-      duration: 0.5,
-    },
-    cuein: 0,
   }, {
     src: 'media/audio/2.wav',
     name: 'Guitar',
-    start: 0,
-    fadeOut: {
-      shape: 'linear',
-      duration: 0.5,
-    },
-    cuein: 0,
   }, {
     src: 'media/audio/3.wav',
     name: 'Guitar',
-    start: 0,
-    fadeOut: {
-      shape: 'linear',
-      duration: 0.5,
-    },
-    cuein: 0,
   }
   //}, {
   //   src: 'media/audio/4.wav',
