@@ -174,13 +174,7 @@ export default class {
       this.pause();
     });
     ee.on('playFrag', (index) => {
-      const start = this.formInfo[index].start;
-      const end = this.formInfo[index].end - start;
-      if (this.isPlaying()) {
-        this.pause();
-      } else {
-        this.play(start, end);
-      }
+      this.playFrag(index);
     });
     ee.on('changeFrag', (frag, index) => {
       this.changeFragHook(frag, index);
@@ -242,6 +236,15 @@ export default class {
           break;
       }
     };
+  }
+  playFrag(index) {
+    const start = this.formInfo[index].start;
+    const end = this.formInfo[index].end - start;
+    if (this.isPlaying()) {
+      this.pause();
+    } else {
+      this.play(start, end);
+    }
   }
   // 是否播放
   isPlaying() {

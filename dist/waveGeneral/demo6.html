@@ -5,9 +5,18 @@
   <title>waveGeneral</title>
 </head>
 <style type="text/css">
+  #demoBtn{
+    width: 650px;
+    height: 700px;
+    overflow: auto;
+    position: absolute;
+    background: rgba(255,255,255,0.8);
+    right: 0;
+    z-index: 1000;
+  }
   #demoBtn>div{
     float: left;
-    width: 40%;
+    width: 100%;
     height: 40px;
   }
   #demoBtn>div p{
@@ -31,6 +40,11 @@
     line-height: 20px;
     border:1px #ccc solid;
     cursor: pointer;
+  }
+  #demoBtn>div .btn2{
+    float: left;
+    padding: 0 10px;
+    margin-bottom: 10px;
   }
 </style>
 <link rel="stylesheet" type="text/css" href="css/style.css">
@@ -72,64 +86,64 @@
     </ul>
   </div>
   <div id="demoBtn">
-    <div>
+<!--     <div>
       <p>声音设置：</p>
       <input type="text" placeholder="声音大小">
-      <div class="btn sound">确定</div>
-    </div>
+      <div class="btn sound" name="sound">确定</div>
+    </div> -->
     <div>
       <p>跳转播放：</p>
-      <input type="text" placeholder="播放时间">
-      <div class="btn play">确定</div>
+      <input type="text" placeholder="播放时间" id="playInput">
+      <div class="btn play" name="playTime">确定</div>
     </div>
     <div>
       <p>功能按键：</p>
-      <div class="btn play">播放</div>
-      <div class="btn pause">暂停</div>
-      <div class="btn stop">停止</div>
-      <div class="btn cycle">循环</div>
+      <div class="btn play" name="play">播放</div>
+      <div class="btn pause" name="pause">暂停</div>
+      <div class="btn stop" name="stop">停止</div>
+      <div class="btn cycle" name="cycle">循环</div>
     </div>
     <div>
       <p>播放片段：</p>
-      <input type="text" placeholder="片段index">
-      <div class="btn playFrag">确定</div>
+      <input type="text" placeholder="片段index" id="playFrag">
+      <div class="btn playFrag" name="playFrag">确定</div>
     </div>
     <div>
       <p>删除片段：</p>
-      <input type="text" placeholder="片段index">
-      <div class="btn delecteFrag">确定</div>
+      <input type="text" placeholder="片段index" id="deleteFrag">
+      <div class="btn delecteFrag" name="deleteFrag">确定</div>
     </div>
     <div>
       <p>添加片段：</p>
-      <input type="text" placeholder="起始时间">
-      <input type="text" placeholder="结束时间">
-      <div class="btn addFrag">确定</div>
+      <input type="text" placeholder="起始时间" id="addfragStart">
+      <input type="text" placeholder="结束时间" id="addfragEnd">
+      <div class="btn addFrag" name="addFrag">确定</div>
     </div>
     <div>
       <p>改变片段：</p>
-      <input type="text" placeholder="片段index">
-      <input type="text" placeholder="起始时间">
-      <input type="text" placeholder="结束时间">
-      <div class="btn changeFrag">确定</div>
+      <input type="text" placeholder="片段index" id="changeFragHook">
+      <input type="text" placeholder="起始时间" id="changeStart">
+      <input type="text" placeholder="结束时间" id="changeEnd">
+      <div class="btn changeFrag" name="changeFragHook">确定</div>
     </div>
     <div>
       <p>设置表单：</p>
-      <input type="text" placeholder="表单数组">
-      <div class="btn quality">确定</div>
+      <input type="text" placeholder="表单数组" id="setFormType">
+      <div class="btn quality" name="setFormType">确定</div>
     </div>
     <div>
       <p>设置质检：</p>
-      <input type="text" placeholder="质检数组">
-      <div class="btn form">确定</div>
+      <input type="text" placeholder="质检数组" id="setErrorInfo">
+      <div class="btn form" name="setErrorInfo">确定</div>
     </div>
     <div>
       <p>缩放设置：</p>
-      <input type="text" placeholder="缩放index">
-      <div class="btn zoom">确定</div>
+      <input type="text" placeholder="缩放index" id="setZoom">
+      <div class="btn zoom" name="setZoom">确定</div>
     </div>
     <div>
       <p>波形重绘：</p>
-      <div class="btn waveRender">确定</div>
+      <div class="btn waveRender" name="waveRender">确定</div>
     </div>
     <div>
       <p>时间重绘：</p>
@@ -137,11 +151,21 @@
     </div>
     <div>
       <p>获取数据：</p>
-      <div class="btn formInfo">确定</div>
-    </div>
-    <div>
-      <p>统计信息：</p>
-      <div class="btn statistics">确定</div>
+      <div class="btn formInfo btn2" name="getFromInfo">表单信息</div>
+      <div class="btn statistics btn2" name="getFromInfo">统计信息</div>
+      <div class="btn statistics btn2" name="getAllTime">总时长</div>
+      <div class="btn statistics btn2" name="getStartTime">开始时间</div>
+      <div class="btn statistics btn2" name="getStopTime">结束时间</div>
+      <div class="btn statistics btn2" name="getPauseTime">暂停时间</div>
+      <div class="btn statistics btn2" name="getName">项目名称</div>
+      <div class="btn statistics btn2" name="getFormType">标注表单</div>
+      <div class="btn statistics btn2" name="getQuForm">质检表单</div>
+      <div class="btn statistics btn2" name="getSaveFun">保存方法</div>
+      <div class="btn statistics btn2" name="getCycle">循环状态</div>
+      <div class="btn statistics btn2" name="getSampleRate">音频码率</div>
+      <div class="btn statistics btn2" name="getZoomIndex">缩放比例</div>
+      <div class="btn statistics btn2" name="getAC">ac获取</div>
+      <div class="btn statistics btn2" name="getZoomArr">缩放区间</div>
     </div>
   </div>
 </body>
@@ -149,3 +173,4 @@
 <script type="text/javascript" src="js/wark.min.js"></script>
 <script type="text/javascript" src="js/demo6.js"></script>
 </html>
+<!-- {start:1, end, 2, extend:{}, title:''} -->

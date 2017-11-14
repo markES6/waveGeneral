@@ -10,6 +10,8 @@ class FragController {
     this.shortFrag = document.getElementById('shortFrag');
     this.mouseE;
     this.canMove = canmove;
+    this.moveEditbefore = false;
+    this.moveEditing = false;
 
     this.downPoint = null;
     this.creatDom = false;
@@ -46,9 +48,13 @@ class FragController {
       // 选中状态
       // e.stopPropagation();
       // e.preventDefault();
+      this.moveEditbefore = this.moveEdit(e);
       if (e.which === 1) {
         if (this.selected) {
           this.downRightEvent(e);
+          return;
+        } else if (this.moveEditbefore[0]) {
+          this.moveEditing = true;
           return;
         }
         this.downEvent(e);
@@ -59,8 +65,12 @@ class FragController {
       // 选中状态
       e.stopPropagation();
       e.preventDefault();
+      this.moveEdit(e);
       if (this.selected) {
         this.moveRightEvent(e);
+        return;
+      } else if (this.moveEditing) {
+        this.editMoveEvent(e);
         return;
       }
       if (this.downPoint) {
@@ -74,6 +84,11 @@ class FragController {
       if (e.which === 3) { return; }
       if (this.selected) {
         this.upRightEvent();
+        return;
+      } else if (this.moveEditing) {
+        this.upRightEvent();
+        this.moveEditing = false;
+        this.moveEditbefore = false;
         return;
       }
       if (this.creatDom) {
@@ -95,6 +110,12 @@ class FragController {
       // }
       if (this.creatDom) {
         this.upEventCreat(e);
+      }
+      if (this.moveEditing) {
+        this.upRightEvent();
+        this.moveEditing = false;
+        this.moveEditbefore = false;
+        return;
       }
       this.shortFrag.style.display = 'none';
       this.downPoint = null;
@@ -183,6 +204,29 @@ class FragController {
       this.creatDom = true;
     }
   }
+  moveEdit(e) {
+    const fragList = document.getElementsByClassName('frag');
+    const canvasLeft = this.fragId.getBoundingClientRect().left;
+    const mouseLeft = pixelsToSeconds(e.clientX - parseFloat(canvasLeft), this.samplesPerPixel, this.sampleRate);
+    let pointSlected = false;
+    let index;
+    for (let i = 0; i < fragList.length; i++) {
+      const name = parseInt(fragList[i].getAttribute('name'));
+      if (this.formInfo[name].end - 0.1 < mouseLeft && this.formInfo[name].end > mouseLeft) {
+        index = name;
+        pointSlected = 'end';
+      } else if (this.formInfo[name].start < mouseLeft && this.formInfo[name].start + 0.1 > mouseLeft) {
+        index = name;
+        pointSlected = 'start';
+      }
+    }
+    if (pointSlected) {
+      document.body.style.cursor = 'w-resize';
+    } else {
+      document.body.style.cursor = 'default';
+    }
+    return [pointSlected, index];
+  }
   upEventPlay(e) {
     const name = this.getAttrName(e);
     this.downPoint = null;
@@ -231,15 +275,41 @@ class FragController {
       this.clearClassName();
     }
   }
+  editMoveEvent(e) {
+    const index = this.moveEditbefore[1];
+    const selectedDom = document.getElementsByClassName('frag')[index];
+    if (!selectedDom) { return; }
+    let left;
+    let width;
+    if (this.moveEditbefore[0] === 'end') {
+      left = window.parseFloat(selectedDom.style.left);
+      width = window.parseFloat(selectedDom.style.width) + e.movementX;
+    } else if (this.moveEditbefore[0] === 'start') {
+      left = window.parseFloat(selectedDom.style.left) + e.movementX;
+      width = window.parseFloat(selectedDom.style.width) - e.movementX;
+    }
+    if (this.pointStart(left, index) && this.pointStart(left + width, index)) {
+      selectedDom.style.left = `${left}px`;
+      selectedDom.style.width = `${width}px`;
+    }
+    const starts = pixelsToSeconds(left, this.samplesPerPixel, this.sampleRate);
+    const ends = pixelsToSeconds(left + width, this.samplesPerPixel, this.sampleRate);
+    // const newPoint = e.target.getAttribute('name');
+    // if (index !== newPoint && newPoint !== 'waveFrag') {
+    //   this.upRightEvent();
+    //   return;
+    // }
+    this.changeFrag = { start: starts, end: ends, title: this.formInfo[index].title, extend: this.formInfo[index].extend };
+  }
   moveRightEvent(e) {
     const selectedDom = document.getElementsByClassName('fragSelected')[0];
     if (!selectedDom) { return; }
     let left;
     let width;
     if (this.getHitPoint(e)) {
-      selectedDom.style.cursor = 'w-resize';
+      document.body.style.cursor = 'w-resize';
     } else {
-      selectedDom.style.cursor = 'move';
+      document.body.style.cursor = 'move';
     }
     if (this.movePoint) {
       if (this.hitPoint) {
@@ -271,9 +341,10 @@ class FragController {
   }
   upRightEvent() {
     if (this.changeFrag && !isNaN(this.changeFrag.start)) {
-      const frag = this.checkedFrag(this.changeFrag, this.selected);
-      this.ee.emit('changeFrag', frag, this.selected);
-      this.formInfo[this.selected] = this.changeFrag;
+      const selected = this.selected || this.moveEditbefore[1];
+      const frag = this.checkedFrag(this.changeFrag, selected);
+      this.ee.emit('changeFrag', frag, selected);
+      this.formInfo[selected] = this.changeFrag;
     }
     this.movePoint = false;
     this.hitPoint = false;

@@ -68,8 +68,8 @@
     border:1px #6C708C solid;
     border-top: none;
     border-bottom: 0;
-    cursor: pointer;
-  }
+/*    cursor: pointer;
+*/  }
   .fragGreen{
     background: rgba(36, 179, 0, 0.5);
   }

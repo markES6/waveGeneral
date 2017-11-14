@@ -1513,13 +1513,7 @@ var WaveGeneral =
 	        _this2.pause();
 	      });
 	      ee.on('playFrag', function (index) {
-	        var start = _this2.formInfo[index].start;
-	        var end = _this2.formInfo[index].end - start;
-	        if (_this2.isPlaying()) {
-	          _this2.pause();
-	        } else {
-	          _this2.play(start, end);
-	        }
+	        _this2.playFrag(index);
 	      });
 	      ee.on('changeFrag', function (frag, index) {
 	        _this2.changeFragHook(frag, index);
@@ -1583,6 +1577,17 @@ var WaveGeneral =
 	            break;
 	        }
 	      };
+	    }
+	  }, {
+	    key: 'playFrag',
+	    value: function playFrag(index) {
+	      var start = this.formInfo[index].start;
+	      var end = this.formInfo[index].end - start;
+	      if (this.isPlaying()) {
+	        this.pause();
+	      } else {
+	        this.play(start, end);
+	      }
 	    }
 	    // 是否播放
 	
@@ -4627,6 +4632,8 @@ var WaveGeneral =
 	    this.shortFrag = document.getElementById('shortFrag');
 	    this.mouseE;
 	    this.canMove = canmove;
+	    this.moveEditbefore = false;
+	    this.moveEditing = false;
 	
 	    this.downPoint = null;
 	    this.creatDom = false;
@@ -4676,9 +4683,13 @@ var WaveGeneral =
 	        // 选中状态
 	        // e.stopPropagation();
 	        // e.preventDefault();
+	        _this.moveEditbefore = _this.moveEdit(e);
 	        if (e.which === 1) {
 	          if (_this.selected) {
 	            _this.downRightEvent(e);
+	            return;
+	          } else if (_this.moveEditbefore[0]) {
+	            _this.moveEditing = true;
 	            return;
 	          }
 	          _this.downEvent(e);
@@ -4689,8 +4700,12 @@ var WaveGeneral =
 	        // 选中状态
 	        e.stopPropagation();
 	        e.preventDefault();
+	        _this.moveEdit(e);
 	        if (_this.selected) {
 	          _this.moveRightEvent(e);
+	          return;
+	        } else if (_this.moveEditing) {
+	          _this.editMoveEvent(e);
 	          return;
 	        }
 	        if (_this.downPoint) {
@@ -4706,6 +4721,11 @@ var WaveGeneral =
 	        }
 	        if (_this.selected) {
 	          _this.upRightEvent();
+	          return;
+	        } else if (_this.moveEditing) {
+	          _this.upRightEvent();
+	          _this.moveEditing = false;
+	          _this.moveEditbefore = false;
 	          return;
 	        }
 	        if (_this.creatDom) {
@@ -4729,6 +4749,12 @@ var WaveGeneral =
 	        // }
 	        if (_this.creatDom) {
 	          _this.upEventCreat(e);
+	        }
+	        if (_this.moveEditing) {
+	          _this.upRightEvent();
+	          _this.moveEditing = false;
+	          _this.moveEditbefore = false;
+	          return;
 	        }
 	        _this.shortFrag.style.display = 'none';
 	        _this.downPoint = null;
@@ -4840,6 +4866,31 @@ var WaveGeneral =
 	      }
 	    }
 	  }, {
+	    key: 'moveEdit',
+	    value: function moveEdit(e) {
+	      var fragList = document.getElementsByClassName('frag');
+	      var canvasLeft = this.fragId.getBoundingClientRect().left;
+	      var mouseLeft = (0, _conversions.pixelsToSeconds)(e.clientX - parseFloat(canvasLeft), this.samplesPerPixel, this.sampleRate);
+	      var pointSlected = false;
+	      var index = void 0;
+	      for (var i = 0; i < fragList.length; i++) {
+	        var name = parseInt(fragList[i].getAttribute('name'));
+	        if (this.formInfo[name].end - 0.1 < mouseLeft && this.formInfo[name].end > mouseLeft) {
+	          index = name;
+	          pointSlected = 'end';
+	        } else if (this.formInfo[name].start < mouseLeft && this.formInfo[name].start + 0.1 > mouseLeft) {
+	          index = name;
+	          pointSlected = 'start';
+	        }
+	      }
+	      if (pointSlected) {
+	        document.body.style.cursor = 'w-resize';
+	      } else {
+	        document.body.style.cursor = 'default';
+	      }
+	      return [pointSlected, index];
+	    }
+	  }, {
 	    key: 'upEventPlay',
 	    value: function upEventPlay(e) {
 	      var name = this.getAttrName(e);
@@ -4895,6 +4946,36 @@ var WaveGeneral =
 	      }
 	    }
 	  }, {
+	    key: 'editMoveEvent',
+	    value: function editMoveEvent(e) {
+	      var index = this.moveEditbefore[1];
+	      var selectedDom = document.getElementsByClassName('frag')[index];
+	      if (!selectedDom) {
+	        return;
+	      }
+	      var left = void 0;
+	      var width = void 0;
+	      if (this.moveEditbefore[0] === 'end') {
+	        left = window.parseFloat(selectedDom.style.left);
+	        width = window.parseFloat(selectedDom.style.width) + e.movementX;
+	      } else if (this.moveEditbefore[0] === 'start') {
+	        left = window.parseFloat(selectedDom.style.left) + e.movementX;
+	        width = window.parseFloat(selectedDom.style.width) - e.movementX;
+	      }
+	      if (this.pointStart(left, index) && this.pointStart(left + width, index)) {
+	        selectedDom.style.left = left + 'px';
+	        selectedDom.style.width = width + 'px';
+	      }
+	      var starts = (0, _conversions.pixelsToSeconds)(left, this.samplesPerPixel, this.sampleRate);
+	      var ends = (0, _conversions.pixelsToSeconds)(left + width, this.samplesPerPixel, this.sampleRate);
+	      // const newPoint = e.target.getAttribute('name');
+	      // if (index !== newPoint && newPoint !== 'waveFrag') {
+	      //   this.upRightEvent();
+	      //   return;
+	      // }
+	      this.changeFrag = { start: starts, end: ends, title: this.formInfo[index].title, extend: this.formInfo[index].extend };
+	    }
+	  }, {
 	    key: 'moveRightEvent',
 	    value: function moveRightEvent(e) {
 	      var selectedDom = document.getElementsByClassName('fragSelected')[0];
@@ -4904,9 +4985,9 @@ var WaveGeneral =
 	      var left = void 0;
 	      var width = void 0;
 	      if (this.getHitPoint(e)) {
-	        selectedDom.style.cursor = 'w-resize';
+	        document.body.style.cursor = 'w-resize';
 	      } else {
-	        selectedDom.style.cursor = 'move';
+	        document.body.style.cursor = 'move';
 	      }
 	      if (this.movePoint) {
 	        if (this.hitPoint) {
@@ -4940,9 +5021,10 @@ var WaveGeneral =
 	    key: 'upRightEvent',
 	    value: function upRightEvent() {
 	      if (this.changeFrag && !isNaN(this.changeFrag.start)) {
-	        var frag = this.checkedFrag(this.changeFrag, this.selected);
-	        this.ee.emit('changeFrag', frag, this.selected);
-	        this.formInfo[this.selected] = this.changeFrag;
+	        var selected = this.selected || this.moveEditbefore[1];
+	        var frag = this.checkedFrag(this.changeFrag, selected);
+	        this.ee.emit('changeFrag', frag, selected);
+	        this.formInfo[selected] = this.changeFrag;
 	      }
 	      this.movePoint = false;
 	      this.hitPoint = false;
