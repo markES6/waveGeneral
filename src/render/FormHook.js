@@ -132,7 +132,7 @@ class FromHook {
       }
     });
     return `<div class="form-group" style="left:${left}px" name="${index}">
-            <div class="form-title"><h1>${index}</h1><h2 name="close">X</h2></div>
+            <div class="form-title"><h1>${index + 1}</h1><h2 name="close">X</h2></div>
             ${formContent}
             ${qualityDom}
             </div>`;
@@ -147,7 +147,10 @@ class FromHook {
     // formContent += this.creatDom(form, indexs);
     // this.formDom.innerHTML = formContent;
   }
-  render() {
+  render(runSave) {
+    if (!runSave) {
+      this.ee.emit('saveAddForm');
+    }
     this.ee.emit('saveFun', this.formInfo);
     let formContent = '';
     this.formInfo.forEach((formItem, index) => {

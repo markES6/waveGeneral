@@ -53,6 +53,14 @@
     background: #26C78C;
     z-index: 100;
   }
+  #movePointer{
+    width: 1px;
+    top: 30px;
+    height: 340px;
+    position: absolute;
+    background: red;
+    z-index: 100;
+  }
   #waveFrag{
     height: 340px;
     width: 100%;

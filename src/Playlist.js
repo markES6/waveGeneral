@@ -154,7 +154,7 @@ export default class {
     this.fragController.setForminfo(this.formInfo);
     this.fragController.setSelected();
     this.fragHook.render();
-    this.formHook.render();
+    this.formHook.render(true);
   }
 
   // 控制模块
@@ -188,6 +188,9 @@ export default class {
     ee.on('deleteFrag', (index) => {
       this.deleteFragHook(index);
     });
+    ee.on('saveAddForm', () => {
+      this.formController.saveAddForm();
+    })
     ee.on('zoom', (index) => {
       this.zoom(index);
     });

@@ -57,9 +57,12 @@ class FormController {
     document.getElementById('wrap')
     .getElementsByClassName('form-group')[index].className = 'form-group form-selected';
     this.formDom.getElementsByClassName('form-selected')[0].onmouseleave = () => {
-      this.addFormInfo();
-      this.ee.emit('save', this.formInfo);
+      this.saveAddForm();
     };
+  }
+  saveAddForm(){
+    this.addFormInfo();
+    this.ee.emit('save', this.formInfo);
   }
   addFormInfo() {
     const formSlected = this.formDom.getElementsByClassName('form-selected')[0];
@@ -97,6 +100,7 @@ class FormController {
       const index = group.getAttribute('name');
       this.setClassName(index);
       if (name === 'close' && this.selected === index) {
+        console.log(index);
         this.ee.emit('deleteFrag', index);
       }
       if (name.indexOf('qualityState') >= 0) {
@@ -123,7 +127,10 @@ class FormController {
     this.formDom.onkeydown = (e) => {
       switch (e.keyCode) {
         case 32:
-           e.stopPropagation();
+          e.stopPropagation();
+          break;
+        case 82:
+          e.stopPropagation();
           break;
         default:
           break;

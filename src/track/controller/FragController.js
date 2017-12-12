@@ -208,6 +208,7 @@ class FragController {
     const fragList = document.getElementsByClassName('frag');
     const canvasLeft = this.fragId.getBoundingClientRect().left;
     const mouseLeft = pixelsToSeconds(e.clientX - parseFloat(canvasLeft), this.samplesPerPixel, this.sampleRate);
+    document.getElementById('movePointer').style.left = `${e.clientX - parseFloat(canvasLeft)}px`;
     let pointSlected = false;
     let index;
     for (let i = 0; i < fragList.length; i++) {
