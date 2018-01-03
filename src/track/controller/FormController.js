@@ -28,6 +28,9 @@ class FormController {
       case 'text':
         values = formDom.value;
         break;
+      case 'textarea':
+        values = formDom.value;
+        break;
       case 'select-one':
         values = formDom.options[formDom.selectedIndex].value;
         break;

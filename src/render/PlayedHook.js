@@ -11,6 +11,7 @@ class PlayedHook {
     this.oDiv1 = document.getElementById('waveBack');
     this.oDiv2 = document.getElementById('wavePointer');
     this.oDiv3 = document.getElementById('played');
+    this.oDiv4 = document.getElementsByClassName('playBig')[0];
   }
   render() {
     const widthX = secondsToPixels(this.seconds, this.samplesPerPixel, this.sampleRate);
@@ -20,6 +21,7 @@ class PlayedHook {
     this.oDiv1.style.width = `${widthX}px`;
     this.oDiv2.style.left = `${widthX}px`;
     this.oDiv3.style.width = `${playedWid * 100}%`;
+    this.oDiv4.style.left = `${widthX}px`;
   }
 }
 export default PlayedHook;

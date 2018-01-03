@@ -3,6 +3,9 @@ class OtherController {
     this.ee = ee;
     this.smallNav = document.getElementById('smallNav');
     this.navList = document.getElementById('navList');
+    this.playBig = document.getElementsByClassName('playBig')[0];
+    this.playBotton = this.playBig.getElementsByClassName('playBtton')[0];
+    this.pauseBtton = this.playBig.getElementsByClassName('pauseBtton')[0];
   }
   bindEvent() {
     const next = this.smallNav.getElementsByClassName('btn')[0];
@@ -20,6 +23,16 @@ class OtherController {
         this.navList.style.left = `${left + 95}%`;
       }
     });
+    this.playBotton.addEventListener('click', (e) => {
+      this.playBotton.style.display = 'none';
+      this.pauseBtton.style.display = 'block';
+      this.ee.emit('play');
+    })
+    this.pauseBtton.addEventListener('click', (e) => {
+      this.playBotton.style.display = 'block';
+      this.pauseBtton.style.display = 'none';
+      this.ee.emit('pause');
+    })
   }
 }
 export default OtherController;

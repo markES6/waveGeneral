@@ -7,7 +7,7 @@ const playlist = WaveGeneral.init({
     console.log(info);
   },
   markInfo: { operationCase: 1 },
-  typeArr: [{ type: 'input', sort: 'form1', title: '标题', option: '' }],
+  typeArr: [{ type: 'input', sort: 'form1', title: '标题', option: '' },{ type: 'textarea', sort: 'form2', title: '标题2', option: '' }],
   errorInfo: { type: 'checkbox', sort: 'errorInfo', title: '标题', option: ['测试1', '测试2', '测试3'] },
   timescale: true,
   canMove: true,
@@ -139,6 +139,7 @@ $(() => {
     playlist.setCycle(false);
   });
   $('#save').click(() => {
-    playlist.saveLocalStorage();
+    playlist.saveAddlastForm();
+    console.log(playlist.saveLocalStorage());
   });
 });

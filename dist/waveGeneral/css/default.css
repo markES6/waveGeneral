@@ -219,6 +219,12 @@
     width: 15px;
     height: 15px;
   }
+  #wrap .form-group textarea{
+    width: 150px;
+    float: left;
+    height: 50px;
+    font-size: 12px;
+  }
   #wrap .form-group .submit{
     width: 100%;
     float: left;
@@ -359,3 +365,19 @@
     font-size:12px;  
     float:left;
   } 
+  .playBig{
+    position: absolute;
+    top: 55%;
+    left: 0%;
+    margin: -20px 0 0 -20px;
+    z-index: 1000;
+  }
+  .playBig img{
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 40px;
+    height: 40px;
+    background: rgba(255,255,255,0.5);
+    border-radius: 50%;
+  }

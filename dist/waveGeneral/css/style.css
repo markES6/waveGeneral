@@ -171,7 +171,6 @@
   animation: cd-bounce 0.3s;
 }
 .cd-form textarea {
-  min-height: 200px;
   resize: vertical;
   overflow: auto;
 }

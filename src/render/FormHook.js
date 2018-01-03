@@ -18,6 +18,11 @@ class FromHook {
     const inputDom = `<div class="form-content" style="display:${state}"><p>${typeInfo.title}:</p><input type="text" value="${checkValue}" class="formValue" name="${typeInfo.sort}"></div>`;
     return inputDom;
   }
+  renderTextarea(item, typeInfo, state) {
+    const checkValue = item.extend[typeInfo.sort] || '';
+    const textAreaDom = `<div class="form-content" style="display:${state}"><p>${typeInfo.title}:</p><textarea type="textarea" class="formValue" name="${typeInfo.sort}">${checkValue}</textarea></div>`;
+    return textAreaDom;
+  }
   renderCheckbox(item, typeInfo, index, state) {
     let listDom = '';
     let checkValue = item.extend[typeInfo.sort] || [];
@@ -126,6 +131,9 @@ class FromHook {
           break;
         case 'select':
           formContent += this.renderSelect(formItem, typeItem);
+          break;
+        case 'textarea':
+          formContent += this.renderTextarea(formItem, typeItem);
           break;
         default:
           break;

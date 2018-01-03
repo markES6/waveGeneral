@@ -35,6 +35,9 @@ export default class {
 
     this.fragDom = document.getElementById('waveFrag');
     this.canvasDom = document.getElementById('waveCanvse');
+    this.playBig = document.getElementsByClassName('playBig')[0];
+    this.playBotton = this.playBig.getElementsByClassName('playBtton')[0];
+    this.pauseBtton = this.playBig.getElementsByClassName('pauseBtton')[0];
   }
   // 设置初始值
   setDefault(info) {
@@ -156,6 +159,9 @@ export default class {
     this.fragHook.render();
     this.formHook.render(true);
   }
+  saveAddlastForm(){
+    this.formController.saveAddForm();
+  }
 
   // 控制模块
   setUpEventEmitter() {
@@ -200,6 +206,7 @@ export default class {
       this.saveFun(this.formInfo);
     });
     ee.on('saveFun', (formInfo) => {
+      this.formController.saveAddForm();
       this.saveFun(formInfo);
     });
     ee.on('loadFirst', () => {
@@ -243,11 +250,7 @@ export default class {
   playFrag(index) {
     const start = this.formInfo[index].start;
     const end = this.formInfo[index].end - start;
-    if (this.isPlaying()) {
-      this.pause();
-    } else {
-      this.play(start, end);
-    }
+    this.play(start, end);
   }
   // 是否播放
   isPlaying() {
@@ -329,6 +332,8 @@ export default class {
     this.playoutPromises = playoutPromises;
 
     document.getElementById('play').style.display = 'none';
+    this.playBotton.style.display = 'none';
+    this.pauseBtton.style.display = 'block';
     return Promise.all(this.playoutPromises);
   }
   // 暂停
@@ -340,6 +345,8 @@ export default class {
     this.stopAnimation();
     this.pauseTime = this.lastPlay;
     document.getElementById('play').style.display = 'block';
+    this.playBotton.style.display = 'block';
+    this.pauseBtton.style.display = 'none';
     return this.playbackReset();
   }
   // 停止
