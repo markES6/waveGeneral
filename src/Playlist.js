@@ -152,6 +152,7 @@ export default class {
     this.render();
   }
   deleteFragHook(index) {
+    document.getElementsByClassName('form-selected')[0].className = 'form-group';
     this.formInfo.splice(index, 1);
     this.formController.setForminfo(this.formInfo);
     this.fragController.setForminfo(this.formInfo);

@@ -13,6 +13,7 @@
     padding:10px 20px;
     height: 600px;
     float: left;
+    margin-top: 60px;
   }
   #container{
     width: 800px;
@@ -224,6 +225,7 @@
     float: left;
     height: 50px;
     font-size: 12px;
+    min-height: 20px;
   }
   #wrap .form-group .submit{
     width: 100%;
@@ -367,9 +369,9 @@
   } 
   .playBig{
     position: absolute;
-    top: 55%;
+    top: 100%;
     left: 0%;
-    margin: -20px 0 0 -20px;
+    margin: -40px 0 0 -20px;
     z-index: 1000;
   }
   .playBig img{
@@ -380,4 +382,23 @@
     height: 40px;
     background: rgba(255,255,255,0.5);
     border-radius: 50%;
+  }
+
+
+  #personList{
+    position: absolute;
+    width: 840px;
+    border:1px solid #ccc;
+    height: 60px;
+  }
+  #personList li{
+    width: 50%;
+    float: left;
+    padding-left: 10px;
+    font-size: 12px;
+    color: #333;
+    height: 20px;
+    line-height: 20px;
+    list-style: none;
+    box-sizing: border-box;
   }

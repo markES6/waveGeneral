@@ -103,7 +103,6 @@ class FormController {
       const index = group.getAttribute('name');
       this.setClassName(index);
       if (name === 'close' && this.selected === index) {
-        console.log(index);
         this.ee.emit('deleteFrag', index);
       }
       if (name.indexOf('qualityState') >= 0) {
