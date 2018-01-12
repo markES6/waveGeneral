@@ -3,15 +3,17 @@ const playlist = WaveGeneral.init({
   samplesPerPixel: 750,
   waveHeight: 500,
   container: document.getElementById('wavelist'),
-  saveFun: (info) => {
-    console.log(info);
+  saveFun: function(info){
+  },
+  beforeSave: function(info){
+    return info
   },
   markInfo: { operationCase: 1 },
   typeArr: [{ type: 'input', sort: 'form1', title: '标题', option: '' },{ type: 'textarea', sort: 'form2', title: '标题2', option: '' }],
   errorInfo: { type: 'checkbox', sort: 'errorInfo', title: '标题', option: ['测试1', '测试2', '测试3'] },
   timescale: true,
   canMove: true,
-});
+})
 playlist.load([
   {
     src: 'media/audio/0.wav',
@@ -117,29 +119,30 @@ playlist.load([
   //   },
   //   cuein: 0,
   // },
-]);
+])
+playlist.setCycle(false)
 $(() => {
   $('#demo').click(() => {
-    playlist.demo();
-  });
+    playlist.demo()
+  })
   $('#play').click(() => {
-    playlist.play();
-  });
+    playlist.play()
+  })
   $('#pause').click(() => {
-    playlist.pause();
-  });
+    playlist.pause()
+  })
   $('#stop').click(() => {
-    playlist.stop();
-    document.getElementById('play').style.display = 'block';
-  });
+    playlist.stop()
+    document.getElementById('play').style.display = 'block'
+  })
   $('#scope').click(() => {
-    playlist.play(3, 3);
-  });
+    playlist.play(3, 3)
+  })
   $('#cycle').click(() => {
-    playlist.setCycle(false);
-  });
+    playlist.setCycle(false)
+  })
   $('#save').click(() => {
-    playlist.saveAddlastForm();
-    console.log(playlist.saveLocalStorage());
-  });
-});
+    playlist.saveAddlastForm()
+    console.log(playlist.saveLocalStorage())
+  })
+})

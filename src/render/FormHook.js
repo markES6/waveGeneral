@@ -156,9 +156,6 @@ class FromHook {
     // this.formDom.innerHTML = formContent;
   }
   render(runSave) {
-    if (!runSave) {
-      this.ee.emit('saveAddForm');
-    }
     this.ee.emit('saveFun', this.formInfo);
     let formContent = '';
     this.formInfo.forEach((formItem, index) => {

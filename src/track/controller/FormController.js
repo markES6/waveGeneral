@@ -59,16 +59,12 @@ class FormController {
     this.clearClassName();
     document.getElementById('wrap')
     .getElementsByClassName('form-group')[index].className = 'form-group form-selected';
-    this.formDom.getElementsByClassName('form-selected')[0].onmouseleave = () => {
-      this.saveAddForm();
-    };
   }
   saveAddForm(){
     this.addFormInfo();
-    this.ee.emit('save', this.formInfo);
   }
-  addFormInfo() {
-    const formSlected = this.formDom.getElementsByClassName('form-selected')[0];
+  addFormInfo(lastFrom) {
+    const formSlected = lastFrom || this.formDom.getElementsByClassName('form-selected')[0];
     if (!formSlected) {
       return;
     }
