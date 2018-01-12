@@ -34,6 +34,9 @@ export function init(options = {}, ee = EventEmitter()) {
     saveFun: (info) => {
       console.log(info);
     },
+    beforeCreate: function(frag){
+      return frag
+    },
     canMove: false,
     errorInfo: { type: 'checkbox', sort: 'errorInfo', title: 'errorInfo', option: ['错误1', '错误2', '错误3'] },
     waveHeight: 256,
@@ -54,6 +57,7 @@ export function init(options = {}, ee = EventEmitter()) {
   playlist.setTypeArr(config.typeArr);
   playlist.setErrorInfo(config.errorInfo);
   playlist.setSaveFun(config.saveFun);
+  playlist.setBeforeCreate(config.beforeCreate);
   playlist.setCanMove(config.canMove);
   playlist.setSampleRate(config.sampleRate);
   playlist.setSamplesPerPixel(config.samplesPerPixel);

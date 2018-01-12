@@ -63,6 +63,9 @@ export default class {
   setErrorInfo(errorInfo) {
     this.errorInfo = errorInfo
   }
+  setBeforeCreate (beforeCreate) {
+    this.beforeCreate = beforeCreate
+  }
   setSaveFun(saveFun) {
     this.saveFun = saveFun
   }
@@ -170,7 +173,7 @@ export default class {
   setUpEventEmitter() {
     const ee = this.ee
     this.fragController = new FragController(ee, this.fragDom,
-      this.formInfo, this.samplesPerPixel, this.sampleRate, this.canMove)
+      this.formInfo, this.samplesPerPixel, this.sampleRate, this.canMove, this.beforeCreate)
     this.fragController.bindEvent()
     this.formController = new FormController(ee, this.formInfo, this.markInfo)
     this.formController.bindEvent()

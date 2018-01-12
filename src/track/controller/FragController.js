@@ -1,7 +1,7 @@
 import { pixelsToSeconds, secondsToPixels } from '../../utils/conversions'
 
 class FragController {
-  constructor(ee, fragId, formInfo, samplesPerPixel, sampleRate, canmove) {
+  constructor(ee, fragId, formInfo, samplesPerPixel, sampleRate, canmove, beforeCreat) {
     this.ee = ee
     this.fragId = fragId
     this.formInfo = formInfo
@@ -12,7 +12,7 @@ class FragController {
     this.canMove = canmove
     this.moveEditbefore = false
     this.moveEditing = false
-
+    this.beforeCreat = beforeCreat
     this.downPoint = null
     this.creatDom = false
     this.selected = false
@@ -245,11 +245,14 @@ class FragController {
     const start = Math.min(upPoint, this.downPoint)
     const end = pixelsToSeconds(Math.max(upPoint, this.downPoint), this.samplesPerPixel, this.sampleRate)
     const endTime = end >= this.allTime ? this.allTime : end
-    const frag = {
+    let frag = {
       start: pixelsToSeconds(start, this.samplesPerPixel, this.sampleRate),
       end: endTime,
       title: '',
       extend: {},
+    }
+    if (this.beforeCreat) {
+      frag = this.beforeCreat(frag)
     }
     this.formInfo.push(this.checkedFrag(frag, -1))
     this.ee.emit('addFrag', this.formInfo)

@@ -3,10 +3,17 @@ const playlist = WaveGeneral.init({
   samplesPerPixel: 750,
   waveHeight: 500,
   container: document.getElementById('wavelist'),
-  saveFun: function(info){
+  saveFun: function (info) {
   },
-  beforeSave: function(info){
-    return info
+  beforeCreate: function (frag) {
+    let maxEnd = 0
+    for (let i = 0; i < this.formInfo.length; i++) {
+      if (frag.start > this.formInfo[i].end && this.formInfo[i].end > maxEnd) {
+        maxEnd = this.formInfo[i].end
+      }
+    }
+    frag.start = maxEnd
+    return frag
   },
   markInfo: { operationCase: 1 },
   typeArr: [{ type: 'input', sort: 'form1', title: '标题', option: '' },{ type: 'textarea', sort: 'form2', title: '标题2', option: '' }],
