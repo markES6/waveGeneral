@@ -127,7 +127,7 @@ playlist.load([
   //   cuein: 0,
   // },
 ])
-playlist.setCycle(false)
+// playlist.setCycle(false)
 $(() => {
   $('#demo').click(() => {
     playlist.demo()
