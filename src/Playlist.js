@@ -224,7 +224,7 @@ export default class {
       console.log(111);
     });
     document.getElementById('wrap').onmousewheel = (e) => {
-      const zoomIndex = e.deltaY === 100 ? 1 : -1;
+      const zoomIndex = e.deltaY >= 1 ? 1 : -1;
       e.preventDefault();
       ee.emit('zoom', zoomIndex);
     };
