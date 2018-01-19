@@ -3,7 +3,7 @@ const playlist = WaveGeneral.init({
   samplesPerPixel: 750,
   waveHeight: 500,
   container: document.getElementById('wavelist'),
-  saveFun: function (info) {
+  afterCreate: function (info) {
   },
   beforeCreate: function (frag) {
     let maxEnd = 0
@@ -15,7 +15,7 @@ const playlist = WaveGeneral.init({
     frag.start = maxEnd
     return frag
   },
-  markInfo: { operationCase: 1 },
+  markInfo: { operationCase: 32 },
   typeArr: [{ type: 'input', sort: 'form1', title: '标题', option: '' },{ type: 'textarea', sort: 'form2', title: '标题2', option: '' }],
   errorInfo: { type: 'checkbox', sort: 'errorInfo', title: '标题', option: ['测试1', '测试2', '测试3'] },
   timescale: true,

@@ -31,7 +31,7 @@ export function init(options = {}, ee = EventEmitter()) {
            // { type: 'checkbox', sort: 'form3', title: 'checkbox', option: ['苹果', '香蕉', '橘子'] },
            // { type: 'radio', sort: 'form4', title: 'radio', option: ['苹果', '香蕉', '橘子'] }
           ],
-    saveFun: (info) => {
+    afterCreate: (info) => {
       console.log(info);
     },
     beforeCreate: function(frag){
@@ -56,7 +56,7 @@ export function init(options = {}, ee = EventEmitter()) {
   playlist.setDataInfo();
   playlist.setTypeArr(config.typeArr);
   playlist.setErrorInfo(config.errorInfo);
-  playlist.setSaveFun(config.saveFun);
+  playlist.setAfterCreate(config.afterCreate);
   playlist.setBeforeCreate(config.beforeCreate);
   playlist.setCanMove(config.canMove);
   playlist.setSampleRate(config.sampleRate);

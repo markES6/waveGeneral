@@ -100,7 +100,7 @@ var WaveGeneral =
 	      fadeColor: 'black'
 	    },
 	    typeArr: [{ type: 'input', sort: 'form1', title: '标题', option: '' }, { type: 'select', sort: 'form2', title: 'select', option: ['苹果', '香蕉', '橘子'] }],
-	    saveFun: function saveFun(info) {
+	    afterCreate: function afterCreate(info) {
 	      console.log(info);
 	    },
 	    beforeCreate: function beforeCreate(frag) {
@@ -125,7 +125,7 @@ var WaveGeneral =
 	  playlist.setDataInfo();
 	  playlist.setTypeArr(config.typeArr);
 	  playlist.setErrorInfo(config.errorInfo);
-	  playlist.setSaveFun(config.saveFun);
+	  playlist.setAfterCreate(config.afterCreate);
 	  playlist.setBeforeCreate(config.beforeCreate);
 	  playlist.setCanMove(config.canMove);
 	  playlist.setSampleRate(config.sampleRate);
@@ -1353,9 +1353,9 @@ var WaveGeneral =
 	      this.beforeCreate = beforeCreate;
 	    }
 	  }, {
-	    key: 'setSaveFun',
-	    value: function setSaveFun(saveFun) {
-	      this.saveFun = saveFun;
+	    key: 'setAfterCreate',
+	    value: function setAfterCreate(afterCreate) {
+	      this.afterCreate = afterCreate;
 	    }
 	  }, {
 	    key: 'setCanMove',
@@ -1496,20 +1496,12 @@ var WaveGeneral =
 	  }, {
 	    key: 'deleteFragHook',
 	    value: function deleteFragHook(index) {
-	      var lastFrom = document.getElementsByClassName('form-group');
-	      this.formController.addFormInfo(lastFrom[lastFrom.length - 1]);
-	      document.getElementsByClassName('form-selected')[0].className = 'form-group';
 	      this.formInfo.splice(index, 1);
 	      this.formController.setForminfo(this.formInfo);
 	      this.fragController.setForminfo(this.formInfo);
 	      this.fragController.setSelected();
 	      this.fragHook.render();
 	      this.formHook.render();
-	    }
-	  }, {
-	    key: 'saveAddlastForm',
-	    value: function saveAddlastForm() {
-	      this.formController.saveAddForm();
 	    }
 	
 	    // 控制模块
@@ -1550,9 +1542,9 @@ var WaveGeneral =
 	      ee.on('zoom', function (index) {
 	        _this2.zoom(index);
 	      });
-	      ee.on('saveFun', function (formInfo) {
-	        _this2.formController.saveAddForm();
-	        _this2.saveFun(formInfo);
+	      ee.on('saveFormInfo', function (changeIndex) {
+	        _this2.formInfo = _this2.formController.saveFormInfo(changeIndex);
+	        _this2.afterCreate(_this2.formInfo);
 	      });
 	      ee.on('loadFirst', function () {
 	        var self = _this2;
@@ -4488,14 +4480,14 @@ var WaveGeneral =
 	    key: 'renderInput',
 	    value: function renderInput(item, typeInfo, state) {
 	      var checkValue = item.extend[typeInfo.sort] || '';
-	      var inputDom = '<div class="form-content" style="display:' + state + '"><p>' + typeInfo.title + ':</p><input type="text" value="' + checkValue + '" class="formValue" name="' + typeInfo.sort + '"></div>';
+	      var inputDom = '<div class="form-content" style="display:' + state + '"><p>' + typeInfo.title + ':</p><input type="text" value="' + checkValue + '" class="formValue changeSave" name="' + typeInfo.sort + '"></div>';
 	      return inputDom;
 	    }
 	  }, {
 	    key: 'renderTextarea',
 	    value: function renderTextarea(item, typeInfo, state) {
 	      var checkValue = item.extend[typeInfo.sort] || '';
-	      var textAreaDom = '<div class="form-content" style="display:' + state + '"><p>' + typeInfo.title + ':</p><textarea type="textarea" class="formValue" name="' + typeInfo.sort + '">' + checkValue + '</textarea></div>';
+	      var textAreaDom = '<div class="form-content" style="display:' + state + '"><p>' + typeInfo.title + ':</p><textarea type="textarea" class="formValue changeSave" name="' + typeInfo.sort + '">' + checkValue + '</textarea></div>';
 	      return textAreaDom;
 	    }
 	  }, {
@@ -4513,7 +4505,7 @@ var WaveGeneral =
 	            checked = 'checked';
 	          }
 	        });
-	        listDom += '<li>\n                    <input type="checkbox" name="checkbox-' + index + '" value=\'' + indexT + '\' ' + checked + '>\n                    <label>' + name + '</label>\n                  </li>\n                ';
+	        listDom += '<li>\n                    <input type="checkbox" name="checkbox-' + index + '" class="clickSave" value=\'' + indexT + '\' ' + checked + '>\n                    <label>' + name + '</label>\n                  </li>\n                ';
 	      });
 	      var checkboxDom = '<div class="form-content" style="display:' + state + '"><p>' + typeInfo.title + ':</p> \n                          <ul class="cd-form-list formValue" name="' + typeInfo.sort + '" type="checkbox">\n                            ' + listDom + '\n                          </ul>\n                        </div>';
 	      return checkboxDom;
@@ -4525,7 +4517,7 @@ var WaveGeneral =
 	      var checkValue = item.extend[typeInfo.sort] || '';
 	      typeInfo.option.forEach(function (name, indexT) {
 	        var checked = checkValue === '' + indexT ? 'checked' : '';
-	        listDom += '<li>\n                    <input type="radio" name="radio-' + index + '" value="' + indexT + '" ' + checked + '>\n                    <label>' + name + '</label>\n                  </li>\n                ';
+	        listDom += '<li>\n                    <input type="radio" name="radio-' + index + '" class="clickSave" value="' + indexT + '" ' + checked + '>\n                    <label>' + name + '</label>\n                  </li>\n                ';
 	      });
 	      var radioDom = '<div class="form-content" name="' + typeInfo.sort + '"><p>' + typeInfo.title + ':</p>\n                          <ul class="cd-form-list formValue" type="radio" name="' + typeInfo.sort + '">\n                            ' + listDom + '\n                          </ul>\n                        </div>';
 	      return radioDom;
@@ -4539,7 +4531,7 @@ var WaveGeneral =
 	        var checked = checkValue === '' + indexT ? 'selected' : '';
 	        listDom += '<option value=' + indexT + ' ' + checked + '>' + name + '</option>';
 	      });
-	      var selectDom = '<div class="form-content"><p>' + typeInfo.title + ':</p>\n                          <p class="cd-select icon">\n                            <select class="formValue" name="' + typeInfo.sort + '">\n                             ' + listDom + '\n                            </select>\n                         </p>\n                      </div>';
+	      var selectDom = '<div class="form-content"><p>' + typeInfo.title + ':</p>\n                          <p class="cd-select icon">\n                            <select class="formValue changeSave" name="' + typeInfo.sort + '">\n                             ' + listDom + '\n                            </select>\n                         </p>\n                      </div>';
 	      return selectDom;
 	    }
 	  }, {
@@ -4603,29 +4595,57 @@ var WaveGeneral =
 	      return '<div class="form-group" style="left:' + left + 'px" name="' + index + '">\n            <div class="form-title"><h1>' + (index + 1) + '</h1><h2 name="close">X</h2></div>\n            ' + formContent + '\n            ' + qualityDom + '\n            </div>';
 	    }
 	  }, {
+	    key: 'changeSave',
+	    value: function changeSave(dom) {
+	      var that = this;
+	      dom.oninput = function (e) {
+	        var index = that.getParentNode(dom).getAttribute('name');
+	        that.ee.emit('saveFormInfo', index);
+	      };
+	    }
+	  }, {
+	    key: 'clickSave',
+	    value: function clickSave(dom) {
+	      var that = this;
+	      dom.onclick = function (e) {
+	        var index = that.getParentNode(dom).getAttribute('name');
+	        that.ee.emit('saveFormInfo', index);
+	      };
+	    }
+	  }, {
+	    key: 'getParentNode',
+	    value: function getParentNode(dom) {
+	      if (dom.className.indexOf('form-group') >= 0) {
+	        return dom;
+	      } else {
+	        return this.getParentNode(dom.parentNode);
+	      }
+	    }
+	  }, {
 	    key: 'renderAdd',
 	    value: function renderAdd(form) {
 	      this.formInfo = form;
 	      this.render();
-	      // let formContent = '';
-	      // this.formInfo.forEach((formItem, index) => {
-	      //   formContent += this.creatDom(formItem, index);
-	      // });
-	      // formContent += this.creatDom(form, indexs);
-	      // this.formDom.innerHTML = formContent;
 	    }
 	  }, {
 	    key: 'render',
 	    value: function render(runSave) {
 	      var _this2 = this;
 	
-	      this.ee.emit('saveFun', this.formInfo);
 	      var formContent = '';
 	      this.formInfo.forEach(function (formItem, index) {
 	        formContent += _this2.creatDom(formItem, index);
 	      });
 	      this.formDom.innerHTML = '';
 	      this.formDom.innerHTML = formContent;
+	      var changeList = document.getElementsByClassName('changeSave');
+	      var clickList = document.getElementsByClassName('clickSave');
+	      for (var i = 0; i < changeList.length; i++) {
+	        this.changeSave(changeList[i]);
+	      }
+	      for (var _i = 0; _i < clickList.length; _i++) {
+	        this.clickSave(clickList[_i]);
+	      }
 	    }
 	  }]);
 	
@@ -5172,14 +5192,9 @@ var WaveGeneral =
 	      document.getElementById('wrap').getElementsByClassName('form-group')[index].className = 'form-group form-selected';
 	    }
 	  }, {
-	    key: 'saveAddForm',
-	    value: function saveAddForm() {
-	      this.addFormInfo();
-	    }
-	  }, {
-	    key: 'addFormInfo',
-	    value: function addFormInfo(lastFrom) {
-	      var formSlected = lastFrom || this.formDom.getElementsByClassName('form-selected')[0];
+	    key: 'saveFormInfo',
+	    value: function saveFormInfo(changeIndex) {
+	      var formSlected = this.formDom.getElementsByClassName('form-group')[changeIndex];
 	      if (!formSlected) {
 	        return;
 	      }
@@ -5200,6 +5215,7 @@ var WaveGeneral =
 	        var formValue = this.getValue(listDom[i].getElementsByClassName('formValue')[0]);
 	        this.formInfo[name].extend[formValue[0]] = formValue[1];
 	      }
+	      return this.formInfo;
 	    }
 	  }, {
 	    key: 'clearClassName',
@@ -5255,12 +5271,6 @@ var WaveGeneral =
 	            break;
 	        }
 	      };
-	      // this.formDom.addEventListener('mouseleave', (e) => {
-	      //   console.log(e.target);
-	      //   // console.log(111)
-	      //   this.addFormInfo();
-	      //   this.ee.emit('save', this.formInfo);
-	      // });
 	      this.smallNav.addEventListener('click', function (e) {
 	        var name = e.target.getAttribute('name') || '';
 	        _this.ee.emit('selectdFrag', name);

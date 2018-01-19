@@ -60,11 +60,8 @@ class FormController {
     document.getElementById('wrap')
     .getElementsByClassName('form-group')[index].className = 'form-group form-selected';
   }
-  saveAddForm(){
-    this.addFormInfo();
-  }
-  addFormInfo(lastFrom) {
-    const formSlected = lastFrom || this.formDom.getElementsByClassName('form-selected')[0];
+  saveFormInfo(changeIndex) {
+    const formSlected = this.formDom.getElementsByClassName('form-group')[changeIndex];
     if (!formSlected) {
       return;
     }
@@ -85,6 +82,7 @@ class FormController {
       const formValue = this.getValue(listDom[i].getElementsByClassName('formValue')[0]);
       this.formInfo[name].extend[formValue[0]] = formValue[1];
     }
+    return this.formInfo
   }
   clearClassName() {
     const frag = document.getElementsByClassName('form-group');
@@ -134,12 +132,6 @@ class FormController {
           break;
       }
     };
-    // this.formDom.addEventListener('mouseleave', (e) => {
-    //   console.log(e.target);
-    //   // console.log(111)
-    //   this.addFormInfo();
-    //   this.ee.emit('save', this.formInfo);
-    // });
     this.smallNav.addEventListener('click', (e) => {
       const name = e.target.getAttribute('name') || '';
       this.ee.emit('selectdFrag', name);

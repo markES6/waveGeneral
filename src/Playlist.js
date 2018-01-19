@@ -66,8 +66,8 @@ export default class {
   setBeforeCreate (beforeCreate) {
     this.beforeCreate = beforeCreate
   }
-  setSaveFun(saveFun) {
-    this.saveFun = saveFun
+  setAfterCreate(afterCreate) {
+    this.afterCreate = afterCreate
   }
   setCanMove(canmove) {
     this.canMove = canmove
@@ -155,18 +155,12 @@ export default class {
     this.render()
   }
   deleteFragHook(index) {
-    const lastFrom = document.getElementsByClassName('form-group')
-    this.formController.addFormInfo(lastFrom[lastFrom.length - 1])
-    document.getElementsByClassName('form-selected')[0].className = 'form-group'
     this.formInfo.splice(index, 1)
     this.formController.setForminfo(this.formInfo)
     this.fragController.setForminfo(this.formInfo)
     this.fragController.setSelected()
     this.fragHook.render()
     this.formHook.render()
-  }
-  saveAddlastForm(){
-    this.formController.saveAddForm()
   }
 
   // 控制模块
@@ -203,9 +197,9 @@ export default class {
     ee.on('zoom', (index) => {
       this.zoom(index)
     })
-    ee.on('saveFun', (formInfo) => {
-      this.formController.saveAddForm()
-      this.saveFun(formInfo)
+    ee.on('saveFormInfo', (changeIndex) => {
+      this.formInfo = this.formController.saveFormInfo(changeIndex)
+      this.afterCreate(this.formInfo)
     })
     ee.on('loadFirst', () => {
       const self = this

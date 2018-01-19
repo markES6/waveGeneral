@@ -15,12 +15,12 @@ class FromHook {
   }
   renderInput(item, typeInfo, state) {
     const checkValue = item.extend[typeInfo.sort] || '';
-    const inputDom = `<div class="form-content" style="display:${state}"><p>${typeInfo.title}:</p><input type="text" value="${checkValue}" class="formValue" name="${typeInfo.sort}"></div>`;
+    const inputDom = `<div class="form-content" style="display:${state}"><p>${typeInfo.title}:</p><input type="text" value="${checkValue}" class="formValue changeSave" name="${typeInfo.sort}"></div>`;
     return inputDom;
   }
   renderTextarea(item, typeInfo, state) {
     const checkValue = item.extend[typeInfo.sort] || '';
-    const textAreaDom = `<div class="form-content" style="display:${state}"><p>${typeInfo.title}:</p><textarea type="textarea" class="formValue" name="${typeInfo.sort}">${checkValue}</textarea></div>`;
+    const textAreaDom = `<div class="form-content" style="display:${state}"><p>${typeInfo.title}:</p><textarea type="textarea" class="formValue changeSave" name="${typeInfo.sort}">${checkValue}</textarea></div>`;
     return textAreaDom;
   }
   renderCheckbox(item, typeInfo, index, state) {
@@ -37,7 +37,7 @@ class FromHook {
         }
       });
       listDom += `<li>
-                    <input type="checkbox" name="checkbox-${index}" value='${indexT}' ${checked}>
+                    <input type="checkbox" name="checkbox-${index}" class="clickSave" value='${indexT}' ${checked}>
                     <label>${name}</label>
                   </li>
                 `;
@@ -55,7 +55,7 @@ class FromHook {
     typeInfo.option.forEach((name, indexT) => {
       const checked = checkValue === `${indexT}` ? 'checked' : '';
       listDom += `<li>
-                    <input type="radio" name="radio-${index}" value="${indexT}" ${checked}>
+                    <input type="radio" name="radio-${index}" class="clickSave" value="${indexT}" ${checked}>
                     <label>${name}</label>
                   </li>
                 `;
@@ -76,7 +76,7 @@ class FromHook {
     });
     const selectDom = `<div class="form-content"><p>${typeInfo.title}:</p>
                           <p class="cd-select icon">
-                            <select class="formValue" name="${typeInfo.sort}">
+                            <select class="formValue changeSave" name="${typeInfo.sort}">
                              ${listDom}
                             </select>
                          </p>
@@ -145,24 +145,46 @@ class FromHook {
             ${qualityDom}
             </div>`;
   }
+  changeSave(dom) {
+    const that = this
+    dom.oninput  = function(e){
+      const index = that.getParentNode(dom).getAttribute('name')
+      that.ee.emit('saveFormInfo', index)
+    }
+  }
+  clickSave(dom) {
+    const that = this
+    dom.onclick = function(e){
+      const index = that.getParentNode(dom).getAttribute('name')
+      that.ee.emit('saveFormInfo', index)
+    }
+  }
+  getParentNode(dom){
+    if(dom.className.indexOf('form-group') >= 0) {
+      return dom
+    }else{
+      return this.getParentNode(dom.parentNode)
+    } 
+  }
   renderAdd(form) {
     this.formInfo = form;
     this.render();
-    // let formContent = '';
-    // this.formInfo.forEach((formItem, index) => {
-    //   formContent += this.creatDom(formItem, index);
-    // });
-    // formContent += this.creatDom(form, indexs);
-    // this.formDom.innerHTML = formContent;
   }
   render(runSave) {
-    this.ee.emit('saveFun', this.formInfo);
     let formContent = '';
     this.formInfo.forEach((formItem, index) => {
       formContent += this.creatDom(formItem, index);
     });
     this.formDom.innerHTML = '';
     this.formDom.innerHTML = formContent;
+    const changeList = document.getElementsByClassName('changeSave')
+    const clickList = document.getElementsByClassName('clickSave')
+    for (let i = 0; i < changeList.length; i++) {
+      this.changeSave(changeList[i])
+    }
+    for (let i = 0; i < clickList.length; i++) {
+      this.clickSave(clickList[i])
+    }
   }
 }
 
