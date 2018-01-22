@@ -143,6 +143,7 @@ export default class {
     this.fragController.setForminfo(this.formInfo)
     this.fragHook.renderAdd(frag[frag.length - 1], frag.length - 1)
     this.formHook.renderAdd(this.formInfo)
+    this.playFrag(this.formInfo.length - 1)
   }
   changeFragHook(frag, index) {
     this.formInfo.splice(index, 1, frag)
@@ -305,7 +306,7 @@ export default class {
 
   // 播放
   play(startTime, endTime) {
-    const start = startTime || this.pauseTime
+    const start = startTime || startTime == 0 ? startTime : this.pauseTime
     const end = endTime || this.allTime
     this.startTime = startTime
     this.endTime = end

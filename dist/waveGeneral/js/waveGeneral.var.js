@@ -1478,6 +1478,7 @@ var WaveGeneral =
 	      this.fragController.setForminfo(this.formInfo);
 	      this.fragHook.renderAdd(frag[frag.length - 1], frag.length - 1);
 	      this.formHook.renderAdd(this.formInfo);
+	      this.playFrag(this.formInfo.length - 1);
 	    }
 	  }, {
 	    key: 'changeFragHook',
@@ -1685,7 +1686,7 @@ var WaveGeneral =
 	    value: function play(startTime, endTime) {
 	      var _this6 = this;
 	
-	      var start = startTime || this.pauseTime;
+	      var start = startTime || startTime == 0 ? startTime : this.pauseTime;
 	      var end = endTime || this.allTime;
 	      this.startTime = startTime;
 	      this.endTime = end;
@@ -4411,7 +4412,7 @@ var WaveGeneral =
 	      if (frag.extend.change) {
 	        className += ' yellow';
 	      }
-	      var dom = '<li class="' + className + '" name="' + index + '">' + (index + 1) + '</li>';
+	      var dom = '<li class="' + className + '" name="' + index + '" title="' + (frag.extend.form1 || ' ') + '">' + (index + 1) + '</li>';
 	      return dom;
 	    }
 	  }, {
@@ -4540,9 +4541,9 @@ var WaveGeneral =
 	      var state = formItem.extend.qualityState == '0' ? 'none' : 'block';
 	      var qualityType = { type: 'radio', sort: 'qualityState', title: '质检状态', option: ['合格', '不合格'] };
 	      var errorType = { type: 'input', sort: 'errorsMessage', title: '错误信息' };
-	      var qualityState = this.renderRadio(formItem, qualityType, 'qualityState' + index);
-	      var errorsState = this.renderCheckbox(formItem, errorInfo, 'errorsState' + index, state);
-	      var errorsMessage = this.renderInput(formItem, errorType, state);
+	      var qualityState = qualityType ? this.renderRadio(formItem, qualityType, 'qualityState' + index) : '';
+	      var errorsState = errorInfo ? this.renderCheckbox(formItem, errorInfo, 'errorsState' + index, state) : '';
+	      var errorsMessage = errorType ? this.renderInput(formItem, errorType, state) : '';
 	      var operationCase = this.markInfo.operationCase;
 	      if (operationCase !== 4 && operationCase !== 32 && operationCase !== 128 && operationCase !== 256) {
 	        var checkValue = formItem.extend.errorInfo || '';

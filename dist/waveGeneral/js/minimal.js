@@ -17,7 +17,7 @@ const playlist = WaveGeneral.init({
   },
   markInfo: { operationCase: 32 },
   typeArr: [{ type: 'input', sort: 'form1', title: '标题', option: '' },{ type: 'textarea', sort: 'form2', title: '标题2', option: '' }],
-  errorInfo: { type: 'checkbox', sort: 'errorInfo', title: '标题', option: ['测试1', '测试2', '测试3'] },
+  errorInfo: null,
   timescale: true,
   canMove: true,
 })
@@ -127,7 +127,7 @@ playlist.load([
   //   cuein: 0,
   // },
 ])
-// playlist.setCycle(false)
+playlist.setCycle(false)
 $(() => {
   $('#demo').click(() => {
     playlist.demo()

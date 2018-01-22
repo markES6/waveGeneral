@@ -32,7 +32,7 @@ class FragHook {
     if (frag.extend.change) {
       className += ' yellow';
     }
-    const dom = `<li class="${className}" name="${index}">${index +  1}</li>`;
+    const dom = `<li class="${className}" name="${index}" title="${frag.extend.form1 || ' '}">${index +  1}</li>`;
     return dom;
   }
   renderAdd(frag, index) {

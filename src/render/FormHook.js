@@ -87,9 +87,9 @@ class FromHook {
     const state = formItem.extend.qualityState == '0' ? 'none' : 'block';
     const qualityType = { type: 'radio', sort: 'qualityState', title: '质检状态', option: ['合格', '不合格'] };
     const errorType = { type: 'input', sort: 'errorsMessage', title: '错误信息'};
-    let qualityState = this.renderRadio(formItem, qualityType, `qualityState${index}`);
-    let errorsState = this.renderCheckbox(formItem, errorInfo, `errorsState${index}`, state);
-    let errorsMessage = this.renderInput(formItem, errorType, state);
+    let qualityState = qualityType ? this.renderRadio(formItem, qualityType, `qualityState${index}`) : '';
+    let errorsState = errorInfo ? this.renderCheckbox(formItem, errorInfo, `errorsState${index}`, state) : '';
+    let errorsMessage = errorType ? this.renderInput(formItem, errorType, state) : '';
     const operationCase = this.markInfo.operationCase;
     if (operationCase !== 4 && operationCase !== 32 && operationCase !== 128 && operationCase !== 256) {
       let checkValue = formItem.extend.errorInfo || '';
