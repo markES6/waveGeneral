@@ -143,4 +143,21 @@ $(() => {
     playlist.saveAddlastForm();
     console.log(JSON.stringify(playlist.saveLocalStorage()));
   });
-});
+  $('#formInfoBox').on('click','textarea',function(e){
+    console.log(getCursorPos($(this).get(0)))
+    e.stopPropagation();
+    return false
+  })
+
+  function getCursorPos(pTextArea) {  
+    var cursurPosition=-1;  
+    if(pTextArea.selectionStart || pTextArea.selectionStart == 0){//非IE浏览器  
+        cursurPosition= pTextArea.selectionStart;  
+    }else{//IE  
+        var range = document.selection.createRange();  
+        range.moveStart("character",-pTextArea.value.length);  
+        cursurPosition=range.text.length;  
+    }  
+    return cursurPosition;  
+  }
+}) 
