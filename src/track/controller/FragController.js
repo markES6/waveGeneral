@@ -169,7 +169,7 @@ class FragController {
       if ((points > item.start && points < item.end) && parseInt(out) !== index) {
         setUp = false
       }
-      if (points <= 0 || points > this.allTime) {
+      if (points < 0 || points > this.allTime) {
         setUp = false
       }
     })
@@ -273,7 +273,6 @@ class FragController {
     this.movePoint = e.clientX
     if (name === this.selected || this.hitPoint) {
       // this.selected = name
-      // console.log(this.hitPoint)
     } else {
       this.selected = null
       this.clearClassName()

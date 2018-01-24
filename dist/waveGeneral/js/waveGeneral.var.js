@@ -4397,7 +4397,8 @@ var WaveGeneral =
 	      } else if (frag.extend.qualityState === '1') {
 	        state = 'fragRed';
 	      }
-	      var dom = '<div class="frag ' + state + '" style=\'left:' + left + 'px;width:' + width + 'px\' name=' + index + '></div>';
+	      var titles = "开始时间：" + start.toFixed(2) + "结束时间：" + end.toFixed(2) + "共：" + (end - start).toFixed(2) + "秒";
+	      var dom = '<div class="frag ' + state + '" style=\'left:' + left + 'px;width:' + width + 'px\' \n    title=' + titles + ' name=' + index + '></div>';
 	      return dom;
 	    }
 	  }, {
@@ -4412,7 +4413,7 @@ var WaveGeneral =
 	      if (frag.extend.change) {
 	        className += ' yellow';
 	      }
-	      var dom = '<li class="' + className + '" name="' + index + '" title="' + (frag.extend.content || ' ') + '">' + (index + 1) + '</li>';
+	      var dom = '<li class="' + className + '" name="' + index + '" title="' + ('   ' + frag.extend.content || ' ') + '">' + (index + 1) + '</li>';
 	      return dom;
 	    }
 	  }, {
@@ -4877,7 +4878,7 @@ var WaveGeneral =
 	        if (points > item.start && points < item.end && parseInt(out) !== index) {
 	          setUp = false;
 	        }
-	        if (points <= 0 || points > _this2.allTime) {
+	        if (points < 0 || points > _this2.allTime) {
 	          setUp = false;
 	        }
 	      });
@@ -4996,7 +4997,6 @@ var WaveGeneral =
 	      this.movePoint = e.clientX;
 	      if (name === this.selected || this.hitPoint) {
 	        // this.selected = name
-	        // console.log(this.hitPoint)
 	      } else {
 	        this.selected = null;
 	        this.clearClassName();

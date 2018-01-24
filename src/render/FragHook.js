@@ -19,7 +19,9 @@ class FragHook {
     } else if (frag.extend.qualityState === '1') {
       state = 'fragRed';
     }
-    const dom = `<div class="frag ${state}" style='left:${left}px;width:${width}px' name=${index}></div>`;
+    const titles = "开始时间："+start.toFixed(2)+"结束时间："+end.toFixed(2)+"共："+(end-start).toFixed(2)+"秒"
+    const dom = `<div class="frag ${state}" style='left:${left}px;width:${width}px' 
+    title=${titles} name=${index}></div>`;
     return dom;
   }
   creatNav(frag, index) {
@@ -32,7 +34,7 @@ class FragHook {
     if (frag.extend.change) {
       className += ' yellow';
     }
-    const dom = `<li class="${className}" name="${index}" title="${frag.extend.content || ' '}">${index +  1}</li>`;
+    const dom = `<li class="${className}" name="${index}" title="${'   '+frag.extend.content || ' '}">${index +  1}</li>`;
     return dom;
   }
   renderAdd(frag, index) {
