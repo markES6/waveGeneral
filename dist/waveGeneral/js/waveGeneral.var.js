@@ -4412,7 +4412,7 @@ var WaveGeneral =
 	      if (frag.extend.change) {
 	        className += ' yellow';
 	      }
-	      var dom = '<li class="' + className + '" name="' + index + '" title="' + (frag.extend.form1 || ' ') + '">' + (index + 1) + '</li>';
+	      var dom = '<li class="' + className + '" name="' + index + '" title="' + (frag.extend.content || ' ') + '">' + (index + 1) + '</li>';
 	      return dom;
 	    }
 	  }, {
@@ -4540,10 +4540,10 @@ var WaveGeneral =
 	    value: function qualityRender(formItem, errorInfo, index) {
 	      var state = formItem.extend.qualityState == '0' ? 'none' : 'block';
 	      var qualityType = { type: 'radio', sort: 'qualityState', title: '质检状态', option: ['合格', '不合格'] };
-	      var errorType = { type: 'input', sort: 'errorsMessage', title: '错误信息' };
+	      var errorType = { type: 'textarea', sort: 'errorsMessage', title: '质检信息' };
 	      var qualityState = qualityType ? this.renderRadio(formItem, qualityType, 'qualityState' + index) : '';
 	      var errorsState = errorInfo ? this.renderCheckbox(formItem, errorInfo, 'errorsState' + index, state) : '';
-	      var errorsMessage = errorType ? this.renderInput(formItem, errorType, state) : '';
+	      var errorsMessage = errorType ? this.renderTextarea(formItem, errorType, state) : '';
 	      var operationCase = this.markInfo.operationCase;
 	      if (operationCase !== 4 && operationCase !== 32 && operationCase !== 128 && operationCase !== 256) {
 	        var checkValue = formItem.extend.errorInfo || '';
@@ -4551,15 +4551,17 @@ var WaveGeneral =
 	        if (typeof checkValue === 'string') {
 	          checkValue = checkValue.split(',');
 	        }
-	        checkValue.forEach(function (item) {
-	          if (errorInfo.option[item]) {
-	            errorValue += errorInfo.option[item] + ',';
-	          }
-	        });
+	        if (errorInfo) {
+	          checkValue.forEach(function (item) {
+	            if (errorInfo.option[item]) {
+	              errorValue += errorInfo.option[item] + ',';
+	            }
+	          });
+	          errorsState = '<div><p>\u9519\u8BEF\u7C7B\u578B:</p><span>' + errorValue + '</span></div>';
+	        }
 	        var errorMes = formItem.extend.errorsMessage || '';
 	        qualityState = '<div><p>\u8D28\u68C0\u72B6\u6001:</p><span>' + (qualityType.option[formItem.extend.qualityState] || '') + '</span></div>';
-	        errorsState = '<div><p>\u9519\u8BEF\u7C7B\u578B:</p><span>' + errorValue + '</span></div>';
-	        errorsMessage = '<div><p>\u9519\u8BEF\u4FE1\u606F:</p><span>' + errorMes + '</span></div>';
+	        errorsMessage = '<div><p>\u8D28\u68C0\u4FE1\u606F:</p><span>' + errorMes + '</span></div>';
 	      }
 	      var qualityDom = '<div class="quality-content">\n                          ' + qualityState + '\n                          ' + errorsState + '\n                          ' + errorsMessage + '\n                        </div>';
 	      return qualityDom;

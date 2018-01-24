@@ -86,10 +86,10 @@ class FromHook {
   qualityRender(formItem, errorInfo, index) {
     const state = formItem.extend.qualityState == '0' ? 'none' : 'block';
     const qualityType = { type: 'radio', sort: 'qualityState', title: '质检状态', option: ['合格', '不合格'] };
-    const errorType = { type: 'input', sort: 'errorsMessage', title: '错误信息'};
+    const errorType = { type: 'textarea', sort: 'errorsMessage', title: '质检信息'};
     let qualityState = qualityType ? this.renderRadio(formItem, qualityType, `qualityState${index}`) : '';
     let errorsState = errorInfo ? this.renderCheckbox(formItem, errorInfo, `errorsState${index}`, state) : '';
-    let errorsMessage = errorType ? this.renderInput(formItem, errorType, state) : '';
+    let errorsMessage = errorType ? this.renderTextarea(formItem, errorType, state) : '';
     const operationCase = this.markInfo.operationCase;
     if (operationCase !== 4 && operationCase !== 32 && operationCase !== 128 && operationCase !== 256) {
       let checkValue = formItem.extend.errorInfo || '';
@@ -97,15 +97,17 @@ class FromHook {
       if (typeof checkValue === 'string') {
         checkValue = checkValue.split(',');
       }
-      checkValue.forEach((item) => {
-        if (errorInfo.option[item]) {
-          errorValue += `${errorInfo.option[item]},`;
-        }
-      });
+      if(errorInfo){
+        checkValue.forEach((item) => {
+          if (errorInfo.option[item]) {
+            errorValue += `${errorInfo.option[item]},`;
+          }
+        });
+        errorsState = `<div><p>错误类型:</p><span>${errorValue}</span></div>`;
+      }
       const errorMes = formItem.extend.errorsMessage || '';
       qualityState = `<div><p>质检状态:</p><span>${qualityType.option[formItem.extend.qualityState] || ''}</span></div>`;
-      errorsState = `<div><p>错误类型:</p><span>${errorValue}</span></div>`;
-      errorsMessage = `<div><p>错误信息:</p><span>${errorMes}</span></div>`;
+      errorsMessage = `<div><p>质检信息:</p><span>${errorMes}</span></div>`;
     }
     const qualityDom = `<div class="quality-content">
                           ${qualityState}
