@@ -6,7 +6,7 @@ const playlist = WaveGeneral.init({
   saveFun: (info) => {
     console.log(info);
   },
-  markInfo: { operationCase: 32 },
+  markInfo: { operationCase: 1 },
   markData : [{"start":1.870748299319728,"end":4.2687074829931975,"title":"","extend":{"formValue":[],"change":true,"form1":"9879465","form2":"54165123","qualityState":"1","errorInfo":"","errorsMessage":"3333"}},{"start":6.224489795918367,"end":8.945578231292517,"title":"","extend":{"formValue":[],"change":true,"form1":"55555","form2":"6549879","qualityState":"0","errorInfo":"","errorsMessage":""}},{"start":9.931972789115646,"end":10.884353741496598,"title":"","extend":{"formValue":[],"form1":"2222","form2":""}},{"start":11.649659863945578,"end":12.227891156462585,"title":"","extend":{"formValue":[],"form1":"33333","form2":""}}],
   typeArr: [{ type: 'input', sort: 'form1', title: '标题', option: '' },{ type: 'textarea', sort: 'form2', title: '标题2', option: '' }],
   errorInfo: { type: 'checkbox', sort: 'errorInfo', title: '标题', option: ['测试1', '测试2', '测试3'] },
