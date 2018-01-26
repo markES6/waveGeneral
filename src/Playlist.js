@@ -384,10 +384,16 @@ export default class {
 
   // 加载音频并初始化显示
   load(trackList) {
+    if(trackList && trackList.length === 0){
+      const loading = document.getElementById('loading');
+      if(loading){
+        loading.style.display = 'none'
+      }
+    }
     if (!trackList || trackList.length === 0) {
       this.zoomBol = true;
       return;
-    }
+    }    
     const promiseTrack = [trackList[0]];
     trackList.shift();
     const loadPromises = promiseTrack.map((trackInfo) => {
