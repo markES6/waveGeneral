@@ -1688,7 +1688,7 @@ var WaveGeneral =
 	
 	      var start = startTime || startTime == 0 ? startTime : this.pauseTime;
 	      var end = endTime || this.allTime;
-	      this.startTime = startTime;
+	      this.startTime = startTime == 0 ? 0.0001 : startTime;
 	      this.endTime = end;
 	      if (this.isPlaying()) {
 	        return this.restartPlayFrom(start, end);
@@ -5247,12 +5247,16 @@ var WaveGeneral =
 	          var fragDom = document.getElementsByClassName('frag');
 	          if (e.target.getAttribute('value') === '0') {
 	            errorsState.style.display = 'none';
-	            errorsState2.style.display = 'none';
+	            if (errorsState2) {
+	              errorsState2.style.display = 'none';
+	            }
 	            fragDom[index].className = 'frag fragGreen';
 	            _this.smallNav.getElementsByTagName('li')[index].className = 'btn green';
 	          } else if (e.target.getAttribute('value') === '1') {
 	            errorsState.style.display = 'block';
-	            errorsState2.style.display = 'block';
+	            if (errorsState2) {
+	              errorsState2.style.display = 'block';
+	            }
 	            fragDom[index].className = 'frag fragRed';
 	            _this.smallNav.getElementsByTagName('li')[index].className = 'btn red';
 	            for (var i = 0; i < errorsState.getElementsByTagName('input').length; i++) {

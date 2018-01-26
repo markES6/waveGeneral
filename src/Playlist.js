@@ -308,7 +308,7 @@ export default class {
   play(startTime, endTime) {
     const start = startTime || startTime == 0 ? startTime : this.pauseTime
     const end = endTime || this.allTime
-    this.startTime = startTime
+    this.startTime = startTime == 0 ? 0.0001 : startTime
     this.endTime = end
     if (this.isPlaying()) {
       return this.restartPlayFrom(start, end)

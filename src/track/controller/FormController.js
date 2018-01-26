@@ -105,12 +105,16 @@ class FormController {
         const fragDom = document.getElementsByClassName('frag');
         if (e.target.getAttribute('value') === '0') {
           errorsState.style.display = 'none';
-          errorsState2.style.display = 'none';
+          if(errorsState2){
+            errorsState2.style.display = 'none';
+          }
           fragDom[index].className = 'frag fragGreen';
           this.smallNav.getElementsByTagName('li')[index].className = 'btn green';
         } else if (e.target.getAttribute('value') === '1') {
           errorsState.style.display = 'block';
-          errorsState2.style.display = 'block';
+          if(errorsState2){
+            errorsState2.style.display = 'block';
+          }
           fragDom[index].className = 'frag fragRed';
           this.smallNav.getElementsByTagName('li')[index].className = 'btn red';
           for (let i = 0; i < errorsState.getElementsByTagName('input').length; i++) {
