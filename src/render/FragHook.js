@@ -18,6 +18,8 @@ class FragHook {
       state = 'fragGreen';
     } else if (frag.extend.qualityState === '1') {
       state = 'fragRed';
+    }else if (frag.extend.qualityState === '2') {
+      state = 'fragOrange';
     }
     const titles = "开始时间："+start.toFixed(2)+"结束时间："+end.toFixed(2)+"共："+(end-start).toFixed(2)+"秒"
     const dom = `<div class="frag ${state}" style='left:${left}px;width:${width}px' 
@@ -30,6 +32,8 @@ class FragHook {
       className += ' green';
     } else if (frag.extend.qualityState === '1') {
       className += ' red';
+    }else if (frag.extend.qualityState === '2') {
+      className += ' orange';
     }
     if (frag.extend.change) {
       className += ' yellow';

@@ -4396,6 +4396,8 @@ var WaveGeneral =
 	        state = 'fragGreen';
 	      } else if (frag.extend.qualityState === '1') {
 	        state = 'fragRed';
+	      } else if (frag.extend.qualityState === '2') {
+	        state = 'fragOrange';
 	      }
 	      var titles = "开始时间：" + start.toFixed(2) + "结束时间：" + end.toFixed(2) + "共：" + (end - start).toFixed(2) + "秒";
 	      var dom = '<div class="frag ' + state + '" style=\'left:' + left + 'px;width:' + width + 'px\' \n    title=' + titles + ' name=' + index + '></div>';
@@ -4409,6 +4411,8 @@ var WaveGeneral =
 	        className += ' green';
 	      } else if (frag.extend.qualityState === '1') {
 	        className += ' red';
+	      } else if (frag.extend.qualityState === '2') {
+	        className += ' orange';
 	      }
 	      if (frag.extend.change) {
 	        className += ' yellow';
@@ -4540,7 +4544,7 @@ var WaveGeneral =
 	    key: 'qualityRender',
 	    value: function qualityRender(formItem, errorInfo, index) {
 	      var state = formItem.extend.qualityState == '0' ? 'none' : 'block';
-	      var qualityType = { type: 'radio', sort: 'qualityState', title: '质检状态', option: ['合格', '不合格'] };
+	      var qualityType = { type: 'radio', sort: 'qualityState', title: '质检状态', option: ['合格', '不合格', '修改'] };
 	      var errorType = { type: 'textarea', sort: 'errorsMessage', title: '质检信息' };
 	      var qualityState = qualityType ? this.renderRadio(formItem, qualityType, 'qualityState' + index) : '';
 	      var errorsState = errorInfo ? this.renderCheckbox(formItem, errorInfo, 'errorsState' + index, state) : '';
@@ -4975,6 +4979,9 @@ var WaveGeneral =
 	      if (this.beforeCreat) {
 	        frag = this.beforeCreat(frag);
 	      }
+	      if (!frag) {
+	        return;
+	      }
 	      this.formInfo.push(this.checkedFrag(frag, -1));
 	      this.ee.emit('addFrag', this.formInfo);
 	    }
@@ -5261,6 +5268,16 @@ var WaveGeneral =
 	            _this.smallNav.getElementsByTagName('li')[index].className = 'btn red';
 	            for (var i = 0; i < errorsState.getElementsByTagName('input').length; i++) {
 	              errorsState.getElementsByTagName('input')[i].checked = false;
+	            }
+	          } else if (e.target.getAttribute('value') === '2') {
+	            errorsState.style.display = 'block';
+	            if (errorsState2) {
+	              errorsState2.style.display = 'block';
+	            }
+	            fragDom[index].className = 'frag fragOrange';
+	            _this.smallNav.getElementsByTagName('li')[index].className = 'btn orange';
+	            for (var _i = 0; _i < errorsState.getElementsByTagName('input').length; _i++) {
+	              errorsState.getElementsByTagName('input')[_i].checked = false;
 	            }
 	          }
 	        }

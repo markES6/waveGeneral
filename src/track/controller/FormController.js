@@ -120,6 +120,16 @@ class FormController {
           for (let i = 0; i < errorsState.getElementsByTagName('input').length; i++) {
             errorsState.getElementsByTagName('input')[i].checked = false;
           }
+        }else if(e.target.getAttribute('value') === '2'){
+          errorsState.style.display = 'block';
+          if(errorsState2){
+            errorsState2.style.display = 'block';
+          }
+          fragDom[index].className = 'frag fragOrange';
+          this.smallNav.getElementsByTagName('li')[index].className = 'btn orange';
+          for (let i = 0; i < errorsState.getElementsByTagName('input').length; i++) {
+            errorsState.getElementsByTagName('input')[i].checked = false;
+          }
         }
       }
       this.selected = index;

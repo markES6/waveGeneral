@@ -85,6 +85,9 @@
   .fragRed{
     background: rgba(196, 30, 4, 0.5);
   }
+  .fragOrange{
+    background: rgba(255, 140, 0, 0.5);
+  }
   .fragSelected{
     background: rgba(253, 254, 202, 0.8);
     border-color: #FDFECA;
@@ -352,6 +355,9 @@
   }
   #smallNav ul .red{
     background: rgba(196, 30, 4, 0.5);
+  }
+  #smallNav ul .orange{
+    background: rgba(255, 140, 0, 0.5);
   }
   #ruler{
     right: -2px;

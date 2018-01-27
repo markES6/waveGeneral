@@ -254,6 +254,9 @@ class FragController {
     if (this.beforeCreat) {
       frag = this.beforeCreat(frag)
     }
+    if(!frag){
+      return
+    }
     this.formInfo.push(this.checkedFrag(frag, -1))
     this.ee.emit('addFrag', this.formInfo)
   }

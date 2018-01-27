@@ -85,7 +85,7 @@ class FromHook {
   }
   qualityRender(formItem, errorInfo, index) {
     const state = formItem.extend.qualityState == '0' ? 'none' : 'block';
-    const qualityType = { type: 'radio', sort: 'qualityState', title: '质检状态', option: ['合格', '不合格'] };
+    const qualityType = { type: 'radio', sort: 'qualityState', title: '质检状态', option: ['合格', '不合格', '修改'] };
     const errorType = { type: 'textarea', sort: 'errorsMessage', title: '质检信息'};
     let qualityState = qualityType ? this.renderRadio(formItem, qualityType, `qualityState${index}`) : '';
     let errorsState = errorInfo ? this.renderCheckbox(formItem, errorInfo, `errorsState${index}`, state) : '';
