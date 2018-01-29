@@ -19,7 +19,7 @@ const playlist = WaveGeneral.init({
   typeArr: [{ type: 'input', sort: 'form1', title: '标题', option: '' },{ type: 'textarea', sort: 'form2', title: '标题2', option: '' }],
   errorInfo: null,
   timescale: true,
-  canMove: true,
+  canMove: false,
 })
 playlist.load([
   {
