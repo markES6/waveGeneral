@@ -8,7 +8,7 @@ const playlist = WaveGeneral.init({
   beforeCreate: function (frag) {
     let maxEnd = 0
     for (let i = 0; i < this.formInfo.length; i++) {
-      if (frag.start > this.formInfo[i].end && this.formInfo[i].end > maxEnd) {
+      if (frag.start >= this.formInfo[i].end && this.formInfo[i].end >= maxEnd) {
         maxEnd = this.formInfo[i].end
       }
     }

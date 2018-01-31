@@ -5020,12 +5020,14 @@ var WaveGeneral =
 	      var left = void 0;
 	      var width = void 0;
 	      if (this.moveEditbefore[0] === 'end') {
-	        left = window.parseFloat(selectedDom.style.left);
-	        width = window.parseFloat(selectedDom.style.width) + e.movementX;
+	        left = window.parseFloat(selectedDom.style.left) * 10000;
+	        width = window.parseFloat(selectedDom.style.width) * 10000 + e.movementX * 10000;
 	      } else if (this.moveEditbefore[0] === 'start') {
-	        left = window.parseFloat(selectedDom.style.left) + e.movementX;
-	        width = window.parseFloat(selectedDom.style.width) - e.movementX;
+	        left = window.parseFloat(selectedDom.style.left) * 10000 + e.movementX * 10000;
+	        width = window.parseFloat(selectedDom.style.width) * 10000 - e.movementX * 10000;
 	      }
+	      left = left / 10000;
+	      width = width / 10000;
 	      if (this.pointStart(left, index) && this.pointStart(left + width, index)) {
 	        selectedDom.style.left = left + 'px';
 	        selectedDom.style.width = width + 'px';
