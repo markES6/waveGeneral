@@ -9,8 +9,6 @@ class FromHook {
     this.samplesPerPixel = samplesPerPixel;
     this.sampleRate = sampleRate;
     this.ee = ee;
-
-
     this.formDom = document.getElementById('formInfo');
   }
   renderInput(item, typeInfo, state) {

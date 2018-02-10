@@ -1,18 +1,19 @@
 const playlist = WaveGeneral.init({
   name: 'demo1',
-  samplesPerPixel: 750,
+  samplesPerPixel: 50,
   waveHeight: 500,
+  zoomLevels: [ 30, 50, 80, 110, 140, 170, 200, 400],
   container: document.getElementById('wavelist'),
   afterCreate: function (info) {
   },
   beforeCreate: function (frag) {
-    let maxEnd = 0
-    for (let i = 0; i < this.formInfo.length; i++) {
-      if (frag.start >= this.formInfo[i].end && this.formInfo[i].end >= maxEnd) {
-        maxEnd = this.formInfo[i].end
-      }
-    }
-    frag.start = maxEnd
+    // let maxEnd = 0
+    // for (let i = 0; i < this.formInfo.length; i++) {
+    //   if (frag.start >= this.formInfo[i].end && this.formInfo[i].end >= maxEnd) {
+    //     maxEnd = this.formInfo[i].end
+    //   }
+    // }
+    // frag.start = maxEnd
     return frag
   },
   markInfo: { operationCase: 32 },
@@ -23,18 +24,19 @@ const playlist = WaveGeneral.init({
 })
 playlist.load([
   {
-    src: 'media/audio/0.wav',
-    name: 'Guitar',
-  }, {
-    src: 'media/audio/1.wav',
-    name: 'Guitar',
-  }, {
-    src: 'media/audio/2.wav',
-    name: 'Guitar',
-  }, {
-    src: 'media/audio/3.wav',
+    src: 'media/audio/ah_1.wav',
     name: 'Guitar',
   }
+  //}, {
+  //   src: 'media/audio/1.wav',
+  //   name: 'Guitar',
+  // }, {
+  //   src: 'media/audio/2.wav',
+  //   name: 'Guitar',
+  // }, {
+  //   src: 'media/audio/3.wav',
+  //   name: 'Guitar',
+
   //}, {
   //   src: 'media/audio/4.wav',
   //   name: 'Guitar',

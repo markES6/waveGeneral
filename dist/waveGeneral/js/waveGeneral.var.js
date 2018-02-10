@@ -2976,7 +2976,7 @@ var WaveGeneral =
 	        secondStep: 1 / 10
 	      },
 	      300: {
-	        marker: 1000,
+	        marker: 500,
 	        bigStep: 500,
 	        smallStep: 100,
 	        secondStep: 1 / 10
@@ -4478,7 +4478,6 @@ var WaveGeneral =
 	    this.samplesPerPixel = samplesPerPixel;
 	    this.sampleRate = sampleRate;
 	    this.ee = ee;
-	
 	    this.formDom = document.getElementById('formInfo');
 	  }
 	

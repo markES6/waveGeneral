@@ -54,7 +54,7 @@ class TimeScale {
         secondStep: 1 / 10,
       },
       300: {
-        marker: 1000,
+        marker: 500,
         bigStep: 500,
         smallStep: 100,
         secondStep: 1 / 10,
