@@ -1,3 +1,4 @@
+// loader基础类
 import EventEmitter from 'event-emitter';
 
 export const STATE_UNINITIALIZED = 0;

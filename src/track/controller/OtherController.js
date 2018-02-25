@@ -1,3 +1,4 @@
+// 其他控制模块
 class OtherController {
   constructor(ee) {
     this.ee = ee;

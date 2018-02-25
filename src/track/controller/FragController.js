@@ -1,3 +1,4 @@
+// 选取框控制预设
 import { pixelsToSeconds, secondsToPixels } from '../../utils/conversions'
 
 class FragController {

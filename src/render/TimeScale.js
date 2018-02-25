@@ -1,3 +1,4 @@
+//时间刻度设置
 import h from 'virtual-dom/h';
 
 import { secondsToPixels } from '../utils/conversions';

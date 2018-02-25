@@ -1,3 +1,4 @@
+// 表单控制模块
 class FormController {
   constructor(ee, formInfo, markInfo) {
     this.formInfo = formInfo;

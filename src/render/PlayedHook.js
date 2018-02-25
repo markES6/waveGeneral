@@ -1,3 +1,4 @@
+// 播放线条播放背景控制
 import { secondsToPixels } from '../utils/conversions';
 
 class PlayedHook {

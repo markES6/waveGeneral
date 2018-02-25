@@ -1,6 +1,4 @@
-/*
-* virtual-dom hook for rendering the time scale canvas.
-*/
+// 时间放大缩小控制
 export default class {
   constructor(tickInfo, offset, samplesPerPixel, duration) {
     this.tickInfo = tickInfo;

@@ -1,4 +1,4 @@
-
+// 绘制波形图canvas
 class CanvasHook {
   constructor(peaks, offset, bits, color) {
     this.peaks = peaks;

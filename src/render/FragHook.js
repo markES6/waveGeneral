@@ -1,3 +1,4 @@
+// 渲染截取框
 import { secondsToPixels } from '../utils/conversions';
 
 class FragHook {

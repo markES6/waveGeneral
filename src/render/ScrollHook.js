@@ -1,8 +1,6 @@
+// 播放过程滚动设置
 import { secondsToPixels } from '../utils/conversions';
 
-/*
-* virtual-dom hook for scrolling the track container.
-*/
 export default class {
   constructor(playlist) {
     this.playlist = playlist;
